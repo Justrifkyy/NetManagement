@@ -1,0 +1,86 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Ticket extends Model
+{
+    protected $fillable = [
+        'customer_id',
+        'technician_id',
+        'type',
+        'subject',
+        'status',
+
+        // --- 1. SURVEY ---
+        'survey_status',
+        'survey_date',
+        'survey_notes',
+        'location_obstacle',
+        'location_photo_path',
+
+        // --- 2. INSTALASI ---
+        'installation_date',
+        'connection_type',
+        'cable_length',
+        'mounting_position',
+        'installation_status',
+        'installation_notes',
+
+        // --- 3. PERANGKAT ---
+        'device_type',
+        'device_brand',
+        'device_sn',
+        'device_mac',
+        'device_condition',
+
+        // --- 4. JARINGAN ---
+        'router_id',
+        'port_interface',
+        'vlan_id',
+        'odp_port',
+        'olt_source',
+        'connection_mode',
+        'dbm_signal',
+
+        // --- 5. AKUN ---
+        'pppoe_username',
+        'pppoe_password',
+        'service_status',
+
+        // --- 6. UJI KONEKSI ---
+        'connectivity_status',
+        'speed_test_result',
+        'latency',
+        'speedtest_photo_path',
+
+        // --- 7. SERAH TERIMA ---
+        'internet_active_confirmation',
+        'handover_date',
+        'final_technician_notes',
+        'completed_at',
+        'evidence_photo_path', // Foto Modem
+    ];
+
+    protected $casts = [
+        'survey_date' => 'date',
+        'installation_date' => 'date',
+        'handover_date' => 'date',
+        'completed_at' => 'datetime',
+        'internet_active_confirmation' => 'boolean',
+    ];
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
+    public function technician()
+    {
+        return $this->belongsTo(User::class, 'technician_id');
+    }
+    public function router()
+    {
+        return $this->belongsTo(NetworkAsset::class, 'router_id');
+    }
+}
