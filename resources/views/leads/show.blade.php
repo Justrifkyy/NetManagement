@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Profil Pelanggan') }}
+            {{ __('Detail Lengkap Prospek') }}
         </h2>
     </x-slot>
 
@@ -37,180 +37,288 @@
 
                 <div class="lg:col-span-2 space-y-6">
 
-                    <div class="bg-white overflow-hidden shadow-xl sm:rounded-2xl border border-gray-100 p-6 relative">
-                        <div class="absolute top-0 right-0 p-6">
+                    <div class="bg-white overflow-hidden shadow-md sm:rounded-xl border border-gray-100 p-6 relative">
+                        <div class="absolute top-4 right-4">
                             <span
-                                class="px-4 py-1 text-sm font-bold rounded-full uppercase tracking-wide
-                                {{ $lead->status == 'converted' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700' }}">
+                                class="px-3 py-1 text-sm font-bold rounded-full uppercase tracking-wide {{ $lead->status == 'converted' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700' }}">
                                 {{ $lead->status }}
                             </span>
                         </div>
 
-                        <div class="mb-6 border-b border-gray-100 pb-4">
-                            <h3 class="text-2xl font-bold text-gray-800">{{ $lead->name }}</h3>
-                            <p class="text-gray-500 text-sm mt-1">
-                                Terdaftar sejak: <span
-                                    class="font-semibold">{{ $lead->created_at->format('d F Y, H:i') }}</span>
-                            </p>
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-sky-600" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                            Identitas Pelanggan
+                        </h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <span class="block text-xs text-gray-400 uppercase">Nama Lengkap</span>
+                                <span class="text-lg font-semibold text-gray-800">{{ $lead->name }}</span>
+                            </div>
+                            <div>
+                                <span class="block text-xs text-gray-400 uppercase">Jenis Pelanggan</span>
+                                <span class="font-medium">{{ ucfirst($lead->customer_type) }}
+                                    {{ $lead->business_name ? '(' . $lead->business_name . ')' : '' }}</span>
+                            </div>
+                            <div>
+                                <span class="block text-xs text-gray-400 uppercase">Ibu Kandung</span>
+                                <span class="font-medium">{{ $lead->mother_name ?? '-' }}</span>
+                            </div>
+                            <div>
+                                <span class="block text-xs text-gray-400 uppercase">Terdaftar Sejak</span>
+                                <span class="font-medium">{{ $lead->created_at->format('d M Y') }}</span>
+                            </div>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div>
-                                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Kontak Utama
-                                </h4>
-                                <div class="flex items-center mb-2">
-                                    <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z">
-                                        </path>
-                                    </svg>
-                                    <span class="text-lg font-medium text-gray-800">{{ $lead->phone }}</span>
-                                </div>
-                                <div class="flex items-center">
-                                    <svg class="w-5 h-5 text-gray-400 mr-2" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
-                                        </path>
-                                    </svg>
-                                    <span class="text-gray-600">{{ $lead->email ?? 'Email tidak diisi' }}</span>
-                                </div>
-                            </div>
+                        <hr class="my-4 border-gray-100">
 
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Informasi
-                                    Keluarga</h4>
-                                <p class="mb-1"><span class="text-gray-500 text-sm">Ibu Kandung:</span> <br><span
-                                        class="font-medium">{{ $lead->mother_name ?? '-' }}</span></p>
-                                <p><span class="text-gray-500 text-sm">Darurat:</span> <br><span
-                                        class="font-medium">{{ $lead->emergency_phone ?? '-' }}
-                                        ({{ $lead->emergency_relation }})</span></p>
+                                <span class="block text-xs text-gray-400 uppercase">No. WhatsApp</span>
+                                <span class="text-lg font-bold text-green-600 flex items-center">
+                                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                                        <path
+                                            d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.017-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
+                                    </svg>
+                                    {{ $lead->phone }}
+                                </span>
+                            </div>
+                            <div>
+                                <span class="block text-xs text-gray-400 uppercase">Email</span>
+                                <span class="font-medium">{{ $lead->email ?? '-' }}</span>
+                            </div>
+                            <div>
+                                <span class="block text-xs text-gray-400 uppercase">Kontak Darurat</span>
+                                <span class="font-medium">{{ $lead->emergency_name }}
+                                    ({{ $lead->emergency_relation }})</span>
+                                <span class="block text-sm text-gray-500">{{ $lead->emergency_phone }}</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-white overflow-hidden shadow-xl sm:rounded-2xl border border-gray-100 p-6">
-                        <div class="flex items-center mb-4 text-sky-700">
-                            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="bg-white overflow-hidden shadow-md sm:rounded-xl border border-gray-100 p-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-sky-600" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
                                 </path>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                             </svg>
-                            <h3 class="text-lg font-bold">Detail Lokasi</h3>
-                        </div>
+                            Lokasi Pemasangan
+                        </h3>
 
                         <div class="space-y-4">
-                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
-                                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Alamat
-                                    Domisili / Instalasi</h4>
+                            <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-100">
+                                <span class="block text-xs text-yellow-600 font-bold uppercase mb-1">Alamat Pemasangan
+                                    (Domisili)</span>
                                 <p class="text-gray-800 font-medium">{{ $lead->address_installation }}</p>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
-                                    <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Alamat KTP
-                                    </h4>
-                                    <p class="text-gray-600 text-sm">{{ $lead->address_ktp }}</p>
+
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
+                                <span class="block text-xs text-gray-400 font-bold uppercase mb-1">Alamat Sesuai
+                                    KTP</span>
+                                <p class="text-gray-600 text-sm">
+                                    {{ $lead->address_ktp ?? 'Sama dengan alamat pasang / Tidak diisi' }}</p>
+                            </div>
+
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                                <div><span class="block text-gray-400 text-xs">RT/RW</span> {{ $lead->rt_rw ?? '-' }}
                                 </div>
-                                <div
-                                    class="bg-sky-50 p-4 rounded-lg border border-sky-100 flex flex-col justify-between">
-                                    <div>
-                                        <h4 class="text-xs font-bold text-sky-600 uppercase tracking-wider mb-1">Titik
-                                            Koordinat</h4>
-                                        <p class="text-sky-800 font-mono text-sm truncate">
-                                            {{ $lead->coordinates ?? '-' }}</p>
-                                    </div>
-                                    @if ($lead->coordinates)
-                                        <a href="https://www.google.com/maps/search/?api=1&query={{ $lead->coordinates }}"
-                                            target="_blank"
-                                            class="mt-2 text-center bg-sky-600 hover:bg-sky-700 text-white text-xs py-2 rounded-md font-bold transition">
-                                            Buka Google Maps
-                                        </a>
-                                    @endif
+                                <div><span class="block text-gray-400 text-xs">Kelurahan</span>
+                                    {{ $lead->village ?? '-' }}</div>
+                                <div><span class="block text-gray-400 text-xs">Kecamatan</span>
+                                    {{ $lead->district ?? '-' }}</div>
+                                <div><span class="block text-gray-400 text-xs">Kota/Kab</span> {{ $lead->city ?? '-' }}
+                                </div>
+                                <div><span class="block text-gray-400 text-xs">Provinsi</span>
+                                    {{ $lead->province ?? '-' }}</div>
+                                <div><span class="block text-gray-400 text-xs">Kode Pos</span>
+                                    {{ $lead->postal_code ?? '-' }}</div>
+                            </div>
+
+                            <div
+                                class="bg-sky-50 p-4 rounded-lg border border-sky-100 flex flex-col sm:flex-row justify-between items-center">
+                                <div class="mb-2 sm:mb-0">
+                                    <span class="block text-xs text-sky-600 font-bold uppercase mb-1">Koordinat Google
+                                        Maps</span>
+                                    <p class="text-sky-800 font-mono text-sm">
+                                        {{ $lead->coordinates ?? 'Belum ada koordinat' }}</p>
+                                </div>
+                                @if ($lead->coordinates)
+                                    <a href="https://www.google.com/maps/search/?api=1&query={{ $lead->coordinates }}"
+                                        target="_blank"
+                                        class="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold rounded-lg transition">
+                                        Buka Maps
+                                    </a>
+                                @endif
+                            </div>
+                            <div class="text-sm">
+                                <span class="block text-gray-400 text-xs">Patokan / Landmark</span>
+                                <p class="text-gray-700">{{ $lead->landmark ?? '-' }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white overflow-hidden shadow-md sm:rounded-xl border border-gray-100 p-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-sky-600" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                                </path>
+                            </svg>
+                            Paket & Jadwal
+                        </h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                                <span class="block text-xs text-blue-500 uppercase font-bold mb-1">Paket Dipilih</span>
+                                <p class="text-xl font-bold text-blue-800">
+                                    {{ $lead->package->name ?? 'Tidak ada paket' }}</p>
+                                <p class="text-sm text-blue-600">{{ $lead->package->speed_mbps ?? 0 }} Mbps - Rp
+                                    {{ number_format($lead->package->price ?? 0, 0, ',', '.') }}</p>
+                                @if ($lead->promo_code)
+                                    <span
+                                        class="mt-2 inline-block px-2 py-1 bg-yellow-200 text-yellow-800 text-xs font-bold rounded">Promo:
+                                        {{ $lead->promo_code }}</span>
+                                @endif
+                            </div>
+
+                            <div class="space-y-3 text-sm">
+                                <div class="flex justify-between border-b border-gray-100 pb-2">
+                                    <span class="text-gray-500">Jadwal Survey</span>
+                                    <span
+                                        class="font-bold">{{ $lead->survey_date ? $lead->survey_date->format('d M Y') : '-' }}</span>
+                                </div>
+                                <div class="flex justify-between border-b border-gray-100 pb-2">
+                                    <span class="text-gray-500">Jadwal Instalasi</span>
+                                    <span
+                                        class="font-bold">{{ $lead->installation_date ? $lead->installation_date->format('d M Y') : '-' }}</span>
+                                </div>
+                                <div class="flex justify-between border-b border-gray-100 pb-2">
+                                    <span class="text-gray-500">Waktu Diinginkan</span>
+                                    <span class="font-bold">{{ $lead->preferred_time ?? '-' }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">Sumber Info</span>
+                                    <span class="font-bold">{{ $lead->source ?? '-' }}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 </div>
 
                 <div class="lg:col-span-1 space-y-6">
-                    <div class="bg-white overflow-hidden shadow-xl sm:rounded-2xl border border-gray-100 p-6">
+
+                    <div class="bg-white overflow-hidden shadow-md sm:rounded-xl border border-gray-100 p-6">
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Catatan Tim</h3>
+
+                        <div class="space-y-4">
+                            <div>
+                                <span class="block text-xs font-bold text-gray-400 uppercase">Ringkasan
+                                    Komunikasi</span>
+                                <p class="text-sm bg-gray-50 p-2 rounded mt-1">{{ $lead->notes_summary ?? '-' }}</p>
+                            </div>
+                            <div>
+                                <span class="block text-xs font-bold text-red-400 uppercase">Kendala / Hambatan</span>
+                                <p class="text-sm bg-red-50 p-2 rounded mt-1 text-red-700">
+                                    {{ $lead->notes_obstacle ?? '-' }}</p>
+                            </div>
+                            <div>
+                                <span class="block text-xs font-bold text-gray-400 uppercase">Catatan Khusus</span>
+                                <p class="text-sm bg-yellow-50 p-2 rounded mt-1">{{ $lead->notes_special ?? '-' }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white overflow-hidden shadow-md sm:rounded-xl border border-gray-100 p-6">
                         <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Dokumen Digital</h3>
 
-                        <div class="space-y-6">
-                            <div class="group">
-                                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Foto KTP</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <span class="block text-xs font-bold text-gray-400 uppercase mb-2">Foto KTP</span>
                                 @if ($lead->ktp_image_path)
-                                    <div
-                                        class="rounded-xl overflow-hidden shadow-sm border border-gray-200 relative h-40 bg-gray-100">
-                                        <img src="{{ Storage::url($lead->ktp_image_path) }}" alt="KTP"
-                                            class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                                        <a href="{{ Storage::url($lead->ktp_image_path) }}" target="_blank"
-                                            class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 flex items-center justify-center transition duration-300">
+                                    <a href="{{ Storage::url($lead->ktp_image_path) }}" target="_blank"
+                                        class="block group relative h-40 rounded-lg overflow-hidden border border-gray-200">
+                                        <img src="{{ Storage::url($lead->ktp_image_path) }}"
+                                            class="w-full h-full object-cover transition group-hover:scale-105">
+                                        <div
+                                            class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition flex items-center justify-center">
                                             <span
-                                                class="text-white font-bold opacity-0 group-hover:opacity-100 border border-white px-3 py-1 rounded">Lihat</span>
-                                        </a>
-                                    </div>
+                                                class="text-white font-bold opacity-0 group-hover:opacity-100">Lihat</span>
+                                        </div>
+                                    </a>
                                 @else
                                     <div
-                                        class="h-40 bg-gray-50 rounded-xl flex flex-col items-center justify-center text-gray-400 border-2 border-dashed border-gray-200">
-                                        <svg class="w-8 h-8 mb-1" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                            </path>
-                                        </svg>
-                                        <span class="text-xs">Tidak ada foto</span>
-                                    </div>
+                                        class="h-20 bg-gray-100 rounded-lg flex items-center justify-center text-xs text-gray-400">
+                                        Tidak ada foto</div>
                                 @endif
                             </div>
 
-                            <div class="group">
-                                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Foto Rumah
-                                </h4>
+                            <div>
+                                <span class="block text-xs font-bold text-gray-400 uppercase mb-2">Foto Rumah</span>
                                 @if ($lead->house_image_path)
-                                    <div
-                                        class="rounded-xl overflow-hidden shadow-sm border border-gray-200 relative h-40 bg-gray-100">
-                                        <img src="{{ Storage::url($lead->house_image_path) }}" alt="Rumah"
-                                            class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-                                        <a href="{{ Storage::url($lead->house_image_path) }}" target="_blank"
-                                            class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 flex items-center justify-center transition duration-300">
+                                    <a href="{{ Storage::url($lead->house_image_path) }}" target="_blank"
+                                        class="block group relative h-40 rounded-lg overflow-hidden border border-gray-200">
+                                        <img src="{{ Storage::url($lead->house_image_path) }}"
+                                            class="w-full h-full object-cover transition group-hover:scale-105">
+                                        <div
+                                            class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition flex items-center justify-center">
                                             <span
-                                                class="text-white font-bold opacity-0 group-hover:opacity-100 border border-white px-3 py-1 rounded">Lihat</span>
-                                        </a>
-                                    </div>
+                                                class="text-white font-bold opacity-0 group-hover:opacity-100">Lihat</span>
+                                        </div>
+                                    </a>
                                 @else
                                     <div
-                                        class="h-40 bg-gray-50 rounded-xl flex flex-col items-center justify-center text-gray-400 border-2 border-dashed border-gray-200">
-                                        <svg class="w-8 h-8 mb-1" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
-                                            </path>
-                                        </svg>
-                                        <span class="text-xs">Tidak ada foto</span>
-                                    </div>
+                                        class="h-20 bg-gray-100 rounded-lg flex items-center justify-center text-xs text-gray-400">
+                                        Tidak ada foto</div>
+                                @endif
+                            </div>
+
+                            <div>
+                                <span class="block text-xs font-bold text-gray-400 uppercase mb-2">Foto
+                                    Pelanggan</span>
+                                @if ($lead->customer_image_path)
+                                    <a href="{{ Storage::url($lead->customer_image_path) }}" target="_blank"
+                                        class="block group relative h-40 rounded-lg overflow-hidden border border-gray-200">
+                                        <img src="{{ Storage::url($lead->customer_image_path) }}"
+                                            class="w-full h-full object-cover transition group-hover:scale-105">
+                                        <div
+                                            class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition flex items-center justify-center">
+                                            <span
+                                                class="text-white font-bold opacity-0 group-hover:opacity-100">Lihat</span>
+                                        </div>
+                                    </a>
+                                @else
+                                    <div
+                                        class="h-20 bg-gray-100 rounded-lg flex items-center justify-center text-xs text-gray-400">
+                                        Tidak ada foto</div>
                                 @endif
                             </div>
                         </div>
                     </div>
 
                     @if ($lead->status !== 'converted')
-                        <div class="bg-red-50 rounded-2xl p-6 border border-red-100 text-center shadow-inner">
-                            <p class="text-sm text-red-600 font-semibold mb-3">Zona Berbahaya</p>
+                        <div class="bg-red-50 p-4 rounded-xl border border-red-100 text-center">
                             <form action="{{ route('marketing.leads.destroy', $lead->id) }}" method="POST"
-                                onsubmit="return confirm('PERINGATAN: Data akan dihapus secara permanen. Lanjutkan?');">
+                                onsubmit="return confirm('Yakin hapus data ini permanen?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit"
-                                    class="w-full bg-white border border-red-300 text-red-600 hover:bg-red-600 hover:text-white font-bold py-2 rounded-lg transition text-sm">
+                                    class="text-xs font-bold text-red-600 hover:text-red-800 uppercase tracking-widest">
                                     Hapus Data Permanen
                                 </button>
                             </form>
                         </div>
                     @endif
+
                 </div>
 
             </div>

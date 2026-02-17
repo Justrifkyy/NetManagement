@@ -47,6 +47,7 @@ return new class extends Migration {
             // A. IDENTITAS
             $table->string('name');
             $table->string('phone');
+            $table->string('mother_name')->nullable();
             $table->string('email')->nullable();
             $table->enum('customer_type', ['personal', 'business'])->default('personal');
             $table->string('business_name')->nullable();
@@ -57,7 +58,8 @@ return new class extends Migration {
             $table->string('emergency_relation')->nullable();
 
             // C. ALAMAT
-            $table->text('address');
+            $table->text('address_ktp')->nullable();        // <--- BARU
+            $table->text('address_installation');
             $table->string('rt_rw')->nullable();
             $table->string('village')->nullable();
             $table->string('district')->nullable();
