@@ -27,13 +27,6 @@
 
                 @if ($errors->any())
                     <div class="mb-6 bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-r-md">
-                        <p class="font-bold flex items-center">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            Terdapat Kesalahan Input:
-                        </p>
                         <ul class="list-disc ml-8 text-sm mt-1">
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
@@ -50,7 +43,7 @@
                         <h4 class="text-sky-700 font-bold text-lg border-b border-gray-100 pb-2 mb-4 flex items-center">
                             <span
                                 class="bg-sky-100 text-sky-700 w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">1</span>
-                            Identitas & Kontak Utama
+                            Identitas & Kontak
                         </h4>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
@@ -63,7 +56,7 @@
                                             'border-gray-200'">
                                         <input type="radio" name="customer_type" value="personal"
                                             x-model="customerType" class="text-sky-600 focus:ring-sky-500">
-                                        <span class="ml-2 font-semibold text-gray-700">Perorangan / Rumah</span>
+                                        <span class="ml-2 font-semibold text-gray-700">Perorangan</span>
                                     </label>
                                     <label
                                         class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-sky-50 transition w-full md:w-auto"
@@ -77,11 +70,11 @@
                             </div>
 
                             <div>
-                                <label class="block text-gray-600 text-sm font-semibold mb-1">Nama Lengkap (KTP) <span
-                                        class="text-red-500">*</span></label>
+                                <label class="block text-gray-600 text-sm font-semibold mb-1">Nama Lengkap (Sesuai KTP)
+                                    <span class="text-red-500">*</span></label>
                                 <input type="text" name="name" value="{{ old('name') }}"
                                     class="w-full border-gray-300 rounded-lg focus:ring-sky-500 focus:border-sky-500"
-                                    placeholder="Sesuai KTP" required>
+                                    placeholder="Contoh: Budi Santoso" required>
                             </div>
 
                             <div x-show="customerType == 'business'" x-transition>
@@ -89,7 +82,14 @@
                                     Usaha/Instansi</label>
                                 <input type="text" name="business_name" value="{{ old('business_name') }}"
                                     class="w-full border-gray-300 rounded-lg focus:ring-sky-500 focus:border-sky-500"
-                                    placeholder="CV/PT/Toko...">
+                                    placeholder="Contoh: PT. Maju Jaya">
+                            </div>
+
+                            <div>
+                                <label class="block text-gray-600 text-sm font-semibold mb-1">Nama Ibu Kandung</label>
+                                <input type="text" name="mother_name" value="{{ old('mother_name') }}"
+                                    class="w-full border-gray-300 rounded-lg focus:ring-sky-500 focus:border-sky-500"
+                                    placeholder="Untuk verifikasi data">
                             </div>
 
                             <div>
@@ -120,8 +120,7 @@
                                 <label class="block text-gray-600 text-sm font-semibold mb-1">Nama Pemilik
                                     Kontak</label>
                                 <input type="text" name="emergency_name" value="{{ old('emergency_name') }}"
-                                    class="w-full border-gray-300 rounded-lg focus:ring-orange-500 focus:border-orange-500"
-                                    placeholder="Nama Kerabat">
+                                    class="w-full border-gray-300 rounded-lg focus:ring-orange-500 focus:border-orange-500">
                             </div>
                             <div>
                                 <label class="block text-gray-600 text-sm font-semibold mb-1">Nomor HP Darurat</label>
@@ -134,7 +133,7 @@
                                 <select name="emergency_relation"
                                     class="w-full border-gray-300 rounded-lg focus:ring-orange-500 focus:border-orange-500">
                                     <option value="">- Pilih Hubungan -</option>
-                                    <option value="Orang Tua">Orang Tua (Ayah/Ibu)</option>
+                                    <option value="Orang Tua">Orang Tua</option>
                                     <option value="Suami/Istri">Suami / Istri</option>
                                     <option value="Saudara">Saudara Kandung</option>
                                     <option value="Kerabat">Kerabat Lain</option>
@@ -149,16 +148,25 @@
                             class="text-sky-700 font-bold text-lg border-b border-gray-100 pb-2 mb-4 flex items-center">
                             <span
                                 class="bg-sky-100 text-sky-700 w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">3</span>
-                            Lokasi Pemasangan
+                            Detail Lokasi
                         </h4>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="md:col-span-3">
-                                <label class="block text-gray-600 text-sm font-semibold mb-1">Alamat Lengkap (Jalan,
-                                    Blok, No. Rumah) <span class="text-red-500">*</span></label>
-                                <textarea name="address" rows="2"
-                                    class="w-full border-gray-300 rounded-lg focus:ring-sky-500 focus:border-sky-500" required>{{ old('address') }}</textarea>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                            <div>
+                                <label class="block text-gray-600 text-sm font-semibold mb-1">Alamat Sesuai KTP</label>
+                                <textarea name="address_ktp" rows="3"
+                                    class="w-full border-gray-300 rounded-lg focus:ring-sky-500 focus:border-sky-500"
+                                    placeholder="Jalan, No Rumah, RT/RW (Sesuai KTP)">{{ old('address_ktp') }}</textarea>
                             </div>
+                            <div>
+                                <label class="block text-gray-600 text-sm font-semibold mb-1">Alamat Pemasangan
+                                    (Domisili) <span class="text-red-500">*</span></label>
+                                <textarea name="address_installation" rows="3"
+                                    class="w-full border-gray-300 rounded-lg focus:ring-sky-500 focus:border-sky-500" required
+                                    placeholder="Lokasi perangkat akan dipasang...">{{ old('address_installation') }}</textarea>
+                            </div>
+                        </div>
 
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
                                 <label class="block text-gray-600 text-sm font-semibold mb-1">RT / RW</label>
                                 <input type="text" name="rt_rw" value="{{ old('rt_rw') }}"

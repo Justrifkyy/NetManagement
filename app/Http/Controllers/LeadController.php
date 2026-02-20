@@ -47,8 +47,9 @@ class LeadController extends Controller
             // Identitas
             'name' => 'required|string|max:255',
             'phone' => 'required|string',
-            'customer_type' => 'required|in:personal,business',
+            'address_installation' => 'required|string', // Validasi Alamat Pasang
             'package_id' => 'required|exists:packages,id',
+            'customer_type' => 'required|in:personal,business',
 
             // Alamat Wajib
             'address' => 'required|string',
@@ -76,6 +77,8 @@ class LeadController extends Controller
             'email' => $request->email,
             'customer_type' => $request->customer_type,
             'business_name' => $request->business_name,
+            'address_ktp' => $request->address_ktp,                   // Input baru
+            'address_installation' => $request->address_installation, // Input baru
 
             // B. Kontak Darurat (Baru)
             'emergency_name' => $request->emergency_name,
