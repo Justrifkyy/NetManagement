@@ -46,7 +46,6 @@
                             Identitas & Kontak
                         </h4>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
                             <div class="md:col-span-2">
                                 <label class="block text-gray-700 text-sm font-bold mb-2">Jenis Pelanggan</label>
                                 <div class="flex gap-4">
@@ -68,7 +67,6 @@
                                     </label>
                                 </div>
                             </div>
-
                             <div>
                                 <label class="block text-gray-600 text-sm font-semibold mb-1">Nama Lengkap (Sesuai KTP)
                                     <span class="text-red-500">*</span></label>
@@ -76,7 +74,6 @@
                                     class="w-full border-gray-300 rounded-lg focus:ring-sky-500 focus:border-sky-500"
                                     placeholder="Contoh: Budi Santoso" required>
                             </div>
-
                             <div x-show="customerType == 'business'" x-transition>
                                 <label class="block text-gray-600 text-sm font-semibold mb-1">Nama
                                     Usaha/Instansi</label>
@@ -84,14 +81,12 @@
                                     class="w-full border-gray-300 rounded-lg focus:ring-sky-500 focus:border-sky-500"
                                     placeholder="Contoh: PT. Maju Jaya">
                             </div>
-
                             <div>
                                 <label class="block text-gray-600 text-sm font-semibold mb-1">Nama Ibu Kandung</label>
                                 <input type="text" name="mother_name" value="{{ old('mother_name') }}"
                                     class="w-full border-gray-300 rounded-lg focus:ring-sky-500 focus:border-sky-500"
                                     placeholder="Untuk verifikasi data">
                             </div>
-
                             <div>
                                 <label class="block text-gray-600 text-sm font-semibold mb-1">No. HP Utama (WA) <span
                                         class="text-red-500">*</span></label>
@@ -113,7 +108,7 @@
                             class="text-orange-800 font-bold text-lg border-b border-orange-200 pb-2 mb-4 flex items-center">
                             <span
                                 class="bg-orange-200 text-orange-800 w-6 h-6 rounded-full flex items-center justify-center text-xs mr-2">2</span>
-                            Kontak Darurat (Wajib Diisi)
+                            Kontak Darurat
                         </h4>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
@@ -165,7 +160,6 @@
                                     placeholder="Lokasi perangkat akan dipasang...">{{ old('address_installation') }}</textarea>
                             </div>
                         </div>
-
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
                                 <label class="block text-gray-600 text-sm font-semibold mb-1">RT / RW</label>
@@ -351,11 +345,10 @@
                             Dokumentasi Foto
                         </h4>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
                             <div
                                 class="border-2 border-dashed border-sky-200 rounded-xl p-4 text-center hover:bg-sky-50 transition bg-white">
                                 <label class="cursor-pointer block">
-                                    <span class="block text-sm font-bold text-gray-700 mb-2">Foto KTP (Wajib)</span>
+                                    <span class="block text-sm font-bold text-gray-700 mb-2">Foto KTP</span>
                                     <div class="h-24 flex items-center justify-center mb-2">
                                         <svg class="w-10 h-10 text-sky-300" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
@@ -368,7 +361,6 @@
                                         class="w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-sky-100 file:text-sky-700 hover:file:bg-sky-200" />
                                 </label>
                             </div>
-
                             <div
                                 class="border-2 border-dashed border-sky-200 rounded-xl p-4 text-center hover:bg-sky-50 transition bg-white">
                                 <label class="cursor-pointer block">
@@ -385,7 +377,6 @@
                                         class="w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-sky-100 file:text-sky-700 hover:file:bg-sky-200" />
                                 </label>
                             </div>
-
                             <div
                                 class="border-2 border-dashed border-sky-200 rounded-xl p-4 text-center hover:bg-sky-50 transition bg-white">
                                 <label class="cursor-pointer block">
@@ -402,7 +393,6 @@
                                         class="w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-sky-100 file:text-sky-700 hover:file:bg-sky-200" />
                                 </label>
                             </div>
-
                         </div>
                     </div>
 

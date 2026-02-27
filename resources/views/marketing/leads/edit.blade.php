@@ -255,7 +255,6 @@
                                 <h4 class="text-lg font-bold">Update Foto</h4>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
                                 <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
                                     <span class="block text-sm font-bold text-gray-700 mb-2">Foto KTP</span>
                                     @if ($lead->ktp_image_path)
@@ -265,7 +264,6 @@
                                     @endif
                                     <input type="file" name="ktp_image" accept="image/*" class="w-full text-xs">
                                 </div>
-
                                 <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
                                     <span class="block text-sm font-bold text-gray-700 mb-2">Foto Rumah</span>
                                     @if ($lead->house_image_path)
@@ -276,7 +274,6 @@
                                     <input type="file" name="house_image" accept="image/*"
                                         class="w-full text-xs">
                                 </div>
-
                                 <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
                                     <span class="block text-sm font-bold text-gray-700 mb-2">Foto Pelanggan</span>
                                     @if ($lead->customer_image_path)
@@ -287,7 +284,6 @@
                                     <input type="file" name="customer_image" accept="image/*"
                                         class="w-full text-xs">
                                 </div>
-
                             </div>
                         </div>
 

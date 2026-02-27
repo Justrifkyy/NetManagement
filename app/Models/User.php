@@ -74,4 +74,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Ticket::class, 'technician_id');
     }
+
+    // Relasi: User (Customer) memiliki satu profil Customer
+    public function customer()
+    {
+        return $this->hasOne(Customer::class);
+    }
 }
