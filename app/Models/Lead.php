@@ -61,4 +61,10 @@ class Lead extends Model
     {
         return $this->belongsTo(User::class, 'marketing_id');
     }
+
+    // Relasi: Prospek (Lead) yang sudah diconvert memiliki satu data Customer
+    public function customerProfile()
+    {
+        return $this->hasOne(Customer::class, 'lead_id');
+    }
 }

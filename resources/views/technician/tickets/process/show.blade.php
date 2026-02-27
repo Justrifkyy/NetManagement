@@ -16,7 +16,7 @@
                 
                 <div class="flex space-x-3">
                     @if($ticket->status !== 'closed')
-                        <a href="{{ route('technician.process.edit', $ticket->id) }}" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded-lg shadow transition flex items-center">
+                        <a href="{{ route('technician.process.edit', $ticket->id) }}" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-6 rounded-lg shadow transition flex items-center border border-yellow-600">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                             Revisi Data
                         </a>
@@ -27,13 +27,26 @@
                 </div>
             </div>
 
-            <div class="bg-white shadow-sm sm:rounded-xl p-6 mb-8 border-l-4 border-green-500">
-                <h3 class="text-2xl font-bold text-gray-900">{{ $ticket->customer->user->name }}</h3>
-                <p class="text-gray-600 mt-1">{{ $ticket->customer->address_installation }}</p>
-                <div class="mt-4 text-sm text-gray-500">
-                    <span class="font-bold mr-4">📅 Selesai: {{ $ticket->completed_at ? $ticket->completed_at->format('d F Y, H:i') : '-' }}</span>
-                    <span class="font-bold">📦 Paket: {{ $ticket->customer->lead->package->name ?? '-' }}</span>
+            @if(session('success'))
+                <div class="mb-6 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-sm">
+                    <p class="font-bold">{{ session('success') }}</p>
                 </div>
+            @endif
+
+            <div class="bg-white shadow-sm sm:rounded-xl p-6 mb-8 border-l-4 border-green-500 relative">
+                <h3 class="text-2xl font-bold text-gray-900">{{ $ticket->customer->user->name ?? 'Pelanggan N/A' }}</h3>
+                <p class="text-gray-600 mt-1">{{ $ticket->customer->address_installation }}</p>
+                <div class="mt-4 text-sm text-gray-500 flex flex-wrap gap-4">
+                    <span class="font-bold bg-gray-100 px-3 py-1 rounded">📅 Selesai: {{ $ticket->completed_at ? $ticket->completed_at->format('d F Y, H:i') : '-' }}</span>
+                    <span class="font-bold bg-blue-50 text-blue-700 px-3 py-1 rounded border border-blue-100">📦 Paket: {{ $ticket->customer->lead->package->name ?? '-' }}</span>
+                </div>
+
+                @if($ticket->final_technician_notes && str_contains($ticket->final_technician_notes, '[REVISI ADMIN]'))
+                    <div class="mt-4 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded text-sm">
+                        <strong>PERHATIAN (Revisi dari Admin):</strong><br>
+                        {{ explode('[REVISI ADMIN]:', $ticket->final_technician_notes)[1] ?? 'Mohon perbaiki data.' }}
+                    </div>
+                @endif
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -43,7 +56,7 @@
                     <div class="p-5 space-y-3">
                         <div class="grid grid-cols-2 text-sm">
                             <span class="text-gray-500">Status Survey</span>
-                            <span class="font-bold text-gray-800">{{ $ticket->survey_status }}</span>
+                            <span class="font-bold text-gray-800">{{ $ticket->survey_status ?? '-' }}</span>
                         </div>
                         <div class="grid grid-cols-2 text-sm">
                             <span class="text-gray-500">Tanggal Survey</span>
@@ -71,15 +84,15 @@
                         </div>
                         <div class="grid grid-cols-2 text-sm">
                             <span class="text-gray-500">Jenis Koneksi</span>
-                            <span class="font-bold text-gray-800">{{ $ticket->connection_type }}</span>
+                            <span class="font-bold text-gray-800">{{ $ticket->connection_type ?? '-' }}</span>
                         </div>
                         <div class="grid grid-cols-2 text-sm">
                             <span class="text-gray-500">Panjang Kabel</span>
-                            <span class="font-bold text-gray-800">{{ $ticket->cable_length }} Meter</span>
+                            <span class="font-bold text-gray-800">{{ $ticket->cable_length ?? '0' }} Meter</span>
                         </div>
                         <div class="grid grid-cols-2 text-sm">
                             <span class="text-gray-500">Posisi Perangkat</span>
-                            <span class="font-bold text-gray-800">{{ $ticket->mounting_position }}</span>
+                            <span class="font-bold text-gray-800">{{ $ticket->mounting_position ?? '-' }}</span>
                         </div>
                     </div>
                 </div>
@@ -89,19 +102,19 @@
                     <div class="p-5 space-y-3">
                         <div class="grid grid-cols-2 text-sm">
                             <span class="text-gray-500">Merk / Tipe</span>
-                            <span class="font-bold text-gray-800">{{ $ticket->device_brand }} ({{ $ticket->device_type }})</span>
+                            <span class="font-bold text-gray-800">{{ $ticket->device_brand ?? '-' }} ({{ $ticket->device_type ?? '-' }})</span>
                         </div>
                         <div class="grid grid-cols-2 text-sm">
                             <span class="text-gray-500">SN Perangkat</span>
-                            <span class="font-mono bg-yellow-50 px-1 rounded">{{ $ticket->device_sn }}</span>
+                            <span class="font-mono bg-yellow-50 px-1 rounded">{{ $ticket->device_sn ?? '-' }}</span>
                         </div>
                         <div class="grid grid-cols-2 text-sm">
                             <span class="text-gray-500">MAC Address</span>
-                            <span class="font-mono bg-yellow-50 px-1 rounded">{{ $ticket->device_mac }}</span>
+                            <span class="font-mono bg-yellow-50 px-1 rounded">{{ $ticket->device_mac ?? '-' }}</span>
                         </div>
                         <div class="grid grid-cols-2 text-sm">
                             <span class="text-gray-500">Kondisi</span>
-                            <span class="font-bold text-gray-800">{{ $ticket->device_condition }}</span>
+                            <span class="font-bold text-gray-800">{{ $ticket->device_condition ?? '-' }}</span>
                         </div>
                     </div>
                 </div>
@@ -115,18 +128,18 @@
                         </div>
                         <div class="grid grid-cols-2 text-sm">
                             <span class="text-gray-500">Port ODP</span>
-                            <span class="font-bold text-gray-800">{{ $ticket->odp_port }}</span>
+                            <span class="font-bold text-gray-800">{{ $ticket->odp_port ?? '-' }}</span>
                         </div>
                         <div class="grid grid-cols-2 text-sm">
                             <span class="text-gray-500">Redaman</span>
                             <span class="font-bold {{ floatval($ticket->dbm_signal) < -25 ? 'text-red-600' : 'text-green-600' }}">
-                                {{ $ticket->dbm_signal }}
+                                {{ $ticket->dbm_signal ?? '-' }} dBm
                             </span>
                         </div>
                         <div class="border-t border-dashed border-gray-200 my-2 pt-2"></div>
                         <div class="grid grid-cols-2 text-sm">
                             <span class="text-gray-500">PPPoE User</span>
-                            <span class="font-mono font-bold text-blue-600">{{ $ticket->pppoe_username }}</span>
+                            <span class="font-mono font-bold text-blue-600">{{ $ticket->pppoe_username ?? '-' }}</span>
                         </div>
                         <div class="grid grid-cols-2 text-sm">
                             <span class="text-gray-500">Password</span>
@@ -136,13 +149,13 @@
                 </div>
 
                 <div class="md:col-span-2 bg-white shadow-sm sm:rounded-xl overflow-hidden border border-gray-100">
-                    <div class="px-5 py-3 bg-gray-50 border-b border-gray-100 font-bold text-gray-700">E. HASIL TEST & BUKTI</div>
+                    <div class="px-5 py-3 bg-gray-50 border-b border-gray-100 font-bold text-gray-700">E. HASIL TEST & BUKTI FOTO</div>
                     <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
                         
-                        <div class="text-center p-4 bg-blue-50 rounded-xl">
-                            <span class="block text-gray-500 text-xs uppercase font-bold">Speed Test</span>
+                        <div class="text-center p-4 bg-blue-50 rounded-xl border border-blue-100">
+                            <span class="block text-gray-500 text-xs uppercase font-bold">Speed Test Result</span>
                             <span class="block text-xl font-extrabold text-blue-700 mt-1">{{ $ticket->speed_test_result ?? 'N/A' }}</span>
-                            <span class="text-xs text-gray-400">Latency: {{ $ticket->latency }}</span>
+                            <span class="text-xs text-gray-500 block mt-1">Latency: {{ $ticket->latency ?? '-' }}</span>
                         </div>
 
                         <div class="relative group h-40 bg-gray-100 rounded-xl overflow-hidden border border-gray-200">
@@ -152,9 +165,9 @@
                                     Lihat Bukti
                                 </a>
                             @else
-                                <div class="flex items-center justify-center h-full text-gray-400 text-xs">No Image</div>
+                                <div class="flex items-center justify-center h-full text-gray-400 text-xs">Tidak Ada Foto</div>
                             @endif
-                            <span class="absolute bottom-0 left-0 bg-black bg-opacity-60 text-white text-xs px-2 py-1">Bukti Instalasi</span>
+                            <span class="absolute bottom-0 left-0 bg-black bg-opacity-70 text-white text-xs px-3 py-1 font-semibold">Bukti Instalasi</span>
                         </div>
 
                         <div class="relative group h-40 bg-gray-100 rounded-xl overflow-hidden border border-gray-200">
@@ -164,9 +177,9 @@
                                     Lihat Hasil
                                 </a>
                             @else
-                                <div class="flex items-center justify-center h-full text-gray-400 text-xs">No Image</div>
+                                <div class="flex items-center justify-center h-full text-gray-400 text-xs">Tidak Ada Foto</div>
                             @endif
-                            <span class="absolute bottom-0 left-0 bg-black bg-opacity-60 text-white text-xs px-2 py-1">Foto Speedtest</span>
+                            <span class="absolute bottom-0 left-0 bg-black bg-opacity-70 text-white text-xs px-3 py-1 font-semibold">Foto Speedtest</span>
                         </div>
 
                     </div>

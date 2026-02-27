@@ -25,4 +25,10 @@ class Package extends Model
     {
         return $this->hasMany(Subscription::class);
     }
+
+    // Relasi: Satu paket bisa dipilih oleh banyak Prospek (Lead)
+    public function leads()
+    {
+        return $this->hasMany(Lead::class);
+    }
 }

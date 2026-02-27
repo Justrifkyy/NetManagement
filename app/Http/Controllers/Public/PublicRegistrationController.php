@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Public; // Namespace baru
 
+use App\Http\Controllers\Controller; // Wajib import Base Controller
 use App\Models\Lead;
 use App\Models\User;
 use App\Models\Package;
@@ -9,15 +10,15 @@ use Illuminate\Http\Request;
 
 class PublicRegistrationController extends Controller
 {
-    // 1. Tampilkan Form
+    // 1. Tampilkan Form Registrasi Mandiri
     public function index()
     {
-        // Hanya tampilkan paket yang aktif
+        // Hanya tampilkan paket yang sedang aktif
         $packages = Package::where('is_active', true)->get();
         return view('public.register', compact('packages'));
     }
 
-    // 2. Proses Simpan Data
+    // 2. Proses Simpan Data Pendaftaran
     public function store(Request $request)
     {
         $request->validate([
@@ -32,10 +33,12 @@ class PublicRegistrationController extends Controller
             'district' => 'required|string',
             'city' => 'required|string',
             'package_id' => 'required|exists:packages,id',
+            
+            // Opsional: Kode Sales/Marketing
             'marketing_code' => 'nullable|string|exists:users,marketing_code',
         ]);
 
-        // A. Cek Kode Marketing
+        // A. Cek Kode Marketing (Jika calon pelanggan memasukkan kode referral sales)
         $marketingId = null;
         if ($request->marketing_code) {
             $marketing = User::where('marketing_code', $request->marketing_code)
@@ -46,14 +49,14 @@ class PublicRegistrationController extends Controller
             }
         }
 
-        // B. Upload Foto
+        // B. Upload Foto Dokumen
         $ktpPath = $request->file('ktp_image')->store('uploads/ktp', 'public');
         $housePath = $request->file('house_image') ? $request->file('house_image')->store('uploads/house', 'public') : null;
         $custPath = $request->file('customer_image') ? $request->file('customer_image')->store('uploads/customer', 'public') : null;
 
-        // C. Simpan ke Database
+        // C. Simpan ke Database (Sebagai "Lead" / Prospek Baru)
         Lead::create([
-            'marketing_id' => $marketingId,
+            'marketing_id' => $marketingId, // Terikat ke sales jika pakai kode
             'name' => $request->name,
             'phone' => $request->phone,
             'email' => $request->email,
@@ -66,6 +69,8 @@ class PublicRegistrationController extends Controller
             'emergency_relation' => $request->emergency_relation,
 
             // Alamat Lengkap
+            'address_ktp' => $request->address_ktp ?? $request->address, // Fallback jika tidak diisi terpisah
+            'address_installation' => $request->address,
             'address' => $request->address,
             'rt_rw' => $request->rt_rw,
             'village' => $request->village,
@@ -80,8 +85,8 @@ class PublicRegistrationController extends Controller
             'package_id' => $request->package_id,
             'promo_code' => $request->promo_code,
             'preferred_time' => $request->preferred_time,
-            'status' => 'prospek', // Default
-            'source' => 'Website Register', // Penanda
+            'status' => 'prospek', // Status awal selalu prospek
+            'source' => 'Website Register', // Penanda bahwa ini daftar dari web
             
             // Foto
             'ktp_image_path' => $ktpPath,
@@ -89,9 +94,11 @@ class PublicRegistrationController extends Controller
             'customer_image_path' => $custPath,
         ]);
 
+        // Arahkan ke halaman sukses
         return redirect()->route('public.register.success');
     }
 
+    // 3. Tampilkan Halaman Sukses
     public function success()
     {
         return view('public.success');

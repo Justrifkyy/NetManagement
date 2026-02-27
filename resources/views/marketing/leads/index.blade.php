@@ -59,7 +59,6 @@
                                         </div>
                                     </div>
                                 </td>
-
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span
                                         class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-md bg-blue-50 text-blue-700 border border-blue-100">
@@ -68,7 +67,6 @@
                                     <div class="text-xs text-gray-400 mt-1">{{ $lead->created_at->format('d M Y') }}
                                     </div>
                                 </td>
-
                                 <td class="px-6 py-4">
                                     <div class="text-sm text-gray-700 truncate max-w-xs"
                                         title="{{ $lead->address_installation }}">
@@ -77,7 +75,6 @@
                                     <div class="text-xs text-gray-400">{{ $lead->district ?? '-' }},
                                         {{ $lead->city ?? '-' }}</div>
                                 </td>
-
                                 <td class="px-6 py-4 whitespace-nowrap text-center">
                                     @php
                                         $statusClasses = [
@@ -95,10 +92,8 @@
                                         {{ ucfirst($lead->status) }}
                                     </span>
                                 </td>
-
                                 <td class="px-6 py-4 whitespace-nowrap text-center">
                                     <div class="flex items-center justify-center space-x-2">
-
                                         <a href="{{ route('marketing.leads.show', $lead->id) }}"
                                             class="p-2 bg-white border border-gray-200 rounded-lg text-gray-500 hover:bg-sky-50 hover:text-sky-600 hover:border-sky-300 transition shadow-sm"
                                             title="Lihat Detail">
@@ -124,7 +119,6 @@
                                                     </path>
                                                 </svg>
                                             </a>
-
                                             <form action="{{ route('marketing.leads.destroy', $lead->id) }}"
                                                 method="POST"
                                                 onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini secara permanen?');">
@@ -141,7 +135,6 @@
                                                     </svg>
                                                 </button>
                                             </form>
-
                                             <form action="{{ route('marketing.leads.convert', $lead->id) }}"
                                                 method="POST"
                                                 onsubmit="return confirm('Proses ini akan membuat akun pelanggan dan tiket instalasi. Lanjutkan?');">
@@ -254,7 +247,6 @@
                                     </path>
                                 </svg>
                             </a>
-
                             @if ($lead->status !== 'converted')
                                 <a href="{{ route('marketing.leads.edit', $lead->id) }}"
                                     class="flex items-center justify-center p-2 bg-white border border-gray-200 rounded-lg text-gray-600 hover:bg-yellow-50 hover:border-yellow-200 hover:text-yellow-600 transition">

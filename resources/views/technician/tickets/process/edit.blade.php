@@ -174,6 +174,13 @@
                             <input type="text" name="pppoe_password" value="{{ old('pppoe_password', $ticket->pppoe_password) }}" class="w-full border-gray-300 rounded-lg shadow-sm font-mono">
                         </div>
                         <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Status Layanan</label>
+                            <select name="service_status" class="w-full border-gray-300 rounded-lg shadow-sm">
+                                <option value="Aktif" {{ $ticket->service_status == 'Aktif' ? 'selected' : '' }}>Aktif</option>
+                                <option value="Isolir" {{ $ticket->service_status == 'Isolir' ? 'selected' : '' }}>Isolir</option>
+                            </select>
+                        </div>
+                        <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Status Koneksi</label>
                             <select name="connectivity_status" class="w-full border-gray-300 rounded-lg shadow-sm">
                                 <option value="Connected" {{ $ticket->connectivity_status == 'Connected' ? 'selected' : '' }}>Connected</option>
@@ -227,7 +234,7 @@
                     </div>
                 </div>
 
-                <div class="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200 md:static md:bg-transparent md:border-0 md:p-0 flex justify-end z-50">
+                <div class="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200 md:static md:bg-transparent md:border-0 md:p-0 flex justify-end z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] md:shadow-none">
                     <a href="{{ route('technician.process.show', $ticket->id) }}" class="mr-3 px-6 py-4 bg-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-300 transition flex items-center">
                         Batal
                     </a>
