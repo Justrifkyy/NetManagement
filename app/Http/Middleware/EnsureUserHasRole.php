@@ -4,21 +4,27 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureUserHasRole
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        if (! in_array($request->user()->role, $roles)) {
-            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+        // Jika belum login, lempar ke login
+        if (!Auth::check()) {
+            return redirect()->route('login');
         }
 
-        return $next($request);
+        $user = Auth::user();
+
+        // Jika user memiliki salah satu dari role yang diizinkan, biarkan lewat
+        if (in_array($user->role, $roles)) {
+            return $next($request);
+        }
+
+        // JANGAN gunakan redirect('/dashboard') di sini karena bisa bikin Infinite Loop!
+        // Gunakan abort(403) untuk memunculkan pesan "Akses Ditolak"
+        abort(403, 'Akses Ditolak. Anda tidak memiliki izin untuk halaman ini.');
     }
 }

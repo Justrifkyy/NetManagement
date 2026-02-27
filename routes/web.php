@@ -3,6 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
+Route::get('/tes', function () {
+    return 'Halo! Server berjalan normal.';
+});
+
 // 1. Import Controllers Public
 use App\Http\Controllers\Public\PublicRegistrationController;
 
