@@ -188,7 +188,7 @@
             @endif
 
             @if (in_array(Auth::user()->role, ['admin', 'super_admin']))
-                <x-responsive-nav-link href="{{ route('admin.tickets.index') }}" :active="request()->requestIs('admin.tickets.*')">
+                <x-responsive-nav-link href="{{ route('admin.tickets.index') }}" :active="request()->routeIs('admin.tickets.*')">
                     {{ __('QC & Aktivasi') }}
                 </x-responsive-nav-link>
                 <x-responsive-nav-link href="{{ route('admin.billing.index') }}" :active="request()->routeIs('admin.billing.*')">

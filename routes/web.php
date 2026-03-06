@@ -78,15 +78,20 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         });
 
         // Verifikasi Tiket & Aktivasi Layanan (QC)
+// Verifikasi Tiket & Aktivasi Layanan (QC)
         Route::get('/tickets/verification', [TicketQCController::class, 'index'])->name('tickets.index');
         Route::get('/tickets/verification/{ticket}', [TicketQCController::class, 'show'])->name('tickets.show');
+        Route::get('/tickets/{ticket}/edit', [TicketQCController::class, 'edit'])->name('tickets.edit');
+        Route::put('/tickets/{ticket}/update', [TicketQCController::class, 'update'])->name('tickets.update');
         Route::post('/tickets/{ticket}/approve', [TicketQCController::class, 'approve'])->name('tickets.approve');
         Route::post('/tickets/{ticket}/reject', [TicketQCController::class, 'reject'])->name('tickets.reject');
 
         // Billing & Keuangan (Placeholder)
-        Route::get('/billing', function () {
-            return 'Halaman Billing & Keuangan';
-        })->name('billing.index');
+        Route::get('/billing', [\App\Http\Controllers\Admin\BillingController::class, 'index'])->name('billing.index');
+        Route::get('/billing/{invoice}', [\App\Http\Controllers\Admin\BillingController::class, 'show'])->name('billing.show');
+        Route::get('/billing/{invoice}/edit', [\App\Http\Controllers\Admin\BillingController::class, 'edit'])->name('billing.edit');
+        Route::put('/billing/{invoice}/update', [\App\Http\Controllers\Admin\BillingController::class, 'update'])->name('billing.update');
+        Route::post('/billing/{invoice}/pay', [\App\Http\Controllers\Admin\BillingController::class, 'markAsPaid'])->name('billing.pay');
     });
 
 
