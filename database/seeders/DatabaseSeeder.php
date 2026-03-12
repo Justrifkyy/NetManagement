@@ -4,20 +4,22 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\Package;
-use App\Models\Lead; // Jangan lupa import model Lead
+use App\Models\Lead;
+use App\Models\Customer;
+use App\Models\Subscription;
+use App\Models\Invoice;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
         // ==========================================
-        // 1. DATA PENGGUNA (USERS)
+        // 1. DATA PENGGUNA (PEGAWAI)
         // ==========================================
-
-        // Super Admin
-        User::create([
+        $superAdmin = User::create([
             'name' => 'Big Boss (Owner)',
             'email' => 'owner@netmanager.local',
             'password' => Hash::make('password'),
@@ -26,8 +28,7 @@ class DatabaseSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        // Admin Operasional
-        User::create([
+        $admin = User::create([
             'name' => 'Admin Operasional',
             'email' => 'admin@netmanager.local',
             'password' => Hash::make('password'),
@@ -35,18 +36,16 @@ class DatabaseSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        // Marketing
         $marketing = User::create([
             'name' => 'Staf Marketing',
             'email' => 'marketing@netmanager.local',
             'password' => Hash::make('password'),
             'role' => 'marketing',
-            'marketing_code' => 'SALES01', // Kode sales untuk referral
+            'marketing_code' => 'SALES01',
             'email_verified_at' => now(),
         ]);
 
-        // Teknisi
-        User::create([
+        $teknisi = User::create([
             'name' => 'Teknisi Lapangan',
             'email' => 'teknisi@netmanager.local',
             'password' => Hash::make('password'),
@@ -54,19 +53,9 @@ class DatabaseSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        // Pelanggan Contoh
-        User::create([
-            'name' => 'Pelanggan Setia',
-            'email' => 'customer@netmanager.local',
-            'password' => Hash::make('password'),
-            'role' => 'customer',
-            'email_verified_at' => now(),
-        ]);
-
         // ==========================================
-        // 2. DATA PAKET INTERNET (PACKAGES)
+        // 2. DATA PAKET INTERNET
         // ==========================================
-
         $paketBasic = Package::create([
             'name' => 'Home Basic 10 Mbps',
             'price' => 150000,
@@ -80,39 +69,98 @@ class DatabaseSeeder extends Seeder
             'price' => 350000,
             'speed_mbps' => 50,
             'description' => 'Cocok untuk gaming, streaming 4K, dan WFH.',
-            'installation_fee' => 0, // Promo gratis pasang
+            'installation_fee' => 0,
         ]);
 
         // ==========================================
-        // 4. TAMBAHAN 10 DATA LEADS (VARIASI LENGKAP)
+        // 3. SIMULASI PELANGGAN AKTIF (BISA LOGIN & BAYAR)
         // ==========================================
 
-        // 1. Prospek Baru - Personal (Ibu Rumah Tangga)
+        // A. Buat Akun Login untuk Pelanggan
+        $userCustomer = User::create([
+            'name' => 'JustRifkyy', // Nama Pelanggan
+            'email' => 'customer@netmanager.local', // Email Login Pelanggan
+            'password' => Hash::make('password'), // Password Login Pelanggan
+            'role' => 'customer',
+            'email_verified_at' => now(),
+        ]);
+
+        // B. Buat Riwayat Prospek (Seolah-olah dari awal)
+        $leadAktif = Lead::create([
+            'marketing_id' => $marketing->id,
+            'name' => 'JustRifkyy',
+            'phone' => '081234567890',
+            'email' => 'customer@netmanager.local',
+            'customer_type' => 'personal',
+            'emergency_name' => 'Bapak',
+            'emergency_phone' => '081299998888',
+            'emergency_relation' => 'Orang Tua',
+            'address_ktp' => 'Jl. Perintis Kemerdekaan KM 10',
+            'address_installation' => 'Asrama UMI, Kamar 101',
+            'city' => 'Makassar',
+            'district' => 'Tamalanrea',
+            'package_id' => $paketSuper->id,
+            'status' => 'aktif',
+            'source' => 'Website',
+        ]);
+
+        // C. Buat Profil Pelanggan Resmi
+        $customerProfile = Customer::create([
+            'user_id' => $userCustomer->id,
+            'lead_id' => $leadAktif->id,
+            'customer_code' => 'CUST-' . date('Ymd') . '-001', // <--- TAMBAHKAN BARIS INI
+            'phone_number' => $leadAktif->phone,
+            'address_installation' => $leadAktif->address_installation,
+            'coordinates' => $leadAktif->coordinates,
+        ]);
+
+        // D. Buat Langganan Internet (Subscription)
+        $subscription = Subscription::create([
+            'customer_id' => $customerProfile->id,
+            'package_id' => $paketSuper->id,
+            'pppoe_username' => 'rifkyy_umi_01',
+            'pppoe_password' => 'secret123',
+            'installation_date' => now()->subDays(5),
+            'billing_due_date' => 5, // Jatuh tempo setiap tanggal 5
+            'status' => 'active',
+        ]);
+
+        // E. Buat 1 Tagihan yang Belum Lunas (Unpaid)
+        Invoice::create([
+            'subscription_id' => $subscription->id,
+            'invoice_number' => 'INV-' . date('Ymd') . '-0001',
+            'amount' => $paketSuper->price,
+            'status' => 'unpaid',
+            'due_date' => now()->addDays(2),
+        ]);
+
+        // ==========================================
+        // 4. TAMBAHAN 9 DATA LEADS (MURNI PROSPEK - BELUM PUNYA AKUN)
+        // ==========================================
+
         Lead::create([
             'marketing_id' => $marketing->id,
             'name' => 'Siti Aminah',
             'phone' => '081344556677',
             'email' => 'siti.aminah@gmail.com',
             'customer_type' => 'personal',
-            'emergency_name' => 'Pak Rahmat (Suami)',
+            'emergency_name' => 'Pak Rahmat',
             'emergency_phone' => '081399887766',
-            'emergency_relation' => 'Suami/Istri',
-            'address_ktp' => 'Jl. Perintis Kemerdekaan KM 10',
-            'address_installation' => 'Perumahan Dosen Unhas Blok AB No. 3',
+            'emergency_relation' => 'Suami',
+            'address_ktp' => 'Jl. Daya',
+            'address_installation' => 'Perumahan BTP Blok M No 22',
             'city' => 'Makassar',
-            'district' => 'Tamalanrea',
-            'coordinates' => '-5.132456, 119.489123',
+            'district' => 'Biringkanaya',
             'package_id' => $paketBasic->id,
             'status' => 'prospek',
             'source' => 'Facebook Ads',
-            'notes_summary' => 'Tanya promo pasang gratis, mau pasang buat anak kuliah.',
         ]);
 
-        // 2. Survey - Bisnis (Cafe)
         Lead::create([
             'marketing_id' => $marketing->id,
-            'name' => 'Andi Baso',
+            'name' => 'Cafe Kopi Kita',
             'phone' => '081211223344',
+            'email' => 'ckk@gmail.com',
             'customer_type' => 'business',
             'business_name' => 'Cafe Kopi Kita',
             'emergency_name' => 'Manager Toko',
@@ -122,16 +170,12 @@ class DatabaseSeeder extends Seeder
             'address_installation' => 'Jl. Pengayoman Ruko Mirah No. 8',
             'city' => 'Makassar',
             'district' => 'Panakkukang',
-            'coordinates' => '-5.156789, 119.445678',
             'package_id' => $paketSuper->id,
             'status' => 'survey',
             'survey_date' => now()->addDays(1),
-            'preferred_time' => 'Pagi jam 09.00',
             'source' => 'Kanvasing',
-            'notes_summary' => 'Butuh wifi kencang untuk pelanggan cafe, minta 2 router jika bisa.',
         ]);
 
-        // 3. Instalasi - Personal (Gamer)
         Lead::create([
             'marketing_id' => $marketing->id,
             'name' => 'Kevin Sanjaya',
@@ -145,20 +189,17 @@ class DatabaseSeeder extends Seeder
             'address_installation' => 'Jl. Sungai Saddang Baru Lrg. 5 No. 12',
             'city' => 'Makassar',
             'district' => 'Rappocini',
-            'coordinates' => '-5.161234, 119.423456',
             'package_id' => $paketSuper->id,
             'status' => 'instalasi',
             'source' => 'Instagram',
-            'survey_date' => now()->subDays(1),
             'installation_date' => now()->addDays(2),
-            'notes_summary' => 'Pastikan ping rendah untuk main Valorant.',
         ]);
 
-        // 4. Prospek - Personal (Ragu-ragu)
         Lead::create([
             'marketing_id' => $marketing->id,
             'name' => 'Rini Anggraeni',
             'phone' => '085233445566',
+            'email' => 'rinih@gmail.com',
             'customer_type' => 'personal',
             'emergency_name' => 'Kakak Rini',
             'emergency_phone' => '085299887766',
@@ -167,18 +208,15 @@ class DatabaseSeeder extends Seeder
             'address_installation' => 'Jl. Dg. Tata 1 Blok 3',
             'city' => 'Makassar',
             'district' => 'Tamalate',
-            'coordinates' => '-5.189012, 119.412345',
             'package_id' => $paketBasic->id,
             'status' => 'prospek',
             'source' => 'Brosur',
-            'notes_obstacle' => 'Masih bandingkan harga dengan provider sebelah (Indihome).',
-            'notes_summary' => 'Belum deal, minta ditelepon lagi minggu depan.',
         ]);
 
-        // 5. Batal - Personal (Kendala Izin)
         Lead::create([
             'marketing_id' => $marketing->id,
             'name' => 'Pak Haji Amir',
+            'email' => 'amir@gmail.com',
             'phone' => '0811445566',
             'customer_type' => 'personal',
             'emergency_name' => 'Anak Pak Haji',
@@ -191,33 +229,8 @@ class DatabaseSeeder extends Seeder
             'package_id' => $paketBasic->id,
             'status' => 'batal',
             'source' => 'Teman',
-            'notes_obstacle' => 'Tidak diizinkan pemilik kos tarik kabel.',
-            'notes_summary' => 'Cancel karena kendala teknis lapangan.',
         ]);
 
-        // 6. Aktif - Bisnis (Laundry)
-        Lead::create([
-            'marketing_id' => $marketing->id,
-            'name' => 'Ibu Wati',
-            'phone' => '081311223399',
-            'customer_type' => 'business',
-            'business_name' => 'Wati Laundry & Dry Clean',
-            'emergency_name' => 'Suami Ibu Wati',
-            'emergency_phone' => '081322334455',
-            'emergency_relation' => 'Suami/Istri',
-            'address_ktp' => 'Jl. Toddopuli Raya',
-            'address_installation' => 'Ruko Toddopuli Timur No. 10',
-            'city' => 'Makassar',
-            'district' => 'Panakkukang',
-            'coordinates' => '-5.165432, 119.456789',
-            'package_id' => $paketBasic->id,
-            'status' => 'aktif', // Sudah jadi pelanggan
-            'source' => 'Spanduk Jalan',
-            'installation_date' => now()->subMonth(),
-            'notes_summary' => 'Pelanggan lama, pembayaran lancar.',
-        ]);
-
-        // 7. Survey - Personal (Pindahan Rumah)
         Lead::create([
             'marketing_id' => $marketing->id,
             'name' => 'Bambang Pamungkas',
@@ -231,21 +244,18 @@ class DatabaseSeeder extends Seeder
             'address_installation' => 'Kompleks Citraland Hertasning Cluster A',
             'city' => 'Gowa',
             'district' => 'Somba Opu',
-            'coordinates' => '-5.201234, 119.467890',
             'package_id' => $paketSuper->id,
             'status' => 'survey',
             'survey_date' => now()->addDays(2),
-            'preferred_time' => 'Sore setelah pulang kerja',
             'source' => 'Google Search',
-            'notes_summary' => 'Baru pindah rumah, butuh pasang cepat.',
         ]);
 
-        // 8. Instalasi - Bisnis (Warnet)
         Lead::create([
             'marketing_id' => $marketing->id,
-            'name' => 'Ko Michael',
+            'name' => 'CyberNet Game Center',
             'phone' => '089988776655',
             'customer_type' => 'business',
+            'email' => 'michael@gmail.com',
             'business_name' => 'CyberNet Game Center',
             'emergency_name' => 'Admin Warnet',
             'emergency_phone' => '089977665544',
@@ -254,20 +264,17 @@ class DatabaseSeeder extends Seeder
             'address_installation' => 'Jl. Urip Sumoharjo No. 99',
             'city' => 'Makassar',
             'district' => 'Makassar',
-            'coordinates' => '-5.143210, 119.421098',
             'package_id' => $paketSuper->id,
             'status' => 'instalasi',
             'source' => 'Referensi Teknisi',
             'installation_date' => now()->addDays(3),
-            'notes_special' => 'Minta IP Public Static jika ada.',
-            'notes_summary' => 'Deal paket tertinggi.',
         ]);
 
-        // 9. Prospek - Personal (Tanya-tanya)
         Lead::create([
             'marketing_id' => $marketing->id,
             'name' => 'Putri Ayu',
             'phone' => '087711223344',
+            'email' => 'ayu@gmail.com',
             'customer_type' => 'personal',
             'emergency_name' => 'Ayah Putri',
             'emergency_phone' => '087755667788',
@@ -279,28 +286,24 @@ class DatabaseSeeder extends Seeder
             'package_id' => $paketBasic->id,
             'status' => 'prospek',
             'source' => 'WhatsApp Blast',
-            'notes_summary' => 'Baru tanya harga, belum yakin mau pasang kapan.',
         ]);
 
-        // 10. Survey - Personal (Kost Mahasiswa)
         Lead::create([
             'marketing_id' => $marketing->id,
             'name' => 'Dimas Anggara',
             'phone' => '085311223344',
+            'email' => 'dimas@gmail.com',
             'customer_type' => 'personal',
             'emergency_name' => 'Teman Kost',
             'emergency_phone' => '085399887766',
             'emergency_relation' => 'Teman',
-            'address_ktp' => 'Palopo (KTP Daerah)',
-            'address_installation' => 'Pondok Indah 2, Jl. Sahabat (Belakang Unhas)',
+            'address_ktp' => 'Palopo',
+            'address_installation' => 'Pondok Indah 2, Jl. Sahabat',
             'city' => 'Makassar',
             'district' => 'Tamalanrea',
-            'coordinates' => '-5.135678, 119.491234',
             'package_id' => $paketBasic->id,
             'status' => 'survey',
             'survey_date' => now()->addDays(1),
-            'notes_obstacle' => 'Harus izin ibu kost dulu untuk tarik kabel.',
-            'notes_summary' => 'Mahasiswa butuh buat skripsi.',
-        ]);    
+        ]);
     }
 }

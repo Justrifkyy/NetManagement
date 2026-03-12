@@ -7,13 +7,13 @@
                 <p class="text-slate-500 mt-1">Selamat datang di Layanan Pelanggan NetManagement.</p>
             </div>
 
-            @if($unpaidInvoices->count() > 0)
+            @if(count($unpaidInvoices) > 0)
                 <div class="mb-8 px-4 sm:px-0">
                     <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-xl shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center">
                         <div class="flex items-start mb-3 sm:mb-0">
                             <svg class="w-6 h-6 text-red-600 mr-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                             <div>
-                                <h4 class="text-red-800 font-bold">Anda memiliki {{ $unpaidInvoices->count() }} tagihan yang belum dibayar!</h4>
+                                <h4 class="text-red-800 font-bold">Anda memiliki {{ count($unpaidInvoices) }} tagihan yang belum dibayar!</h4>
                                 <p class="text-sm text-red-600 mt-1">Segera lakukan pembayaran untuk menghindari pemutusan layanan (Isolir).</p>
                             </div>
                         </div>
@@ -32,9 +32,13 @@
                             <div class="absolute top-0 right-0 bg-green-500 text-white font-bold py-1 px-4 rounded-bl-xl text-xs uppercase tracking-widest shadow-sm">
                                 AKTIF
                             </div>
-                        @else
+                        @elseif($subscription && $subscription->status === 'isolated')
                             <div class="absolute top-0 right-0 bg-red-500 text-white font-bold py-1 px-4 rounded-bl-xl text-xs uppercase tracking-widest shadow-sm">
                                 TERISOLIR
+                            </div>
+                        @else
+                            <div class="absolute top-0 right-0 bg-gray-500 text-white font-bold py-1 px-4 rounded-bl-xl text-xs uppercase tracking-widest shadow-sm">
+                                BELUM AKTIF
                             </div>
                         @endif
 
@@ -60,7 +64,9 @@
                                 </div>
                                 <div class="col-span-2 mt-2">
                                     <p class="text-xs text-slate-500 uppercase font-bold mb-1">Lokasi Pemasangan</p>
-                                    <p class="text-sm font-medium text-slate-700 bg-slate-50 p-3 rounded-lg border border-slate-100">{{ $customer->address_installation }}</p>
+                                    <p class="text-sm font-medium text-slate-700 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                                        {{ $customer->address_installation ?? 'Alamat belum diatur' }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -77,7 +83,7 @@
                             <div>
                                 <p class="text-xs text-slate-400 mb-1">Username PPPoE</p>
                                 <div class="bg-slate-900 px-3 py-2 rounded border border-slate-600 font-mono text-sm text-blue-300">
-                                    {{ $subscription->pppoe_username ?? 'Belum ada' }}
+                                    {{ $subscription->pppoe_username ?? 'Menunggu Aktivasi' }}
                                 </div>
                             </div>
                             <div>
@@ -88,7 +94,7 @@
                             </div>
                             <div class="pt-4 border-t border-slate-700">
                                 <p class="text-xs text-slate-400 mb-1">Tanggal Pemasangan</p>
-                                <p class="font-medium">{{ $subscription->installation_date ? $subscription->installation_date->format('d M Y') : '-' }}</p>
+                                <p class="font-medium">{{ isset($subscription->installation_date) ? $subscription->installation_date->format('d M Y') : 'Belum dipasang' }}</p>
                             </div>
                         </div>
                     </div>

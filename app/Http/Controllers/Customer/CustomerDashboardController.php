@@ -3,36 +3,27 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
-use App\Models\Customer;
-use App\Models\Subscription;
-use App\Models\Invoice;
-use App\Models\Ticket;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Customer;
+use App\Models\Invoice;
 
 class CustomerDashboardController extends Controller
 {
     public function index()
     {
-        $user = Auth::user();
-        
-        // Ambil data spesifik pelanggan berdasarkan User ID yang login
-        $customer = Customer::where('user_id', $user->id)->first();
+        // 1. Cari data customer berdasarkan user yang sedang login (Lebih Aman)
+        $customer = Customer::where('user_id', Auth::id())->first();
 
-        // Fallback jika terjadi anomali data (User ada tapi data Customer terhapus)
+        // Jika profil pelanggan tidak ditemukan (Belum di-Approve Admin)
         if (!$customer) {
-            return view('user.index', [
-                'customer' => null, 
-                'subscription' => null, 
-                'unpaidInvoices' => [], 
-                'recentTickets' => []
-            ]);
+            abort(403, 'MAAF! Akun Anda belum terhubung dengan profil layanan aktif. Jika Anda baru saja mendaftar, silakan tunggu Admin melakukan persetujuan (Approve) terlebih dahulu.');
         }
 
-        // Ambil Data Langganan Aktif & Paketnya
-        $subscription = Subscription::with('package')->where('customer_id', $customer->id)->first();
+        // 2. Ambil data langganan yang sedang berjalan
+        $subscription = $customer->subscriptions()->with('package')->latest()->first();
 
-        // Ambil Tagihan yang Belum Dibayar (Jika punya langganan)
-        $unpaidInvoices = [];
+        // 3. Cek tagihan yang belum dibayar
+        $unpaidInvoices = []; // Default array kosong
         if ($subscription) {
             $unpaidInvoices = Invoice::where('subscription_id', $subscription->id)
                 ->where('status', 'unpaid')
@@ -40,13 +31,6 @@ class CustomerDashboardController extends Controller
                 ->get();
         }
 
-        // Ambil 5 Riwayat Laporan Gangguan (Tiket) Terakhir milik pelanggan
-        $recentTickets = Ticket::where('customer_id', $customer->id)
-            ->latest()
-            ->take(5)
-            ->get();
-
-        // Kirim data ke view (sesuai struktur folder: resources/views/user/index.blade.php)
-        return view('user.index', compact('customer', 'subscription', 'unpaidInvoices', 'recentTickets'));
+        return view('user.index', compact('customer', 'subscription', 'unpaidInvoices'));
     }
 }
