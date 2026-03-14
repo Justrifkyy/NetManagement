@@ -25,12 +25,9 @@ class CustomerDashboardController extends Controller
         // 3. Cek tagihan yang belum dibayar
         $unpaidInvoices = []; // Default array kosong
         if ($subscription) {
-            $unpaidInvoices = Invoice::where('subscription_id', $subscription->id)
-                ->where('status', 'unpaid')
-                ->latest()
-                ->get();
+            $unpaidInvoices = Invoice::where('subscription_id', $subscription->id)->where('status', 'unpaid')->latest()->get();
         }
 
-        return view('user.index', compact('customer', 'subscription', 'unpaidInvoices'));
+        return view('user.dashboard.index', compact('customer', 'subscription', 'unpaidInvoices'));
     }
 }

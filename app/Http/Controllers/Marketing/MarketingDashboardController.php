@@ -28,6 +28,6 @@ class MarketingDashboardController extends Controller
             ->take(5)
             ->get();
 
-        return view('marketing.index', compact('stats', 'recentLeads'));
+        return view('marketing.dashboard.index', compact('stats', 'recentLeads'));
     }
 }
