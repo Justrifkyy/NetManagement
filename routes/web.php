@@ -109,34 +109,33 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
             Route::view('/profile', 'marketing.profile.index')->name('profile.index');
         });
 
-    /*
-    |----------------------------------------------------------------------
-    | ZONE 3: TECHNICIAN
-    |----------------------------------------------------------------------
-    */
-    Route::middleware(['role:technician,admin,super_admin'])
-        ->prefix('technician')
-        ->name('technician.')
-        ->group(function () {
-            // Dashboard Teknisi
+// ==========================================
+        // ZONE 3: TECHNICIAN AREA
+        // ==========================================
+        Route::middleware(['role:technician'])->prefix('technician')->name('technician.')->group(function () {
+            
+            // 1. Dashboard Teknisi
             Route::get('/dashboard', [TechnicianDashboardController::class, 'index'])->name('dashboard');
+            
+            // 2. Survey
+            Route::view('/surveys', 'technician.surveys.index')->name('surveys.index');
+            Route::view('/surveys/{id}', 'technician.surveys.show')->name('surveys.show');
+            Route::view('/surveys/{id}/edit', 'technician.surveys.edit')->name('surveys.edit');
 
-            // Area 1: Jobdesk (Bursa Tugas)
-            Route::get('/jobdesk', [TicketController::class, 'index'])->name('tickets.index');
-            Route::get('/jobdesk/{ticket}', [TicketController::class, 'show'])->name('tickets.show');
-            Route::post('/jobdesk/{ticket}/claim', [TicketController::class, 'claim'])->name('tickets.claim');
+            // 3. Instalasi
+            Route::view('/installations', 'technician.installations.index')->name('installations.index');
+            Route::view('/installations/{id}', 'technician.installations.show')->name('installations.show');
+            Route::view('/installations/{id}/edit', 'technician.installations.edit')->name('installations.edit');
 
-            // Area 2: Meja Kerja (Tugas Diproses)
-            Route::prefix('process')
-                ->name('process.')
-                ->group(function () {
-                    Route::get('/', [TicketController::class, 'processIndex'])->name('index');
-                    Route::get('/{ticket}/input', [TicketController::class, 'processInput'])->name('input');
-                    Route::put('/{ticket}/store', [TicketController::class, 'processStore'])->name('store');
-                    Route::get('/{ticket}/result', [TicketController::class, 'processShow'])->name('show');
-                    Route::get('/{ticket}/edit', [TicketController::class, 'processEdit'])->name('edit');
-                    Route::put('/{ticket}/update', [TicketController::class, 'processUpdate'])->name('update');
-                });
+            // 4. Gangguan (Troubleshoots)
+            Route::view('/troubleshoots', 'technician.troubleshoots.index')->name('troubleshoots.index');
+            Route::view('/troubleshoots/{id}', 'technician.troubleshoots.show')->name('troubleshoots.show');
+
+            // 5. Data Pelanggan Teknis
+            Route::view('/customers/{id}', 'technician.customers.show')->name('customers.show');
+
+            // 6. Akun & Profil
+            Route::view('/profile', 'technician.profile.index')->name('profile.index');
         });
 
     // ==========================================

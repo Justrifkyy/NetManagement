@@ -29,6 +29,6 @@ class TechnicianDashboardController extends Controller
             ->count();
 
         // Mengarah ke resources/views/technician/index.blade.php
-        return view('technician.index', compact('openTickets', 'myActiveTasks', 'completedThisMonth'));
+        return view('technician.dashboard.index', compact('openTickets', 'myActiveTasks', 'completedThisMonth'));
     }
 }
