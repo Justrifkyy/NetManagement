@@ -59,39 +59,36 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         };
     })->name('dashboard');
 
-    /*
-    |----------------------------------------------------------------------
-    | ZONE 1: ADMIN & SUPER ADMIN
-    |----------------------------------------------------------------------
-    */
-    Route::middleware(['role:admin,super_admin'])
-        ->prefix('admin')
-        ->name('admin.')
-        ->group(function () {
-            // Dashboard Admin
+// ==========================================
+        // ZONE 1: ADMIN AREA (Bisa diakses Admin & Super Admin)
+        // ==========================================
+        Route::middleware(['role:admin,super_admin'])->prefix('admin')->name('admin.')->group(function () {
             Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-
-            // Manajemen User (Akses Ekstra Ketat - Cukup Super Admin)
-            Route::middleware(['role:super_admin'])->group(function () {
-                Route::resource('users', UserController::class);
-            });
-
-            // Verifikasi Tiket & Aktivasi Layanan (QC)
-            // Verifikasi Tiket & Aktivasi Layanan (QC)
-            Route::get('/tickets/verification', [TicketQCController::class, 'index'])->name('tickets.index');
-            Route::get('/tickets/verification/{ticket}', [TicketQCController::class, 'show'])->name('tickets.show');
-            Route::get('/tickets/{ticket}/edit', [TicketQCController::class, 'edit'])->name('tickets.edit');
-            Route::put('/tickets/{ticket}/update', [TicketQCController::class, 'update'])->name('tickets.update');
-            Route::post('/tickets/{ticket}/approve', [TicketQCController::class, 'approve'])->name('tickets.approve');
-            Route::post('/tickets/{ticket}/reject', [TicketQCController::class, 'reject'])->name('tickets.reject');
-
-            // Billing & Keuangan (Placeholder)
+            Route::view('/customers', 'admin.customers.index')->name('customers.index');
+            Route::view('/customers/{id}', 'admin.customers.show')->name('customers.show');
+            Route::view('/packages', 'admin.packages.index')->name('packages.index');
             Route::get('/billing', [\App\Http\Controllers\Admin\BillingController::class, 'index'])->name('billing.index');
             Route::get('/billing/{invoice}', [\App\Http\Controllers\Admin\BillingController::class, 'show'])->name('billing.show');
-            Route::get('/billing/{invoice}/edit', [\App\Http\Controllers\Admin\BillingController::class, 'edit'])->name('billing.edit');
-            Route::put('/billing/{invoice}/update', [\App\Http\Controllers\Admin\BillingController::class, 'update'])->name('billing.update');
-            Route::post('/billing/{invoice}/pay', [\App\Http\Controllers\Admin\BillingController::class, 'markAsPaid'])->name('billing.pay');
+            Route::view('/routers', 'admin.routers.index')->name('routers.index');
+            Route::view('/integrations', 'admin.integrations.index')->name('integrations.index');
+            Route::view('/reports', 'admin.reports.index')->name('reports.index');
+            Route::view('/logs', 'admin.logs.index')->name('logs.index');
+            Route::view('/profile', 'admin.profile.index')->name('profile.index');
         });
+
+        // ==========================================
+        // ZONE 0: SUPER ADMIN AREA (HANYA Super Admin)
+        // ==========================================
+        Route::middleware(['role:super_admin'])->prefix('superadmin')->name('superadmin.')->group(function () {
+            Route::view('/dashboard', 'superadmin.dashboard.index')->name('dashboard');
+            Route::view('/users', 'superadmin.users.index')->name('users.index');
+            Route::view('/roles', 'superadmin.roles.index')->name('roles.index');
+            Route::view('/master', 'superadmin.master.index')->name('master.index');
+            Route::view('/settings', 'superadmin.settings.index')->name('settings.index');
+            Route::view('/audits', 'superadmin.audits.index')->name('audits.index');
+            Route::view('/maintenance', 'superadmin.maintenance.index')->name('maintenance.index');
+        });
+
 
     // ==========================================
     // ZONE 2: MARKETING AREA

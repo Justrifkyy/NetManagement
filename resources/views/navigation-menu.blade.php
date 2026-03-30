@@ -14,18 +14,33 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
-                    @if (Auth::user()->role === 'super_admin')
-                        <x-nav-link href="{{ route('admin.users.index') }}" :active="request()->routeIs('admin.users.*')">
-                            {{ __('Kelola Akun') }}
+@if (Auth::user()->role === 'super_admin')
+                        <x-nav-link href="{{ route('superadmin.dashboard') }}" :active="request()->routeIs('superadmin.dashboard')">
+                            {{ __('Super Panel') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ route('superadmin.users.index') }}" :active="request()->routeIs('superadmin.users.*')">
+                            {{ __('Kelola Pegawai') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ route('superadmin.settings.index') }}" :active="request()->routeIs('superadmin.settings.*')">
+                            {{ __('Pengaturan') }}
                         </x-nav-link>
                     @endif
 
                     @if (in_array(Auth::user()->role, ['admin', 'super_admin']))
-                        <x-nav-link href="{{ route('admin.tickets.index') }}" :active="request()->routeIs('admin.tickets.*')">
-                            {{ __('QC & Aktivasi') }}
+                        <x-nav-link href="{{ route('admin.dashboard') }}" :active="request()->routeIs('admin.dashboard')">
+                            {{ __('Dashboard Admin') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ route('admin.customers.index') }}" :active="request()->routeIs('admin.customers.*')">
+                            {{ __('Pelanggan') }}
                         </x-nav-link>
                         <x-nav-link href="{{ route('admin.billing.index') }}" :active="request()->routeIs('admin.billing.*')">
                             {{ __('Keuangan') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ route('admin.routers.index') }}" :active="request()->routeIs('admin.routers.*')">
+                            {{ __('Jaringan') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ route('admin.reports.index') }}" :active="request()->routeIs('admin.reports.*')">
+                            {{ __('Laporan') }}
                         </x-nav-link>
                     @endif
 
@@ -220,18 +235,36 @@
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
 
-            @if (Auth::user()->role === 'super_admin')
-                <x-responsive-nav-link href="{{ route('admin.users.index') }}" :active="request()->routeIs('admin.users.*')">
-                    {{ __('Kelola Akun') }}
+@if (Auth::user()->role === 'super_admin')
+                <div class="block px-4 py-2 text-xs font-bold text-purple-600 bg-purple-50 uppercase">Super Admin Area</div>
+                <x-responsive-nav-link href="{{ route('superadmin.dashboard') }}" :active="request()->routeIs('superadmin.dashboard')">
+                    {{ __('Super Panel') }}
                 </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('superadmin.users.index') }}" :active="request()->routeIs('superadmin.users.*')">
+                    {{ __('Kelola Pegawai & Role') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('superadmin.settings.index') }}" :active="request()->routeIs('superadmin.settings.*')">
+                    {{ __('Pengaturan Sistem') }}
+                </x-responsive-nav-link>
+                <div class="border-t border-gray-200 my-2"></div>
             @endif
 
             @if (in_array(Auth::user()->role, ['admin', 'super_admin']))
-                <x-responsive-nav-link href="{{ route('admin.tickets.index') }}" :active="request()->routeIs('admin.tickets.*')">
-                    {{ __('QC & Aktivasi') }}
+                <div class="block px-4 py-2 text-xs font-bold text-red-600 bg-red-50 uppercase">Admin Operasional</div>
+                <x-responsive-nav-link href="{{ route('admin.dashboard') }}" :active="request()->routeIs('admin.dashboard')">
+                    {{ __('Dashboard Admin') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('admin.customers.index') }}" :active="request()->routeIs('admin.customers.*')">
+                    {{ __('Kelola Pelanggan & Paket') }}
                 </x-responsive-nav-link>
                 <x-responsive-nav-link href="{{ route('admin.billing.index') }}" :active="request()->routeIs('admin.billing.*')">
-                    {{ __('Keuangan') }}
+                    {{ __('Keuangan & Tagihan') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('admin.routers.index') }}" :active="request()->routeIs('admin.routers.*')">
+                    {{ __('Manajemen Jaringan') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('admin.reports.index') }}" :active="request()->routeIs('admin.reports.*')">
+                    {{ __('Laporan & Log') }}
                 </x-responsive-nav-link>
             @endif
 
