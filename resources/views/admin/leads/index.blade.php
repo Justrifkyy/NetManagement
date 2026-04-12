@@ -95,17 +95,7 @@
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 text-sm">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium @switch($lead->status)
-                                            @case('prospect') bg-gray-100 text-gray-800 @break
-                                            @case('contacted') bg-blue-100 text-blue-800 @break
-                                            @case('qualified') bg-indigo-100 text-indigo-800 @break
-                                            @case('proposal_sent') bg-purple-100 text-purple-800 @break
-                                            @case('negotiation') bg-yellow-100 text-yellow-800 @break
-                                            @case('converted') bg-green-100 text-green-800 @break
-                                            @case('lost') bg-red-100 text-red-800 @break
-                                        @endswitch">
-                                            {{ ucfirst(str_replace('_', ' ', $lead->status)) }}
-                                        </span>
+                                        <x-status-badge :status="$lead->status" variant="sm" />
                                     </td>
                                     <td class="px-6 py-4 text-sm text-gray-700">{{ $lead->marketing->name ?? '-' }}</td>
                                     <td class="px-6 py-4 text-sm text-gray-700">

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
 {
@@ -16,6 +18,7 @@ class ProfileController extends Controller
 
     public function updateProfile(Request $request)
     {
+        /** @var User $user */
         $user = Auth::user();
 
         $validated = $request->validate([
@@ -36,14 +39,15 @@ class ProfileController extends Controller
             'new_password' => 'required|string|min:8|confirmed',
         ]);
 
+        /** @var User $user */
         $user = Auth::user();
 
-        if (!\Hash::check($validated['current_password'], $user->password)) {
+        if (!Hash::check($validated['current_password'], $user->password)) {
             return redirect()->back()->with('error', 'Password lama tidak sesuai');
         }
 
         $user->update([
-            'password' => \Hash::make($validated['new_password']),
+            'password' => Hash::make($validated['new_password']),
         ]);
 
         return redirect()->back()->with('success', 'Password berhasil diubah');

@@ -38,17 +38,7 @@
                     <div class="space-y-6">
                         <div>
                             <h3 class="text-sm font-semibold text-gray-600 uppercase">Status</h3>
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium mt-1 @switch($lead->status)
-                                @case('prospect') bg-gray-100 text-gray-800 @break
-                                @case('contacted') bg-blue-100 text-blue-800 @break
-                                @case('qualified') bg-indigo-100 text-indigo-800 @break
-                                @case('proposal_sent') bg-purple-100 text-purple-800 @break
-                                @case('negotiation') bg-yellow-100 text-yellow-800 @break
-                                @case('converted') bg-green-100 text-green-800 @break
-                                @case('lost') bg-red-100 text-red-800 @break
-                            @endswitch">
-                                {{ ucfirst(str_replace('_', ' ', $lead->status)) }}
-                            </span>
+                            <x-status-badge :status="$lead->status" variant="md" class="mt-1" />
                         </div>
 
                         <div>

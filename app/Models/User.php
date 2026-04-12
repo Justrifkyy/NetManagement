@@ -10,6 +10,20 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $email
+ * @property string $password
+ * @property string $role
+ * @property string|null $marketing_code
+ * @property bool $is_active
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @method bool save()
+ * @method bool update(array $attributes = [])
+ * @method static create(array $attributes = [])
+ */
 class User extends Authenticatable
 {
     use HasApiTokens;

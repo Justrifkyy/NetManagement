@@ -32,8 +32,8 @@ class TicketManagementController extends Controller
 
         $tickets = $query->latest()->paginate(15);
         $customers = Customer::with('user')->get();
-        $statuses = ['open', 'assigned', 'in_progress', 'resolved', 'closed'];
-        $types = ['survey', 'installation', 'troubleshoot', 'maintenance'];
+        $statuses = ['open', 'assigned', 'in_progress', 'pending', 'resolved', 'closed'];
+        $types = ['survey', 'installation', 'repair'];
 
         return view('admin.tickets.index', compact('tickets', 'customers', 'statuses', 'types'));
     }
@@ -51,9 +51,9 @@ class TicketManagementController extends Controller
     {
         $validated = $request->validate([
             'customer_id' => 'required|exists:customers,id',
-            'type' => 'required|in:survey,installation,troubleshoot,maintenance',
+            'type' => 'required|in:survey,installation,repair',
             'subject' => 'required|string|max:255',
-            'status' => 'required|in:open,assigned,in_progress,resolved,closed',
+            'status' => 'required|in:open,assigned,in_progress,pending,resolved,closed',
             'technician_id' => 'nullable|exists:users,id',
             'notes' => 'nullable|string',
         ]);
@@ -83,9 +83,9 @@ class TicketManagementController extends Controller
     {
         $validated = $request->validate([
             'customer_id' => 'required|exists:customers,id',
-            'type' => 'required|in:survey,installation,troubleshoot,maintenance',
+            'type' => 'required|in:survey,installation,repair',
             'subject' => 'required|string|max:255',
-            'status' => 'required|in:open,assigned,in_progress,resolved,closed',
+            'status' => 'required|in:open,assigned,in_progress,pending,resolved,closed',
             'technician_id' => 'nullable|exists:users,id',
             'survey_date' => 'nullable|date',
             'survey_status' => 'nullable|string',
@@ -113,7 +113,7 @@ class TicketManagementController extends Controller
     public function updateStatus(Request $request, Ticket $ticket)
     {
         $validated = $request->validate([
-            'status' => 'required|in:open,assigned,in_progress,resolved,closed',
+            'status' => 'required|in:open,assigned,in_progress,pending,resolved,closed',
         ]);
 
         $ticket->update($validated);

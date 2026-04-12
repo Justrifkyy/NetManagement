@@ -35,7 +35,7 @@ class LeadManagementController extends Controller
 
         $leads = $query->latest()->paginate(15);
         $marketers = User::where('role', 'marketing')->get();
-        $statuses = ['prospek', 'survey_pending', 'survey_done', 'install_pending', 'installed', 'rejected'];
+        $statuses = ['prospek', 'survey', 'instalasi', 'aktif', 'batal', 'converted'];
         $packages = Package::where('is_active', true)->get();
 
         return view('admin.leads.index', compact('leads', 'marketers', 'statuses', 'packages'));

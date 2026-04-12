@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\Subscription;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CustomerController extends Controller
 {
@@ -50,7 +51,7 @@ class CustomerController extends Controller
 
         // Log activity
         \App\Models\AuditLog::create([
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(),
             'action' => 'isolate_customer',
             'description' => "Pelanggan {$customer->id} diisolir. Alasan: {$reason}",
             'details' => ['reason' => $reason],
@@ -67,7 +68,7 @@ class CustomerController extends Controller
         $customer->update(['is_isolated' => false]);
 
         \App\Models\AuditLog::create([
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(),
             'action' => 'activate_customer',
             'description' => "Pelanggan {$customer->id} diaktifkan kembali",
         ]);

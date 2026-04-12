@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 Route::get('/tes', function () {
     return 'Halo! Server berjalan normal.';
@@ -66,7 +67,9 @@ Route::get('/pendaftaran-berhasil', [PublicRegistrationController::class, 'succe
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
     // GATEKEEPER DASHBOARD: Redirect ke dashboard masing-masing role
     Route::get('/dashboard', function () {
-        $role = Auth::user()->role;
+        /** @var User $user */
+        $user = Auth::user();
+        $role = $user->role;
 
         return match ($role) {
             'super_admin', 'admin' => redirect()->route('admin.dashboard'),
