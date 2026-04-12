@@ -14,7 +14,7 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
-@if (Auth::user()->role === 'super_admin')
+                    @if (Auth::user()->role === 'super_admin')
                         <x-nav-link href="{{ route('superadmin.dashboard') }}" :active="request()->routeIs('superadmin.dashboard')">
                             {{ __('Super Panel') }}
                         </x-nav-link>
@@ -235,8 +235,9 @@
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
 
-@if (Auth::user()->role === 'super_admin')
-                <div class="block px-4 py-2 text-xs font-bold text-purple-600 bg-purple-50 uppercase">Super Admin Area</div>
+            @if (Auth::user()->role === 'super_admin')
+                <div class="block px-4 py-2 text-xs font-bold text-purple-600 bg-purple-50 uppercase">Super Admin Area
+                </div>
                 <x-responsive-nav-link href="{{ route('superadmin.dashboard') }}" :active="request()->routeIs('superadmin.dashboard')">
                     {{ __('Super Panel') }}
                 </x-responsive-nav-link>
