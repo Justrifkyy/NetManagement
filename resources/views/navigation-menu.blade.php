@@ -33,6 +33,12 @@
                         <x-nav-link href="{{ route('admin.customers.index') }}" :active="request()->routeIs('admin.customers.*')">
                             {{ __('Pelanggan') }}
                         </x-nav-link>
+                        <x-nav-link href="{{ route('admin.tickets.index') }}" :active="request()->routeIs('admin.tickets.*')">
+                            {{ __('Tiket Teknisi') }}
+                        </x-nav-link>
+                        <x-nav-link href="{{ route('admin.leads.index') }}" :active="request()->routeIs('admin.leads.*')">
+                            {{ __('Lead Marketing') }}
+                        </x-nav-link>
                         <x-nav-link href="{{ route('admin.billing.index') }}" :active="request()->routeIs('admin.billing.*')">
                             {{ __('Keuangan') }}
                         </x-nav-link>
