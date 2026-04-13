@@ -1,10 +1,10 @@
 <x-app-layout>
-    <div class="py-10 bg-gray-50 min-h-screen">
+    <div class="py-10 bg-slate-950 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="mb-8 px-4 sm:px-0 flex justify-between items-center">
                 <div>
-                    <h2 class="text-3xl font-extrabold text-gray-900">Manajemen Paket</h2>
-                    <p class="text-gray-500 mt-1">Kelola katalog produk internet dan paket layanan.</p>
+                    <h2 class="text-3xl font-extrabold text-white">Manajemen Paket</h2>
+                    <p class="text-slate-400 mt-1">Kelola katalog produk internet dan paket layanan.</p>
                 </div>
                 <a href="{{ route('admin.packages.create') }}" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
                     + Tambah Paket
@@ -22,10 +22,10 @@
             <!-- Packages Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 sm:px-0">
                 @forelse ($packages as $package)
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <div class="bg-slate-900 rounded-xl shadow-sm border border-slate-800 p-6">
                         <div class="flex justify-between items-start mb-4">
                             <div>
-                                <h3 class="text-xl font-bold text-gray-900">{{ $package->name }}</h3>
+                                <h3 class="text-xl font-bold text-white">{{ $package->name }}</h3>
                                 <p class="text-2xl font-bold text-purple-600 mt-2">Rp {{ number_format($package->price, 0, ',', '.') }}/bulan</p>
                             </div>
                             @if ($package->is_active)
@@ -33,23 +33,23 @@
                                     Aktif
                                 </span>
                             @else
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-800 text-white">
                                     Nonaktif
                                 </span>
                             @endif
                         </div>
 
                         <div class="space-y-2 mb-4">
-                            <p class="text-sm text-gray-700"><strong>Kecepatan:</strong> {{ $package->speed_mbps }} Mbps</p>
-                            <p class="text-sm text-gray-700"><strong>Biaya Pasang:</strong> Rp {{ number_format($package->installation_fee, 0, ',', '.') }}</p>
+                            <p class="text-sm text-slate-300"><strong>Kecepatan:</strong> {{ $package->speed_mbps }} Mbps</p>
+                            <p class="text-sm text-slate-300"><strong>Biaya Pasang:</strong> Rp {{ number_format($package->installation_fee, 0, ',', '.') }}</p>
                             @if ($package->description)
-                                <p class="text-sm text-gray-600 mt-2">{{ $package->description }}</p>
+                                <p class="text-sm text-slate-300 mt-2">{{ $package->description }}</p>
                             @endif
                         </div>
 
                         <div class="flex gap-2">
                             <a href="{{ route('admin.packages.edit', $package) }}" 
-                                class="flex-1 px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 text-center">
+                                class="flex-1 px-3 py-2 bg-amber-600 text-white text-sm rounded-lg hover:bg-amber-700 text-center">
                                 Edit
                             </a>
                             <form action="{{ route('admin.packages.destroy', $package) }}" method="POST" class="flex-1">
@@ -64,7 +64,7 @@
                     </div>
                 @empty
                     <div class="col-span-full text-center py-12">
-                        <p class="text-gray-500">Tidak ada paket</p>
+                        <p class="text-slate-400">Tidak ada paket</p>
                     </div>
                 @endforelse
             </div>

@@ -22,7 +22,7 @@
                 <div class="p-8">
                     <div class="flex justify-between items-center border-b border-slate-200 pb-4 mb-6">
                         <h4 class="text-lg font-bold text-slate-800">Informasi Kontak & Pemasangan</h4>
-                        <button class="text-sm font-bold text-blue-600 hover:text-blue-800">Edit Data</button>
+                        <button class="text-sm font-bold text-amber-400 hover:text-blue-800">Edit Data</button>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -9,7 +9,7 @@
     ];
 
     $statusColors = [
-        'prospect' => 'bg-gray-100 text-gray-800',
+        'prospect' => 'bg-slate-800 text-white',
         'contacted' => 'bg-blue-100 text-blue-800',
         'qualified' => 'bg-indigo-100 text-indigo-800',
         'proposal_sent' => 'bg-purple-100 text-purple-800',
@@ -18,7 +18,7 @@
         'lost' => 'bg-red-100 text-red-800',
     ];
 
-    $colorClass = $statusColors[$status] ?? 'bg-gray-100 text-gray-800';
+    $colorClass = $statusColors[$status] ?? 'bg-slate-800 text-white';
     $sizeClass = $sizeClasses[$variant] ?? $sizeClasses['md'];
 @endphp
 

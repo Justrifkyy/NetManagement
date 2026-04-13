@@ -20,7 +20,7 @@
                     
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Kategori Kendala <span class="text-red-500">*</span></label>
-                        <select name="type" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-blue-500 focus:border-blue-500" required>
+                        <select name="type" class="w-full border-slate-700 rounded-xl shadow-sm focus:ring-amber-500 focus:border-amber-500" required>
                             <option value="">-- Pilih Kategori --</option>
                             <option value="repair">Internet Mati Total (LOS Merah)</option>
                             <option value="repair">Internet Lambat / Putus-putus</option>
@@ -31,22 +31,22 @@
 
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Judul Laporan <span class="text-red-500">*</span></label>
-                        <input type="text" name="subject" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="Contoh: Lampu LOS di modem kedap-kedip merah" required>
+                        <input type="text" name="subject" class="w-full border-slate-700 rounded-xl shadow-sm focus:ring-amber-500 focus:border-amber-500" placeholder="Contoh: Lampu LOS di modem kedap-kedip merah" required>
                     </div>
 
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Detail Keluhan <span class="text-red-500">*</span></label>
-                        <textarea name="description" rows="5" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="Jelaskan secara detail kendala yang Anda alami..." required></textarea>
+                        <textarea name="description" rows="5" class="w-full border-slate-700 rounded-xl shadow-sm focus:ring-amber-500 focus:border-amber-500" placeholder="Jelaskan secara detail kendala yang Anda alami..." required></textarea>
                     </div>
 
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Lampiran Foto (Opsional)</label>
-                        <input type="file" name="attachment" class="w-full border-slate-300 rounded-xl shadow-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                        <input type="file" name="attachment" class="w-full border-slate-700 rounded-xl shadow-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                         <p class="text-xs text-slate-500 mt-2">Upload foto indikator lampu modem atau screenshot hasil speedtest (Max 2MB).</p>
                     </div>
 
                     <div class="pt-4 border-t border-slate-200 flex justify-end">
-                        <button type="button" onclick="alert('Ini baru tampilan (UI). Fitur simpan akan diaktifkan setelah Controller dibuat!')" class="px-8 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg hover:bg-blue-700 transition">
+                        <button type="button" onclick="alert('Ini baru tampilan (UI). Fitur simpan akan diaktifkan setelah Controller dibuat!')" class="px-8 py-3 bg-amber-600 text-white font-bold rounded-xl shadow-lg hover:bg-amber-700 transition">
                             Kirim Laporan Keluhan
                         </button>
                     </div>

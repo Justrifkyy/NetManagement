@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-white leading-tight">
             {{ __('Edit Data Prospek') }}
         </h2>
     </x-slot>
@@ -8,7 +8,7 @@
     <div class="py-12 bg-sky-50 min-h-screen">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
 
-            <div class="bg-white overflow-hidden shadow-2xl sm:rounded-2xl border border-gray-100 relative">
+            <div class="bg-white overflow-hidden shadow-2xl sm:rounded-2xl border border-slate-800 relative">
 
                 <div class="bg-gradient-to-r from-yellow-500 to-orange-500 h-32 flex items-center px-8">
                     <div class="text-white">
@@ -48,23 +48,23 @@
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label class="block text-gray-700 text-sm font-bold mb-2">Nama Lengkap</label>
+                                    <label class="block text-slate-300 text-sm font-bold mb-2">Nama Lengkap</label>
                                     <input type="text" name="name" value="{{ old('name', $lead->name) }}"
-                                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500 py-2.5"
+                                        class="w-full border-slate-700 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500 py-2.5"
                                         required>
                                 </div>
                                 <div>
-                                    <label class="block text-gray-700 text-sm font-bold mb-2">Nama Ibu Kandung</label>
+                                    <label class="block text-slate-300 text-sm font-bold mb-2">Nama Ibu Kandung</label>
                                     <input type="text" name="mother_name"
                                         value="{{ old('mother_name', $lead->mother_name) }}"
-                                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500 py-2.5">
+                                        class="w-full border-slate-700 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500 py-2.5">
                                 </div>
                                 <div class="md:col-span-2">
-                                    <label class="block text-gray-700 text-sm font-bold mb-2">Nama Usaha
+                                    <label class="block text-slate-300 text-sm font-bold mb-2">Nama Usaha
                                         (Opsional)</label>
                                     <input type="text" name="business_name"
                                         value="{{ old('business_name', $lead->business_name) }}"
-                                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500 py-2.5">
+                                        class="w-full border-slate-700 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500 py-2.5">
                                 </div>
                             </div>
                         </div>
@@ -80,33 +80,33 @@
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label class="block text-gray-700 text-sm font-bold mb-2">No. WhatsApp</label>
+                                    <label class="block text-slate-300 text-sm font-bold mb-2">No. WhatsApp</label>
                                     <input type="number" name="phone" value="{{ old('phone', $lead->phone) }}"
-                                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500 py-2.5"
+                                        class="w-full border-slate-700 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500 py-2.5"
                                         required>
                                 </div>
                                 <div>
-                                    <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                                    <label class="block text-slate-300 text-sm font-bold mb-2">Email</label>
                                     <input type="email" name="email" value="{{ old('email', $lead->email) }}"
-                                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500 py-2.5">
+                                        class="w-full border-slate-700 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500 py-2.5">
                                 </div>
                                 <div>
-                                    <label class="block text-gray-700 text-sm font-bold mb-2">Nama Kontak
+                                    <label class="block text-slate-300 text-sm font-bold mb-2">Nama Kontak
                                         Darurat</label>
                                     <input type="text" name="emergency_name"
                                         value="{{ old('emergency_name', $lead->emergency_name) }}"
-                                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500 py-2.5">
+                                        class="w-full border-slate-700 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500 py-2.5">
                                 </div>
                                 <div>
-                                    <label class="block text-gray-700 text-sm font-bold mb-2">No. Darurat</label>
+                                    <label class="block text-slate-300 text-sm font-bold mb-2">No. Darurat</label>
                                     <input type="number" name="emergency_phone"
                                         value="{{ old('emergency_phone', $lead->emergency_phone) }}"
-                                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500 py-2.5">
+                                        class="w-full border-slate-700 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500 py-2.5">
                                 </div>
                                 <div class="md:col-span-2">
-                                    <label class="block text-gray-700 text-sm font-bold mb-2">Hubungan</label>
+                                    <label class="block text-slate-300 text-sm font-bold mb-2">Hubungan</label>
                                     <select name="emergency_relation"
-                                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500 py-2.5">
+                                        class="w-full border-slate-700 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500 py-2.5">
                                         <option value="">- Pilih -</option>
                                         @foreach (['Orang Tua', 'Suami/Istri', 'Saudara', 'Kerabat', 'Tetangga'] as $rel)
                                             <option value="{{ $rel }}"
@@ -131,46 +131,46 @@
                             </div>
                             <div class="space-y-4">
                                 <div>
-                                    <label class="block text-gray-700 text-sm font-bold mb-2">Alamat KTP</label>
+                                    <label class="block text-slate-300 text-sm font-bold mb-2">Alamat KTP</label>
                                     <textarea name="address_ktp" rows="2"
-                                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500" required>{{ old('address_ktp', $lead->address_ktp) }}</textarea>
+                                        class="w-full border-slate-700 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500" required>{{ old('address_ktp', $lead->address_ktp) }}</textarea>
                                 </div>
                                 <div>
-                                    <label class="block text-gray-700 text-sm font-bold mb-2">Alamat Pasang</label>
+                                    <label class="block text-slate-300 text-sm font-bold mb-2">Alamat Pasang</label>
                                     <textarea name="address_installation" rows="2"
-                                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500" required>{{ old('address_installation', $lead->address_installation) }}</textarea>
+                                        class="w-full border-slate-700 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500" required>{{ old('address_installation', $lead->address_installation) }}</textarea>
                                 </div>
                                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                                     <input type="text" name="rt_rw" value="{{ old('rt_rw', $lead->rt_rw) }}"
                                         placeholder="RT/RW"
-                                        class="border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500">
+                                        class="border-slate-700 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500">
                                     <input type="text" name="village"
                                         value="{{ old('village', $lead->village) }}" placeholder="Kelurahan"
-                                        class="border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500">
+                                        class="border-slate-700 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500">
                                     <input type="text" name="district"
                                         value="{{ old('district', $lead->district) }}" placeholder="Kecamatan"
-                                        class="border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500">
+                                        class="border-slate-700 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500">
                                     <input type="text" name="city" value="{{ old('city', $lead->city) }}"
                                         placeholder="Kota"
-                                        class="border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500">
+                                        class="border-slate-700 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500">
                                     <input type="text" name="province"
                                         value="{{ old('province', $lead->province) }}" placeholder="Provinsi"
-                                        class="border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500">
+                                        class="border-slate-700 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500">
                                     <input type="number" name="postal_code"
                                         value="{{ old('postal_code', $lead->postal_code) }}" placeholder="Kode Pos"
-                                        class="border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500">
+                                        class="border-slate-700 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500">
                                 </div>
                                 <div>
-                                    <label class="block text-gray-700 text-sm font-bold mb-2">Patokan Lokasi</label>
+                                    <label class="block text-slate-300 text-sm font-bold mb-2">Patokan Lokasi</label>
                                     <input type="text" name="landmark"
                                         value="{{ old('landmark', $lead->landmark) }}"
-                                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500 py-2.5">
+                                        class="w-full border-slate-700 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500 py-2.5">
                                 </div>
                                 <div>
-                                    <label class="block text-gray-700 text-sm font-bold mb-2">Koordinat</label>
+                                    <label class="block text-slate-300 text-sm font-bold mb-2">Koordinat</label>
                                     <input type="text" name="coordinates"
                                         value="{{ old('coordinates', $lead->coordinates) }}"
-                                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500 py-2.5">
+                                        class="w-full border-slate-700 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500 py-2.5">
                                 </div>
                             </div>
                         </div>
@@ -185,9 +185,9 @@
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label class="block text-gray-700 text-sm font-bold mb-2">Paket Internet</label>
+                                    <label class="block text-slate-300 text-sm font-bold mb-2">Paket Internet</label>
                                     <select name="package_id"
-                                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500 py-2.5">
+                                        class="w-full border-slate-700 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500 py-2.5">
                                         @foreach ($packages as $pkg)
                                             <option value="{{ $pkg->id }}"
                                                 {{ old('package_id', $lead->package_id) == $pkg->id ? 'selected' : '' }}>
@@ -196,9 +196,9 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-gray-700 text-sm font-bold mb-2">Status Prospek</label>
+                                    <label class="block text-slate-300 text-sm font-bold mb-2">Status Prospek</label>
                                     <select name="status"
-                                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500 py-2.5">
+                                        class="w-full border-slate-700 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500 py-2.5">
                                         @foreach (['prospek', 'survey', 'instalasi', 'aktif', 'batal'] as $st)
                                             <option value="{{ $st }}"
                                                 {{ old('status', $lead->status) == $st ? 'selected' : '' }}>
@@ -207,16 +207,16 @@
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-gray-700 text-sm font-bold mb-2">Jadwal Survey</label>
+                                    <label class="block text-slate-300 text-sm font-bold mb-2">Jadwal Survey</label>
                                     <input type="date" name="survey_date"
                                         value="{{ old('survey_date', $lead->survey_date ? $lead->survey_date->format('Y-m-d') : '') }}"
-                                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500">
+                                        class="w-full border-slate-700 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500">
                                 </div>
                                 <div>
-                                    <label class="block text-gray-700 text-sm font-bold mb-2">Jadwal Instalasi</label>
+                                    <label class="block text-slate-300 text-sm font-bold mb-2">Jadwal Instalasi</label>
                                     <input type="date" name="installation_date"
                                         value="{{ old('installation_date', $lead->installation_date ? $lead->installation_date->format('Y-m-d') : '') }}"
-                                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500">
+                                        class="w-full border-slate-700 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500">
                                 </div>
                             </div>
                         </div>
@@ -232,15 +232,15 @@
                             </div>
                             <div class="space-y-4">
                                 <div>
-                                    <label class="block text-gray-700 text-sm font-bold mb-1">Ringkasan
+                                    <label class="block text-slate-300 text-sm font-bold mb-1">Ringkasan
                                         Komunikasi</label>
                                     <textarea name="notes_summary" rows="2"
-                                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500">{{ old('notes_summary', $lead->notes_summary) }}</textarea>
+                                        class="w-full border-slate-700 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500">{{ old('notes_summary', $lead->notes_summary) }}</textarea>
                                 </div>
                                 <div>
-                                    <label class="block text-gray-700 text-sm font-bold mb-1">Kendala</label>
+                                    <label class="block text-slate-300 text-sm font-bold mb-1">Kendala</label>
                                     <textarea name="notes_obstacle" rows="2"
-                                        class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500">{{ old('notes_obstacle', $lead->notes_obstacle) }}</textarea>
+                                        class="w-full border-slate-700 rounded-lg shadow-sm focus:ring-yellow-500 focus:border-yellow-500">{{ old('notes_obstacle', $lead->notes_obstacle) }}</textarea>
                                 </div>
                             </div>
                         </div>
@@ -255,30 +255,30 @@
                                 <h4 class="text-lg font-bold">Update Foto</h4>
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
-                                    <span class="block text-sm font-bold text-gray-700 mb-2">Foto KTP</span>
+                                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                                    <span class="block text-sm font-bold text-slate-300 mb-2">Foto KTP</span>
                                     @if ($lead->ktp_image_path)
                                         <img src="{{ Storage::url($lead->ktp_image_path) }}"
-                                            class="h-32 w-full object-cover rounded-lg mb-2 border border-gray-300">
+                                            class="h-32 w-full object-cover rounded-lg mb-2 border border-slate-700">
                                         <p class="text-xs text-green-600 mb-2">✓ Sudah ada foto</p>
                                     @endif
                                     <input type="file" name="ktp_image" accept="image/*" class="w-full text-xs">
                                 </div>
-                                <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
-                                    <span class="block text-sm font-bold text-gray-700 mb-2">Foto Rumah</span>
+                                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                                    <span class="block text-sm font-bold text-slate-300 mb-2">Foto Rumah</span>
                                     @if ($lead->house_image_path)
                                         <img src="{{ Storage::url($lead->house_image_path) }}"
-                                            class="h-32 w-full object-cover rounded-lg mb-2 border border-gray-300">
+                                            class="h-32 w-full object-cover rounded-lg mb-2 border border-slate-700">
                                         <p class="text-xs text-green-600 mb-2">✓ Sudah ada foto</p>
                                     @endif
                                     <input type="file" name="house_image" accept="image/*"
                                         class="w-full text-xs">
                                 </div>
-                                <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
-                                    <span class="block text-sm font-bold text-gray-700 mb-2">Foto Pelanggan</span>
+                                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                                    <span class="block text-sm font-bold text-slate-300 mb-2">Foto Pelanggan</span>
                                     @if ($lead->customer_image_path)
                                         <img src="{{ Storage::url($lead->customer_image_path) }}"
-                                            class="h-32 w-full object-cover rounded-lg mb-2 border border-gray-300">
+                                            class="h-32 w-full object-cover rounded-lg mb-2 border border-slate-700">
                                         <p class="text-xs text-green-600 mb-2">✓ Sudah ada foto</p>
                                     @endif
                                     <input type="file" name="customer_image" accept="image/*"
@@ -287,9 +287,9 @@
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-end space-x-4 border-t border-gray-100 pt-6">
+                        <div class="flex items-center justify-end space-x-4 border-t border-slate-800 pt-6">
                             <a href="{{ route('marketing.leads.index') }}"
-                                class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-bold hover:bg-gray-300 transition">
+                                class="px-6 py-3 bg-slate-800 text-slate-300 rounded-lg font-bold hover:bg-slate-700 transition">
                                 Batal
                             </a>
                             <button type="submit"

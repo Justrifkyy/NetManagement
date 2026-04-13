@@ -6,7 +6,7 @@
     <title>Pendaftaran Berhasil</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 font-sans min-h-screen flex flex-col justify-center items-center">
+<body class="bg-slate-800 font-sans min-h-screen flex flex-col justify-center items-center">
 
     <div class="bg-white p-8 rounded-xl shadow-lg max-w-md w-full text-center">
         <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100">
@@ -14,12 +14,12 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
             </svg>
         </div>
-        <h2 class="mt-6 text-2xl font-extrabold text-gray-900">Pendaftaran Terkirim!</h2>
-        <p class="mt-2 text-gray-600">
+        <h2 class="mt-6 text-2xl font-extrabold text-white">Pendaftaran Terkirim!</h2>
+        <p class="mt-2 text-slate-300">
             Terima kasih telah mendaftar. Tim kami akan segera menghubungi Anda melalui WhatsApp untuk konfirmasi jadwal survey.
         </p>
         <div class="mt-6">
-            <a href="/" class="text-blue-600 hover:text-blue-800 font-medium">Kembali ke Beranda</a>
+            <a href="/" class="text-amber-400 hover:text-blue-800 font-medium">Kembali ke Beranda</a>
         </div>
     </div>
 

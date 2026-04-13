@@ -1,15 +1,15 @@
 <x-app-layout>
-    <div class="py-10 bg-gray-50 min-h-screen">
+    <div class="py-10 bg-slate-950 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-extrabold text-gray-900 mb-8 px-4 sm:px-0">Pengaturan Role & Akses</h2>
+            <h2 class="text-3xl font-extrabold text-white mb-8 px-4 sm:px-0">Pengaturan Role & Akses</h2>
 
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 px-4 sm:px-0">
-                <p class="text-gray-600 mb-6">Atur hak akses dan permission untuk setiap role dalam sistem</p>
+            <div class="bg-slate-900 rounded-xl shadow-sm border border-slate-800 p-6 px-4 sm:px-0">
+                <p class="text-slate-300 mb-6">Atur hak akses dan permission untuk setiap role dalam sistem</p>
 
                 <div class="space-y-6">
                     @foreach ($roles as $role)
-                        <div class="border-t border-gray-200 pt-6 first:border-t-0 first:pt-0">
-                            <h3 class="font-bold text-lg text-gray-900 mb-4 capitalize">{{ str_replace('_', ' ', $role) }}</h3>
+                        <div class="border-t border-slate-800 pt-6 first:border-t-0 first:pt-0">
+                            <h3 class="font-bold text-lg text-white mb-4 capitalize">{{ str_replace('_', ' ', $role) }}</h3>
                             
                             <form action="{{ route('superadmin.roles.updatePermissions') }}" method="POST">
                                 @csrf
@@ -22,7 +22,7 @@
                                             <input type="checkbox" name="permissions[]" value="{{ $permKey }}"
                                                 @checked(in_array($permKey, $rolePermissions[$role]->pluck('permission')->toArray() ?? []))
                                                 class="rounded">
-                                            <span class="ml-2 text-sm text-gray-700">{{ $permName }}</span>
+                                            <span class="ml-2 text-sm text-slate-300">{{ $permName }}</span>
                                         </label>
                                     @endforeach
                                 </div>

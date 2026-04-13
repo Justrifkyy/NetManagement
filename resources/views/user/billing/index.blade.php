@@ -40,7 +40,7 @@
                             @forelse($invoices as $inv)
                                 <tr class="hover:bg-slate-50 transition">
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="font-mono text-sm font-bold text-blue-600">
+                                        <div class="font-mono text-sm font-bold text-amber-400">
                                             {{ $inv->invoice_number }}</div>
                                         <div class="text-xs text-slate-500">{{ $inv->created_at->format('d M Y') }}
                                         </div>
@@ -67,7 +67,7 @@
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-center">
                                         <a href="{{ route('client.billing.show', $inv->id) }}"
-                                            class="inline-flex items-center px-4 py-2 bg-white border border-slate-300 shadow-sm text-xs font-bold rounded-lg text-slate-700 hover:bg-slate-50 transition">
+                                            class="inline-flex items-center px-4 py-2 bg-white border border-slate-700 shadow-sm text-xs font-bold rounded-lg text-slate-700 hover:bg-slate-50 transition">
                                             Lihat Detail
                                         </a>
                                     </td>

@@ -79,7 +79,7 @@
                         </table>
                     </div>
 
-                    <div class="border-t border-dashed border-slate-300 pt-8 mt-8 flex flex-col items-center">
+                    <div class="border-t border-dashed border-slate-700 pt-8 mt-8 flex flex-col items-center">
                         @if($invoice->status === 'unpaid')
                             <p class="text-sm text-slate-500 mb-4 text-center">Silakan selesaikan pembayaran sebelum tanggal jatuh tempo agar layanan internet Anda tidak terputus.</p>
                             

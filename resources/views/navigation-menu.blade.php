@@ -1,10 +1,10 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-50">
+<nav x-data="{ open: false }" class="bg-slate-900/95 backdrop-blur-md border-b border-slate-800 shadow-lg sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
-                        <x-application-mark class="block h-9 w-auto text-sky-600" />
+                        <x-application-mark class="block h-9 w-auto text-amber-500" />
                     </a>
                 </div>
 
@@ -101,7 +101,7 @@
                         </x-nav-link>
                         <div class="hidden sm:flex sm:items-center sm:ml-4">
                             <a href="{{ route('client.notifications.index') }}"
-                                class="text-gray-400 hover:text-gray-500 relative transition">
+                                class="text-slate-400 hover:text-slate-400 relative transition">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
@@ -121,9 +121,9 @@
                     <div class="ms-3 relative">
                         <x-dropdown align="right" width="60">
                             <x-slot name="trigger">
-                                <span class="inline-flex rounded-md">
+                                    <span class="inline-flex rounded-md">
                                     <button type="button"
-                                        class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition ease-in-out duration-150">
+                                        class="inline-flex items-center px-3 py-2 border border-slate-600 text-sm leading-4 font-medium rounded-md text-slate-300 bg-slate-800 hover:text-white hover:border-slate-500 focus:outline-none focus:bg-slate-700 active:bg-slate-700 transition ease-in-out duration-150">
                                         {{ Auth::user()->currentTeam->name }}
                                         <svg class="ms-2 -me-0.5 size-4" xmlns="http://www.w3.org/2000/svg"
                                             fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -135,7 +135,7 @@
                             </x-slot>
                             <x-slot name="content">
                                 <div class="w-60">
-                                    <div class="block px-4 py-2 text-xs text-gray-400">{{ __('Manage Team') }}</div>
+                                    <div class="block px-4 py-2 text-xs text-slate-400">{{ __('Manage Team') }}</div>
                                     <x-dropdown-link
                                         href="{{ route('teams.show', Auth::user()->currentTeam->id) }}">{{ __('Team Settings') }}</x-dropdown-link>
                                     @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
@@ -143,8 +143,8 @@
                                             href="{{ route('teams.create') }}">{{ __('Create New Team') }}</x-dropdown-link>
                                     @endcan
                                     @if (Auth::user()->allTeams()->count() > 1)
-                                        <div class="border-t border-gray-200"></div>
-                                        <div class="block px-4 py-2 text-xs text-gray-400">{{ __('Switch Teams') }}
+                                        <div class="border-t border-slate-700"></div>
+                                        <div class="block px-4 py-2 text-xs text-slate-400">{{ __('Switch Teams') }}
                                         </div>
                                         @foreach (Auth::user()->allTeams() as $team)
                                             <x-switchable-team :team="$team" />
@@ -161,21 +161,21 @@
                         <x-slot name="trigger">
                             @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
                                 <button
-                                    class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
+                                    class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-slate-700 transition">
                                     <img class="size-8 rounded-full object-cover"
                                         src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" />
                                 </button>
                             @else
                                 <span class="inline-flex rounded-md">
                                     <button type="button"
-                                        class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition ease-in-out duration-150">
+                                        class="inline-flex items-center px-3 py-2 border border-slate-600 text-sm leading-4 font-medium rounded-md text-slate-300 bg-slate-800 hover:text-white hover:border-slate-500 focus:outline-none focus:bg-slate-700 active:bg-slate-700 transition ease-in-out duration-150">
                                         <span
                                             class="mr-2 px-2 py-0.5 rounded text-xs font-bold text-white uppercase 
                                             {{ Auth::user()->role == 'super_admin' ? 'bg-purple-600' : '' }}
-                                            {{ Auth::user()->role == 'admin' ? 'bg-red-500' : '' }}
-                                            {{ Auth::user()->role == 'marketing' ? 'bg-blue-500' : '' }}
-                                            {{ Auth::user()->role == 'technician' ? 'bg-yellow-500' : '' }}
-                                            {{ Auth::user()->role == 'customer' ? 'bg-green-500' : '' }}
+                                            {{ Auth::user()->role == 'admin' ? 'bg-red-600' : '' }}
+                                            {{ Auth::user()->role == 'marketing' ? 'bg-amber-600' : '' }}
+                                            {{ Auth::user()->role == 'technician' ? 'bg-amber-600' : '' }}
+                                            {{ Auth::user()->role == 'customer' ? 'bg-green-600' : '' }}
                                         ">
                                             {{ str_replace('_', ' ', Auth::user()->role) }}
                                         </span>
@@ -191,7 +191,7 @@
                         </x-slot>
 
                         <x-slot name="content">
-                            <div class="block px-4 py-2 text-xs text-gray-400">
+                            <div class="block px-4 py-2 text-xs text-slate-400">
                                 {{ __('Manage Account') }}
                             </div>
 
@@ -205,12 +205,12 @@
                                 </x-dropdown-link>
                             @endif
 
-                            <div class="border-t border-gray-200"></div>
+                            <div class="border-t border-slate-700"></div>
 
                             <form method="POST" action="{{ route('logout') }}" x-data>
                                 @csrf
                                 <x-dropdown-link href="{{ route('logout') }}" @click.prevent="$root.submit();"
-                                    class="text-red-600 font-semibold">
+                                    class="text-red-500 font-semibold">
                                     {{ __('Log Out') }}
                                 </x-dropdown-link>
                             </form>
@@ -221,7 +221,7 @@
 
             <div class="-me-2 flex items-center sm:hidden">
                 <button @click="open = ! open"
-                    class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
+                    class="inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-slate-300 hover:bg-slate-800 focus:outline-none focus:bg-slate-800 focus:text-slate-300 transition duration-150 ease-in-out">
                     <svg class="size-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{ 'hidden': open, 'inline-flex': !open }" class="inline-flex"
                             stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -234,7 +234,7 @@
         </div>
     </div>
 
-    <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden bg-gray-50 border-t border-gray-200">
+    <div :class="{ 'block': open, 'hidden': !open }" class="hidden sm:hidden bg-slate-800 border-t border-slate-700">
         <div class="pt-2 pb-3 space-y-1">
 
             <x-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard') || request()->routeIs('*.dashboard')">
@@ -242,7 +242,7 @@
             </x-responsive-nav-link>
 
             @if (Auth::user()->role === 'super_admin')
-                <div class="block px-4 py-2 text-xs font-bold text-purple-600 bg-purple-50 uppercase">Super Admin Area
+                <div class="block px-4 py-2 text-xs font-bold text-purple-400 bg-purple-900/40 uppercase">Super Admin Area
                 </div>
                 <x-responsive-nav-link href="{{ route('superadmin.dashboard') }}" :active="request()->routeIs('superadmin.dashboard')">
                     {{ __('Super Panel') }}
@@ -253,11 +253,11 @@
                 <x-responsive-nav-link href="{{ route('superadmin.settings.index') }}" :active="request()->routeIs('superadmin.settings.*')">
                     {{ __('Pengaturan Sistem') }}
                 </x-responsive-nav-link>
-                <div class="border-t border-gray-200 my-2"></div>
+                <div class="border-t border-slate-700 my-2"></div>
             @endif
 
             @if (in_array(Auth::user()->role, ['admin', 'super_admin']))
-                <div class="block px-4 py-2 text-xs font-bold text-red-600 bg-red-50 uppercase">Admin Operasional</div>
+                <div class="block px-4 py-2 text-xs font-bold text-red-400 bg-red-900/40 uppercase">Admin Operasional</div>
                 <x-responsive-nav-link href="{{ route('admin.dashboard') }}" :active="request()->routeIs('admin.dashboard')">
                     {{ __('Dashboard Admin') }}
                 </x-responsive-nav-link>
@@ -340,19 +340,19 @@
 
         </div>
 
-        <div class="pt-4 pb-1 border-t border-gray-200 bg-white">
+        <div class="pt-4 pb-1 border-t border-slate-700 bg-slate-800">
             <div class="flex items-center px-4">
                 @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
                     <div class="shrink-0 me-3">
-                        <img class="size-10 rounded-full object-cover border border-gray-200"
+                        <img class="size-10 rounded-full object-cover border border-slate-600"
                             src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" />
                     </div>
                 @endif
                 <div>
-                    <div class="font-bold text-base text-gray-800">{{ Auth::user()->name }}</div>
-                    <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                    <div class="font-bold text-base text-white">{{ Auth::user()->name }}</div>
+                    <div class="font-medium text-sm text-slate-400">{{ Auth::user()->email }}</div>
                     <span
-                        class="inline-block mt-1 px-2 py-0.5 text-xs font-bold text-gray-600 bg-gray-200 rounded uppercase tracking-widest">{{ str_replace('_', ' ', Auth::user()->role) }}</span>
+                        class="inline-block mt-1 px-2 py-0.5 text-xs font-bold text-white bg-amber-600 rounded uppercase tracking-widest">{{ str_replace('_', ' ', Auth::user()->role) }}</span>
                 </div>
             </div>
 
@@ -370,7 +370,7 @@
                 <form method="POST" action="{{ route('logout') }}" x-data>
                     @csrf
                     <x-responsive-nav-link href="{{ route('logout') }}" @click.prevent="$root.submit();"
-                        class="text-red-600">
+                        class="text-red-500">
                         {{ __('Log Out') }}
                     </x-responsive-nav-link>
                 </form>

@@ -22,7 +22,7 @@
                     </div>
                     <div>
                         <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Biaya Bulanan</p>
-                        <p class="text-xl font-black text-blue-600">Rp {{ number_format(Auth::user()->customer->subscriptions->first()->package->price ?? 0, 0, ',', '.') }}</p>
+                        <p class="text-xl font-black text-amber-400">Rp {{ number_format(Auth::user()->customer->subscriptions->first()->package->price ?? 0, 0, ',', '.') }}</p>
                     </div>
                 </div>
             </div>

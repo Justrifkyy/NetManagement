@@ -8,7 +8,7 @@
                     <p class="text-slate-500 mt-1">Lacak status laporan kendala internet Anda di sini.</p>
                 </div>
                 <div class="mt-4 sm:mt-0">
-                    <a href="{{ route('client.tickets.create') }}" class="px-6 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg hover:bg-blue-700 transition flex items-center">
+                    <a href="{{ route('client.tickets.create') }}" class="px-6 py-3 bg-amber-600 text-white font-bold rounded-xl shadow-lg hover:bg-amber-700 transition flex items-center">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                         Buat Laporan Baru
                     </a>

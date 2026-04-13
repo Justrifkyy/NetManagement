@@ -1,7 +1,7 @@
 <x-app-layout>
-    <div class="py-10 bg-gray-50 min-h-screen">
+    <div class="py-10 bg-slate-950 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-extrabold text-gray-900 mb-8 px-4 sm:px-0">Pemeliharaan Sistem</h2>
+            <h2 class="text-3xl font-extrabold text-white mb-8 px-4 sm:px-0">Pemeliharaan Sistem</h2>
 
             @if (session('success'))
                 <div class="mb-4 px-4 sm:px-0 rounded-xl bg-green-50 p-4 border border-green-200">
@@ -11,16 +11,16 @@
 
             <!-- Maintenance Mode -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 px-4 sm:px-0">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h3 class="font-bold text-lg text-gray-900 mb-4">Mode Pemeliharaan</h3>
-                    <p class="text-gray-600 mb-4">Tutup sistem untuk maintenance</p>
+                <div class="bg-slate-900 rounded-xl shadow-sm border border-slate-800 p-6">
+                    <h3 class="font-bold text-lg text-white mb-4">Mode Pemeliharaan</h3>
+                    <p class="text-slate-300 mb-4">Tutup sistem untuk maintenance</p>
 
                     <form action="{{ route('superadmin.maintenance.maintenanceMode') }}" method="POST">
                         @csrf
                         <label class="flex items-center mb-4">
                             <input type="checkbox" name="maintenance_mode" value="1" @checked($maintenanceMode)
                                 class="rounded">
-                            <span class="ml-2 text-sm font-medium text-gray-700">Aktifkan Mode Pemeliharaan</span>
+                            <span class="ml-2 text-sm font-medium text-slate-300">Aktifkan Mode Pemeliharaan</span>
                         </label>
                         <button type="submit" class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
                             Update
@@ -29,8 +29,8 @@
                 </div>
 
                 <!-- Database Info -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h3 class="font-bold text-lg text-gray-900 mb-4">Informasi Database</h3>
+                <div class="bg-slate-900 rounded-xl shadow-sm border border-slate-800 p-6">
+                    <h3 class="font-bold text-lg text-white mb-4">Informasi Database</h3>
                     <div class="space-y-2 text-sm">
                         <p><strong>Ukuran:</strong> {{ $cacheSize }}</p>
                         <p><strong>Backup Terakhir:</strong> {{ $lastBackup }}</p>
@@ -38,15 +38,15 @@
 
                     <form action="{{ route('superadmin.maintenance.backupDatabase') }}" method="POST" class="mt-4">
                         @csrf
-                        <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">
+                        <button type="submit" class="w-full px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 text-sm">
                             Backup Sekarang
                         </button>
                     </form>
                 </div>
 
                 <!-- Cache Management -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h3 class="font-bold text-lg text-gray-900 mb-4">Manajemen Cache</h3>
+                <div class="bg-slate-900 rounded-xl shadow-sm border border-slate-800 p-6">
+                    <h3 class="font-bold text-lg text-white mb-4">Manajemen Cache</h3>
 
                     <form action="{{ route('superadmin.maintenance.clearCache') }}" method="POST">
                         @csrf
@@ -66,24 +66,24 @@
             </div>
 
             <!-- Maintenance Actions -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 px-4 sm:px-0">
-                <h3 class="font-bold text-xl text-gray-900 mb-6">Aksi Pemeliharaan</h3>
+            <div class="bg-slate-900 rounded-xl shadow-sm border border-slate-800 p-6 px-4 sm:px-0">
+                <h3 class="font-bold text-xl text-white mb-6">Aksi Pemeliharaan</h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="border border-gray-200 rounded-lg p-4">
-                        <h4 class="font-semibold text-gray-900 mb-2">Backup Database</h4>
-                        <p class="text-sm text-gray-600 mb-4">Buat backup lengkap dari database sistem</p>
+                    <div class="border border-slate-800 rounded-lg p-4">
+                        <h4 class="font-semibold text-white mb-2">Backup Database</h4>
+                        <p class="text-sm text-slate-300 mb-4">Buat backup lengkap dari database sistem</p>
                         <form action="{{ route('superadmin.maintenance.backupDatabase') }}" method="POST">
                             @csrf
-                            <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">
+                            <button type="submit" class="w-full px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 text-sm">
                                 Jalankan Backup
                             </button>
                         </form>
                     </div>
 
-                    <div class="border border-gray-200 rounded-lg p-4">
-                        <h4 class="font-semibold text-gray-900 mb-2">Bersihkan Log</h4>
-                        <p class="text-sm text-gray-600 mb-4">Hapus file log yang sudah lama</p>
+                    <div class="border border-slate-800 rounded-lg p-4">
+                        <h4 class="font-semibold text-white mb-2">Bersihkan Log</h4>
+                        <p class="text-sm text-slate-300 mb-4">Hapus file log yang sudah lama</p>
                         <form action="{{ route('superadmin.maintenance.clearLogs') }}" method="POST">
                             @csrf
                             <button type="submit" class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm"
@@ -93,9 +93,9 @@
                         </form>
                     </div>
 
-                    <div class="border border-gray-200 rounded-lg p-4">
-                        <h4 class="font-semibold text-gray-900 mb-2">Optimize Database</h4>
-                        <p class="text-sm text-gray-600 mb-4">Optimalkan performa database</p>
+                    <div class="border border-slate-800 rounded-lg p-4">
+                        <h4 class="font-semibold text-white mb-2">Optimize Database</h4>
+                        <p class="text-sm text-slate-300 mb-4">Optimalkan performa database</p>
                         <form action="{{ route('superadmin.maintenance.optimizeDatabase') }}" method="POST">
                             @csrf
                             <button type="submit" class="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm">
@@ -104,9 +104,9 @@
                         </form>
                     </div>
 
-                    <div class="border border-gray-200 rounded-lg p-4">
-                        <h4 class="font-semibold text-gray-900 mb-2">Clear Cache</h4>
-                        <p class="text-sm text-gray-600 mb-4">Hapus semua cache aplikasi</p>
+                    <div class="border border-slate-800 rounded-lg p-4">
+                        <h4 class="font-semibold text-white mb-2">Clear Cache</h4>
+                        <p class="text-sm text-slate-300 mb-4">Hapus semua cache aplikasi</p>
                         <form action="{{ route('superadmin.maintenance.clearCache') }}" method="POST">
                             @csrf
                             <button type="submit" class="w-full px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 text-sm"

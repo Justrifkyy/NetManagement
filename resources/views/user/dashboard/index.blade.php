@@ -27,7 +27,7 @@
                 </div>
                 <div class="mt-4 md:mt-0">
                     <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-white border border-slate-200 shadow-sm text-slate-600">
-                        ID Pelanggan: <span class="text-blue-600 ml-1 font-mono">{{ $customer->customer_code ?? 'Menunggu Aktivasi' }}</span>
+                        ID Pelanggan: <span class="text-amber-400 ml-1 font-mono">{{ $customer->customer_code ?? 'Menunggu Aktivasi' }}</span>
                     </span>
                 </div>
             </div>
@@ -72,7 +72,7 @@
 
                 <div class="bg-white rounded-2xl p-6 shadow-sm border border-blue-100 flex flex-col">
                     <div class="flex justify-between items-start mb-4">
-                        <div class="p-3 bg-blue-50 text-blue-600 rounded-xl">
+                        <div class="p-3 bg-blue-50 text-amber-400 rounded-xl">
                             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                         </div>
                         <span class="text-xs font-bold text-slate-400 uppercase">{{ $subscription->package->speed_mbps ?? 0 }} Mbps</span>

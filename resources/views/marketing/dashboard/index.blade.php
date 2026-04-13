@@ -3,14 +3,14 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
             <div class="mb-8 px-4 sm:px-0">
-                <h2 class="text-3xl font-bold text-gray-800">Dashboard Marketing</h2>
-                <p class="text-gray-500 mt-1">Pantau performa prospek dan konversi Anda bulan ini.</p>
+                <h2 class="text-3xl font-bold text-white">Dashboard Marketing</h2>
+                <p class="text-slate-400 mt-1">Pantau performa prospek dan konversi Anda bulan ini.</p>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-4 sm:px-0 mb-8">
 
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex items-center">
-                    <div class="p-4 bg-gray-50 text-gray-600 rounded-xl mr-4">
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-800 flex items-center">
+                    <div class="p-4 bg-slate-950 text-slate-300 rounded-xl mr-4">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
@@ -18,13 +18,13 @@
                         </svg>
                     </div>
                     <div>
-                        <p class="text-sm font-bold text-gray-400 uppercase">Total Leads</p>
-                        <h3 class="text-3xl font-extrabold text-gray-800">{{ $stats['total'] ?? 0 }}</h3>
+                        <p class="text-sm font-bold text-slate-400 uppercase">Total Leads</p>
+                        <h3 class="text-3xl font-extrabold text-white">{{ $stats['total'] ?? 0 }}</h3>
                     </div>
                 </div>
 
                 <div class="bg-white rounded-2xl p-6 shadow-sm border border-blue-100 flex items-center">
-                    <div class="p-4 bg-blue-50 text-blue-600 rounded-xl mr-4">
+                    <div class="p-4 bg-blue-50 text-amber-400 rounded-xl mr-4">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z">
@@ -65,9 +65,9 @@
             </div>
 
             <div class="px-4 sm:px-0">
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
-                        <h3 class="font-bold text-gray-800 text-lg flex items-center">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-800 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-slate-800 bg-slate-950 flex justify-between items-center">
+                        <h3 class="font-bold text-white text-lg flex items-center">
                             <svg class="w-5 h-5 mr-2 text-sky-600" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -85,16 +85,16 @@
                             <thead class="bg-white">
                                 <tr>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-3 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">
                                         Nama Pelanggan</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-3 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">
                                         Paket</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-3 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">
                                         Tanggal Masuk</th>
                                     <th
-                                        class="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                        class="px-6 py-3 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">
                                         Status</th>
                                 </tr>
                             </thead>
@@ -105,8 +105,8 @@
                                 @forelse($recentLeads as $lead)
                                     <tr class="hover:bg-sky-50 transition">
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="font-bold text-gray-900">{{ $lead->name }}</div>
-                                            <div class="text-sm text-gray-500">{{ $lead->phone }}</div>
+                                            <div class="font-bold text-white">{{ $lead->name }}</div>
+                                            <div class="text-sm text-slate-400">{{ $lead->phone }}</div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span
@@ -114,7 +114,7 @@
                                                 {{ $lead->package->name ?? 'Belum Pilih' }}
                                             </span>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-medium">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-400 font-medium">
                                             {{ $lead->created_at->format('d M Y') }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
@@ -127,7 +127,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="4" class="px-6 py-10 text-center text-gray-500">
+                                        <td colspan="4" class="px-6 py-10 text-center text-slate-400">
                                             Belum ada prospek baru yang diinput.
                                         </td>
                                     </tr>

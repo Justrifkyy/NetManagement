@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-white leading-tight">
             {{ __('Detail Lengkap Prospek') }}
         </h2>
     </x-slot>
@@ -35,14 +35,14 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="lg:col-span-2 space-y-6">
-                    <div class="bg-white overflow-hidden shadow-md sm:rounded-xl border border-gray-100 p-6 relative">
+                    <div class="bg-white overflow-hidden shadow-md sm:rounded-xl border border-slate-800 p-6 relative">
                         <div class="absolute top-4 right-4">
                             <span
                                 class="px-3 py-1 text-sm font-bold rounded-full uppercase tracking-wide {{ $lead->status == 'converted' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700' }}">
                                 {{ $lead->status }}
                             </span>
                         </div>
-                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                        <h3 class="text-lg font-bold text-white mb-4 flex items-center">
                             <svg class="w-5 h-5 mr-2 text-sky-600" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -52,44 +52,44 @@
                         </h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <span class="block text-xs text-gray-400 uppercase">Nama Lengkap</span>
-                                <span class="text-lg font-semibold text-gray-800">{{ $lead->name }}</span>
+                                <span class="block text-xs text-slate-400 uppercase">Nama Lengkap</span>
+                                <span class="text-lg font-semibold text-white">{{ $lead->name }}</span>
                             </div>
                             <div>
-                                <span class="block text-xs text-gray-400 uppercase">Jenis Pelanggan</span>
+                                <span class="block text-xs text-slate-400 uppercase">Jenis Pelanggan</span>
                                 <span class="font-medium">{{ ucfirst($lead->customer_type) }}
                                     {{ $lead->business_name ? '(' . $lead->business_name . ')' : '' }}</span>
                             </div>
                             <div>
-                                <span class="block text-xs text-gray-400 uppercase">Ibu Kandung</span>
+                                <span class="block text-xs text-slate-400 uppercase">Ibu Kandung</span>
                                 <span class="font-medium">{{ $lead->mother_name ?? '-' }}</span>
                             </div>
                             <div>
-                                <span class="block text-xs text-gray-400 uppercase">Terdaftar Sejak</span>
+                                <span class="block text-xs text-slate-400 uppercase">Terdaftar Sejak</span>
                                 <span class="font-medium">{{ $lead->created_at->format('d M Y') }}</span>
                             </div>
                         </div>
-                        <hr class="my-4 border-gray-100">
+                        <hr class="my-4 border-slate-800">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <span class="block text-xs text-gray-400 uppercase">No. WhatsApp</span>
+                                <span class="block text-xs text-slate-400 uppercase">No. WhatsApp</span>
                                 <span class="text-lg font-bold text-green-600">{{ $lead->phone }}</span>
                             </div>
                             <div>
-                                <span class="block text-xs text-gray-400 uppercase">Email</span>
+                                <span class="block text-xs text-slate-400 uppercase">Email</span>
                                 <span class="font-medium">{{ $lead->email ?? '-' }}</span>
                             </div>
                             <div>
-                                <span class="block text-xs text-gray-400 uppercase">Kontak Darurat</span>
+                                <span class="block text-xs text-slate-400 uppercase">Kontak Darurat</span>
                                 <span class="font-medium">{{ $lead->emergency_name }}
                                     ({{ $lead->emergency_relation }})</span>
-                                <span class="block text-sm text-gray-500">{{ $lead->emergency_phone }}</span>
+                                <span class="block text-sm text-slate-400">{{ $lead->emergency_phone }}</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-white overflow-hidden shadow-md sm:rounded-xl border border-gray-100 p-6">
-                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                    <div class="bg-white overflow-hidden shadow-md sm:rounded-xl border border-slate-800 p-6">
+                        <h3 class="text-lg font-bold text-white mb-4 flex items-center">
                             <svg class="w-5 h-5 mr-2 text-sky-600" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -104,26 +104,26 @@
                             <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-100">
                                 <span class="block text-xs text-yellow-600 font-bold uppercase mb-1">Alamat Pemasangan
                                     (Domisili)</span>
-                                <p class="text-gray-800 font-medium">{{ $lead->address_installation }}</p>
+                                <p class="text-white font-medium">{{ $lead->address_installation }}</p>
                             </div>
-                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
-                                <span class="block text-xs text-gray-400 font-bold uppercase mb-1">Alamat Sesuai
+                            <div class="bg-slate-950 p-4 rounded-lg border border-slate-800">
+                                <span class="block text-xs text-slate-400 font-bold uppercase mb-1">Alamat Sesuai
                                     KTP</span>
-                                <p class="text-gray-600 text-sm">
+                                <p class="text-slate-300 text-sm">
                                     {{ $lead->address_ktp ?? 'Sama dengan alamat pasang / Tidak diisi' }}</p>
                             </div>
                             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                                <div><span class="block text-gray-400 text-xs">RT/RW</span> {{ $lead->rt_rw ?? '-' }}
+                                <div><span class="block text-slate-400 text-xs">RT/RW</span> {{ $lead->rt_rw ?? '-' }}
                                 </div>
-                                <div><span class="block text-gray-400 text-xs">Kelurahan</span>
+                                <div><span class="block text-slate-400 text-xs">Kelurahan</span>
                                     {{ $lead->village ?? '-' }}</div>
-                                <div><span class="block text-gray-400 text-xs">Kecamatan</span>
+                                <div><span class="block text-slate-400 text-xs">Kecamatan</span>
                                     {{ $lead->district ?? '-' }}</div>
-                                <div><span class="block text-gray-400 text-xs">Kota/Kab</span> {{ $lead->city ?? '-' }}
+                                <div><span class="block text-slate-400 text-xs">Kota/Kab</span> {{ $lead->city ?? '-' }}
                                 </div>
-                                <div><span class="block text-gray-400 text-xs">Provinsi</span>
+                                <div><span class="block text-slate-400 text-xs">Provinsi</span>
                                     {{ $lead->province ?? '-' }}</div>
-                                <div><span class="block text-gray-400 text-xs">Kode Pos</span>
+                                <div><span class="block text-slate-400 text-xs">Kode Pos</span>
                                     {{ $lead->postal_code ?? '-' }}</div>
                             </div>
                             <div
@@ -142,14 +142,14 @@
                                 @endif
                             </div>
                             <div class="text-sm">
-                                <span class="block text-gray-400 text-xs">Patokan / Landmark</span>
-                                <p class="text-gray-700">{{ $lead->landmark ?? '-' }}</p>
+                                <span class="block text-slate-400 text-xs">Patokan / Landmark</span>
+                                <p class="text-slate-300">{{ $lead->landmark ?? '-' }}</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-white overflow-hidden shadow-md sm:rounded-xl border border-gray-100 p-6">
-                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                    <div class="bg-white overflow-hidden shadow-md sm:rounded-xl border border-slate-800 p-6">
+                        <h3 class="text-lg font-bold text-white mb-4 flex items-center">
                             <svg class="w-5 h-5 mr-2 text-sky-600" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -163,7 +163,7 @@
                                 <span class="block text-xs text-blue-500 uppercase font-bold mb-1">Paket Dipilih</span>
                                 <p class="text-xl font-bold text-blue-800">
                                     {{ $lead->package->name ?? 'Tidak ada paket' }}</p>
-                                <p class="text-sm text-blue-600">{{ $lead->package->speed_mbps ?? 0 }} Mbps - Rp
+                                <p class="text-sm text-amber-400">{{ $lead->package->speed_mbps ?? 0 }} Mbps - Rp
                                     {{ number_format($lead->package->price ?? 0, 0, ',', '.') }}</p>
                                 @if ($lead->promo_code)
                                     <span
@@ -172,22 +172,22 @@
                                 @endif
                             </div>
                             <div class="space-y-3 text-sm">
-                                <div class="flex justify-between border-b border-gray-100 pb-2">
-                                    <span class="text-gray-500">Jadwal Survey</span>
+                                <div class="flex justify-between border-b border-slate-800 pb-2">
+                                    <span class="text-slate-400">Jadwal Survey</span>
                                     <span
                                         class="font-bold">{{ $lead->survey_date ? $lead->survey_date->format('d M Y') : '-' }}</span>
                                 </div>
-                                <div class="flex justify-between border-b border-gray-100 pb-2">
-                                    <span class="text-gray-500">Jadwal Instalasi</span>
+                                <div class="flex justify-between border-b border-slate-800 pb-2">
+                                    <span class="text-slate-400">Jadwal Instalasi</span>
                                     <span
                                         class="font-bold">{{ $lead->installation_date ? $lead->installation_date->format('d M Y') : '-' }}</span>
                                 </div>
-                                <div class="flex justify-between border-b border-gray-100 pb-2">
-                                    <span class="text-gray-500">Waktu Diinginkan</span>
+                                <div class="flex justify-between border-b border-slate-800 pb-2">
+                                    <span class="text-slate-400">Waktu Diinginkan</span>
                                     <span class="font-bold">{{ $lead->preferred_time ?? '-' }}</span>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="text-gray-500">Sumber Info</span>
+                                    <span class="text-slate-400">Sumber Info</span>
                                     <span class="font-bold">{{ $lead->source ?? '-' }}</span>
                                 </div>
                             </div>
@@ -196,13 +196,13 @@
                 </div>
 
                 <div class="lg:col-span-1 space-y-6">
-                    <div class="bg-white overflow-hidden shadow-md sm:rounded-xl border border-gray-100 p-6">
-                        <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Catatan Tim</h3>
+                    <div class="bg-white overflow-hidden shadow-md sm:rounded-xl border border-slate-800 p-6">
+                        <h3 class="text-lg font-bold text-white mb-4 border-b pb-2">Catatan Tim</h3>
                         <div class="space-y-4">
                             <div>
-                                <span class="block text-xs font-bold text-gray-400 uppercase">Ringkasan
+                                <span class="block text-xs font-bold text-slate-400 uppercase">Ringkasan
                                     Komunikasi</span>
-                                <p class="text-sm bg-gray-50 p-2 rounded mt-1">{{ $lead->notes_summary ?? '-' }}</p>
+                                <p class="text-sm bg-slate-950 p-2 rounded mt-1">{{ $lead->notes_summary ?? '-' }}</p>
                             </div>
                             <div>
                                 <span class="block text-xs font-bold text-red-400 uppercase">Kendala / Hambatan</span>
@@ -210,20 +210,20 @@
                                     {{ $lead->notes_obstacle ?? '-' }}</p>
                             </div>
                             <div>
-                                <span class="block text-xs font-bold text-gray-400 uppercase">Catatan Khusus</span>
+                                <span class="block text-xs font-bold text-slate-400 uppercase">Catatan Khusus</span>
                                 <p class="text-sm bg-yellow-50 p-2 rounded mt-1">{{ $lead->notes_special ?? '-' }}</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-white overflow-hidden shadow-md sm:rounded-xl border border-gray-100 p-6">
-                        <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Dokumen Digital</h3>
+                    <div class="bg-white overflow-hidden shadow-md sm:rounded-xl border border-slate-800 p-6">
+                        <h3 class="text-lg font-bold text-white mb-4 border-b pb-2">Dokumen Digital</h3>
                         <div class="space-y-4">
                             <div>
-                                <span class="block text-xs font-bold text-gray-400 uppercase mb-2">Foto KTP</span>
+                                <span class="block text-xs font-bold text-slate-400 uppercase mb-2">Foto KTP</span>
                                 @if ($lead->ktp_image_path)
                                     <a href="{{ Storage::url($lead->ktp_image_path) }}" target="_blank"
-                                        class="block group relative h-40 rounded-lg overflow-hidden border border-gray-200">
+                                        class="block group relative h-40 rounded-lg overflow-hidden border border-slate-800">
                                         <img src="{{ Storage::url($lead->ktp_image_path) }}"
                                             class="w-full h-full object-cover transition group-hover:scale-105">
                                         <div
@@ -234,15 +234,15 @@
                                     </a>
                                 @else
                                     <div
-                                        class="h-20 bg-gray-100 rounded-lg flex items-center justify-center text-xs text-gray-400">
+                                        class="h-20 bg-slate-800 rounded-lg flex items-center justify-center text-xs text-slate-400">
                                         Tidak ada foto</div>
                                 @endif
                             </div>
                             <div>
-                                <span class="block text-xs font-bold text-gray-400 uppercase mb-2">Foto Rumah</span>
+                                <span class="block text-xs font-bold text-slate-400 uppercase mb-2">Foto Rumah</span>
                                 @if ($lead->house_image_path)
                                     <a href="{{ Storage::url($lead->house_image_path) }}" target="_blank"
-                                        class="block group relative h-40 rounded-lg overflow-hidden border border-gray-200">
+                                        class="block group relative h-40 rounded-lg overflow-hidden border border-slate-800">
                                         <img src="{{ Storage::url($lead->house_image_path) }}"
                                             class="w-full h-full object-cover transition group-hover:scale-105">
                                         <div
@@ -253,16 +253,16 @@
                                     </a>
                                 @else
                                     <div
-                                        class="h-20 bg-gray-100 rounded-lg flex items-center justify-center text-xs text-gray-400">
+                                        class="h-20 bg-slate-800 rounded-lg flex items-center justify-center text-xs text-slate-400">
                                         Tidak ada foto</div>
                                 @endif
                             </div>
                             <div>
-                                <span class="block text-xs font-bold text-gray-400 uppercase mb-2">Foto
+                                <span class="block text-xs font-bold text-slate-400 uppercase mb-2">Foto
                                     Pelanggan</span>
                                 @if ($lead->customer_image_path)
                                     <a href="{{ Storage::url($lead->customer_image_path) }}" target="_blank"
-                                        class="block group relative h-40 rounded-lg overflow-hidden border border-gray-200">
+                                        class="block group relative h-40 rounded-lg overflow-hidden border border-slate-800">
                                         <img src="{{ Storage::url($lead->customer_image_path) }}"
                                             class="w-full h-full object-cover transition group-hover:scale-105">
                                         <div
@@ -273,7 +273,7 @@
                                     </a>
                                 @else
                                     <div
-                                        class="h-20 bg-gray-100 rounded-lg flex items-center justify-center text-xs text-gray-400">
+                                        class="h-20 bg-slate-800 rounded-lg flex items-center justify-center text-xs text-slate-400">
                                         Tidak ada foto</div>
                                 @endif
                             </div>

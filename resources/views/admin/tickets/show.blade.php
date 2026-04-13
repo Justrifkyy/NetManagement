@@ -1,76 +1,76 @@
 <x-app-layout>
-    <div class="py-10 bg-gray-50 min-h-screen">
+    <div class="py-10 bg-slate-950 min-h-screen">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="mb-8">
                 <a href="{{ route('admin.tickets.index') }}" class="text-purple-600 hover:text-purple-900 font-medium">← Kembali</a>
-                <h2 class="text-3xl font-extrabold text-gray-900 mt-2">Detail Tiket #{{ $ticket->id }}</h2>
+                <h2 class="text-3xl font-extrabold text-white mt-2">Detail Tiket #{{ $ticket->id }}</h2>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+            <div class="bg-slate-900 rounded-xl shadow-sm border border-slate-800 p-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <!-- Left Column -->
                     <div class="space-y-6">
                         <div>
-                            <h3 class="text-sm font-semibold text-gray-600 uppercase">Pelanggan</h3>
-                            <p class="text-lg font-bold text-gray-900 mt-1">{{ $ticket->customer->user->name }}</p>
-                            <p class="text-sm text-gray-600">{{ $ticket->customer->phone_number }}</p>
+                            <h3 class="text-sm font-semibold text-slate-300 uppercase">Pelanggan</h3>
+                            <p class="text-lg font-bold text-white mt-1">{{ $ticket->customer->user->name }}</p>
+                            <p class="text-sm text-slate-300">{{ $ticket->customer->phone_number }}</p>
                         </div>
 
                         <div>
-                            <h3 class="text-sm font-semibold text-gray-600 uppercase">Tipe Tiket</h3>
+                            <h3 class="text-sm font-semibold text-slate-300 uppercase">Tipe Tiket</h3>
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium mt-1 @switch($ticket->type)
                                 @case('survey') bg-blue-100 text-blue-800 @break
                                 @case('installation') bg-green-100 text-green-800 @break
                                 @case('troubleshoot') bg-yellow-100 text-yellow-800 @break
-                                @default bg-gray-100 text-gray-800
+                                @default bg-slate-800 text-white
                             @endswitch">
                                 {{ ucfirst($ticket->type) }}
                             </span>
                         </div>
 
                         <div>
-                            <h3 class="text-sm font-semibold text-gray-600 uppercase">Subjek</h3>
-                            <p class="text-gray-900 mt-1">{{ $ticket->subject }}</p>
+                            <h3 class="text-sm font-semibold text-slate-300 uppercase">Subjek</h3>
+                            <p class="text-white mt-1">{{ $ticket->subject }}</p>
                         </div>
                     </div>
 
                     <!-- Right Column -->
                     <div class="space-y-6">
                         <div>
-                            <h3 class="text-sm font-semibold text-gray-600 uppercase">Status</h3>
+                            <h3 class="text-sm font-semibold text-slate-300 uppercase">Status</h3>
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium mt-1 @switch($ticket->status)
                                 @case('open') bg-red-100 text-red-800 @break
                                 @case('assigned') bg-blue-100 text-blue-800 @break
                                 @case('in_progress') bg-yellow-100 text-yellow-800 @break
                                 @case('resolved') bg-green-100 text-green-800 @break
-                                @case('closed') bg-gray-100 text-gray-800 @break
+                                @case('closed') bg-slate-800 text-white @break
                             @endswitch">
                                 {{ ucfirst(str_replace('_', ' ', $ticket->status)) }}
                             </span>
                         </div>
 
                         <div>
-                            <h3 class="text-sm font-semibold text-gray-600 uppercase">Teknisi</h3>
-                            <p class="text-gray-900 mt-1">
+                            <h3 class="text-sm font-semibold text-slate-300 uppercase">Teknisi</h3>
+                            <p class="text-white mt-1">
                                 @if ($ticket->technician)
                                     {{ $ticket->technician->name }}
                                 @else
-                                    <span class="text-gray-500">Belum ditugaskan</span>
+                                    <span class="text-slate-400">Belum ditugaskan</span>
                                 @endif
                             </p>
                         </div>
 
                         <div>
-                            <h3 class="text-sm font-semibold text-gray-600 uppercase">Dibuat Pada</h3>
-                            <p class="text-gray-900 mt-1">{{ $ticket->created_at->format('d M Y H:i') }}</p>
+                            <h3 class="text-sm font-semibold text-slate-300 uppercase">Dibuat Pada</h3>
+                            <p class="text-white mt-1">{{ $ticket->created_at->format('d M Y H:i') }}</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Additional Details -->
                 @if ($ticket->survey_notes || $ticket->installation_notes)
-                    <div class="border-t border-gray-200 mt-8 pt-8">
-                        <h3 class="text-lg font-bold text-gray-900 mb-4">Detail Pekerjaan</h3>
+                    <div class="border-t border-slate-800 mt-8 pt-8">
+                        <h3 class="text-lg font-bold text-white mb-4">Detail Pekerjaan</h3>
                         
                         @if ($ticket->survey_notes)
                             <div class="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
@@ -88,7 +88,7 @@
                     </div>
                 @endif
 
-                <div class="flex gap-4 mt-8 pt-8 border-t border-gray-200">
+                <div class="flex gap-4 mt-8 pt-8 border-t border-slate-800">
                     <a href="{{ route('admin.tickets.edit', $ticket) }}" class="px-6 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 font-medium">
                         Edit
                     </a>

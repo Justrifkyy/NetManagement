@@ -4,8 +4,8 @@
 
             <div class="flex flex-col md:flex-row justify-between items-center mb-8 px-4 sm:px-0">
                 <div class="mb-4 md:mb-0 text-center md:text-left">
-                    <h2 class="text-3xl font-bold text-gray-800">Daftar Prospek (Leads)</h2>
-                    <p class="text-gray-500 mt-1">Kelola data calon pelanggan & konversi penjualan.</p>
+                    <h2 class="text-3xl font-bold text-white">Daftar Prospek (Leads)</h2>
+                    <p class="text-slate-400 mt-1">Kelola data calon pelanggan & konversi penjualan.</p>
                 </div>
                 <div>
                     <a href="{{ route('marketing.leads.create') }}"
@@ -30,7 +30,7 @@
                 </div>
             @endif
 
-            <div class="hidden md:block bg-white overflow-hidden shadow-xl sm:rounded-2xl border border-gray-100">
+            <div class="hidden md:block bg-white overflow-hidden shadow-xl sm:rounded-2xl border border-slate-800">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gradient-to-r from-sky-600 to-blue-600 text-white">
                         <tr>
@@ -54,8 +54,8 @@
                                             </div>
                                         </div>
                                         <div class="ml-4">
-                                            <div class="text-sm font-bold text-gray-900">{{ $lead->name }}</div>
-                                            <div class="text-xs text-gray-500">{{ $lead->phone }}</div>
+                                            <div class="text-sm font-bold text-white">{{ $lead->name }}</div>
+                                            <div class="text-xs text-slate-400">{{ $lead->phone }}</div>
                                         </div>
                                     </div>
                                 </td>
@@ -64,28 +64,28 @@
                                         class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-md bg-blue-50 text-blue-700 border border-blue-100">
                                         {{ $lead->package->name ?? 'Belum Pilih' }}
                                     </span>
-                                    <div class="text-xs text-gray-400 mt-1">{{ $lead->created_at->format('d M Y') }}
+                                    <div class="text-xs text-slate-400 mt-1">{{ $lead->created_at->format('d M Y') }}
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <div class="text-sm text-gray-700 truncate max-w-xs"
+                                    <div class="text-sm text-slate-300 truncate max-w-xs"
                                         title="{{ $lead->address_installation }}">
                                         {{ Str::limit($lead->address_installation, 35) }}
                                     </div>
-                                    <div class="text-xs text-gray-400">{{ $lead->district ?? '-' }},
+                                    <div class="text-xs text-slate-400">{{ $lead->district ?? '-' }},
                                         {{ $lead->city ?? '-' }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-center">
                                     @php
                                         $statusClasses = [
-                                            'prospek' => 'bg-gray-100 text-gray-800 border-gray-200',
+                                            'prospek' => 'bg-slate-800 text-white border-slate-800',
                                             'survey' => 'bg-yellow-100 text-yellow-800 border-yellow-200',
                                             'instalasi' => 'bg-blue-100 text-blue-800 border-blue-200',
                                             'aktif' => 'bg-green-100 text-green-800 border-green-200',
                                             'batal' => 'bg-red-100 text-red-800 border-red-200',
                                             'converted' => 'bg-purple-100 text-purple-800 border-purple-200',
                                         ];
-                                        $currentClass = $statusClasses[$lead->status] ?? 'bg-gray-100 text-gray-800';
+                                        $currentClass = $statusClasses[$lead->status] ?? 'bg-slate-800 text-white';
                                     @endphp
                                     <span
                                         class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full border {{ $currentClass }} uppercase tracking-wide">
@@ -95,7 +95,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-center">
                                     <div class="flex items-center justify-center space-x-2">
                                         <a href="{{ route('marketing.leads.show', $lead->id) }}"
-                                            class="p-2 bg-white border border-gray-200 rounded-lg text-gray-500 hover:bg-sky-50 hover:text-sky-600 hover:border-sky-300 transition shadow-sm"
+                                            class="p-2 bg-white border border-slate-800 rounded-lg text-slate-400 hover:bg-sky-50 hover:text-sky-600 hover:border-sky-300 transition shadow-sm"
                                             title="Lihat Detail">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
@@ -109,7 +109,7 @@
 
                                         @if ($lead->status !== 'converted')
                                             <a href="{{ route('marketing.leads.edit', $lead->id) }}"
-                                                class="p-2 bg-white border border-gray-200 rounded-lg text-gray-500 hover:bg-yellow-50 hover:text-yellow-600 hover:border-yellow-300 transition shadow-sm"
+                                                class="p-2 bg-white border border-slate-800 rounded-lg text-slate-400 hover:bg-yellow-50 hover:text-yellow-600 hover:border-yellow-300 transition shadow-sm"
                                                 title="Edit Data">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
@@ -124,7 +124,7 @@
                                                 onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini secara permanen?');">
                                                 @csrf @method('DELETE')
                                                 <button type="submit"
-                                                    class="p-2 bg-white border border-gray-200 rounded-lg text-gray-500 hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition shadow-sm"
+                                                    class="p-2 bg-white border border-slate-800 rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition shadow-sm"
                                                     title="Hapus Data">
                                                     <svg class="w-5 h-5" fill="none" stroke="currentColor"
                                                         viewBox="0 0 24 24">
@@ -165,9 +165,9 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-10 text-center text-gray-500">
+                                <td colspan="5" class="px-6 py-10 text-center text-slate-400">
                                     <div class="flex flex-col items-center justify-center">
-                                        <svg class="w-12 h-12 text-gray-300 mb-2" fill="none"
+                                        <svg class="w-12 h-12 text-slate-400 mb-2" fill="none"
                                             stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
@@ -184,15 +184,15 @@
 
             <div class="md:hidden space-y-4 px-4 sm:px-0">
                 @forelse($leads as $lead)
-                    <div class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden relative">
+                    <div class="bg-slate-900 rounded-xl shadow-md border border-slate-800 overflow-hidden relative">
                         <div class="absolute top-0 right-0 p-2">
                             @php
                                 $mobileStatusColor = match ($lead->status) {
                                     'converted' => 'bg-purple-100 text-purple-700',
-                                    'prospek' => 'bg-gray-100 text-gray-700',
+                                    'prospek' => 'bg-slate-800 text-slate-300',
                                     'survey' => 'bg-yellow-100 text-yellow-700',
                                     'instalasi' => 'bg-blue-100 text-blue-700',
-                                    default => 'bg-gray-100 text-gray-600',
+                                    default => 'bg-slate-800 text-slate-300',
                                 };
                             @endphp
                             <span
@@ -201,14 +201,14 @@
                             </span>
                         </div>
 
-                        <div class="p-4 border-b border-gray-50 flex items-center bg-gray-50">
+                        <div class="p-4 border-b border-slate-800 flex items-center bg-slate-950">
                             <div
                                 class="h-10 w-10 rounded-full bg-sky-100 flex items-center justify-center text-sky-700 font-bold text-lg border border-sky-200 uppercase">
                                 {{ substr($lead->name, 0, 1) }}
                             </div>
                             <div class="ml-3">
-                                <h4 class="text-sm font-bold text-gray-800">{{ $lead->name }}</h4>
-                                <span class="text-xs text-gray-500 block">{{ $lead->phone }}</span>
+                                <h4 class="text-sm font-bold text-white">{{ $lead->name }}</h4>
+                                <span class="text-xs text-slate-400 block">{{ $lead->phone }}</span>
                             </div>
                         </div>
 
@@ -223,7 +223,7 @@
                                     class="text-blue-700 font-semibold text-xs bg-blue-50 px-2 py-0.5 rounded">{{ $lead->package->name ?? 'Tanpa Paket' }}</span>
                             </div>
                             <div class="flex items-start text-sm">
-                                <svg class="w-4 h-4 text-gray-400 mr-2 mt-0.5" fill="none" stroke="currentColor"
+                                <svg class="w-4 h-4 text-slate-400 mr-2 mt-0.5" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
@@ -231,14 +231,14 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                 </svg>
-                                <span class="text-gray-600 truncate text-xs">{{ $lead->address_installation }}</span>
+                                <span class="text-slate-300 truncate text-xs">{{ $lead->address_installation }}</span>
                             </div>
                         </div>
 
                         <div
-                            class="px-4 py-3 bg-gray-50 border-t border-gray-100 grid {{ $lead->status !== 'converted' ? 'grid-cols-4' : 'grid-cols-1' }} gap-2">
+                            class="px-4 py-3 bg-slate-950 border-t border-slate-800 grid {{ $lead->status !== 'converted' ? 'grid-cols-4' : 'grid-cols-1' }} gap-2">
                             <a href="{{ route('marketing.leads.show', $lead->id) }}"
-                                class="flex items-center justify-center p-2 bg-white border border-gray-200 rounded-lg text-gray-600 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600 transition">
+                                class="flex items-center justify-center p-2 bg-white border border-slate-800 rounded-lg text-slate-300 hover:bg-blue-50 hover:border-blue-200 hover:text-amber-400 transition">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -249,7 +249,7 @@
                             </a>
                             @if ($lead->status !== 'converted')
                                 <a href="{{ route('marketing.leads.edit', $lead->id) }}"
-                                    class="flex items-center justify-center p-2 bg-white border border-gray-200 rounded-lg text-gray-600 hover:bg-yellow-50 hover:border-yellow-200 hover:text-yellow-600 transition">
+                                    class="flex items-center justify-center p-2 bg-white border border-slate-800 rounded-lg text-slate-300 hover:bg-yellow-50 hover:border-yellow-200 hover:text-yellow-600 transition">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
@@ -260,7 +260,7 @@
                                     onsubmit="return confirm('Hapus?');" class="flex">
                                     @csrf @method('DELETE')
                                     <button type="submit"
-                                        class="w-full flex items-center justify-center p-2 bg-white border border-gray-200 rounded-lg text-gray-600 hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition">
+                                        class="w-full flex items-center justify-center p-2 bg-white border border-slate-800 rounded-lg text-slate-300 hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -295,8 +295,8 @@
                         </div>
                     </div>
                 @empty
-                    <div class="text-center py-10 bg-white rounded-xl border border-gray-100">
-                        <p class="text-gray-500">Belum ada data prospek.</p>
+                    <div class="text-center py-10 bg-slate-900 rounded-xl border border-slate-800">
+                        <p class="text-slate-400">Belum ada data prospek.</p>
                     </div>
                 @endforelse
             </div>
