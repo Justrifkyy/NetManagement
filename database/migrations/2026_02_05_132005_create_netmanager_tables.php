@@ -34,6 +34,7 @@ return new class extends Migration {
             $table->string('location');
             $table->string('ip_address')->nullable();
             $table->string('brand')->nullable();
+            $table->string('type')->nullable(); // OLT, Router, AP, ODP
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
