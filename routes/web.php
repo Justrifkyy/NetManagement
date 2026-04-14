@@ -271,13 +271,12 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
             Route::get('/installation/{installation_id}/handover', [TechnicianController::class, 'handover_form'])->name('handover.form');
             Route::post('/installation/{installation_id}/handover', [TechnicianController::class, 'handover_store'])->name('handover.store');
             
-            // 9. Tickets (Legacy routes)
-            Route::get('/tickets', [TicketController::class, 'index'])->name('tickets.index');
-            Route::get('/tickets/{ticket}', [TicketController::class, 'show'])->name('tickets.show');
-            Route::post('/tickets/{ticket}/claim', [TicketController::class, 'claim'])->name('tickets.claim');
-            
-            // 10. Alias for ticket routes
+            // 9. Tickets (Bursa Pekerjaan)
             Route::get('/ticket', [TicketController::class, 'index'])->name('ticket.index');
+            Route::get('/ticket/{ticket}', [TicketController::class, 'show'])->name('ticket.show');
+            Route::post('/ticket/{ticket}/claim', [TicketController::class, 'claim'])->name('ticket.claim');
+            
+            // 10. Process (Meja Kerja Teknisi)
             
             // 11. Process (Tugas Saya)
             Route::get('/process', [ProcessController::class, 'index'])->name('process.index');
@@ -297,24 +296,18 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
             ->prefix('client')
             ->name('client.')
             ->group(function () {
-                // 1. Dashboard (Beranda)
-                Route::get('/dashboard', [CustomerDashboardController::class, 'index'])->name('dashboard');
+                // Dashboard redirect ke billing
+                Route::get('/dashboard', function() {
+                    return redirect()->route('client.billing.index');
+                })->name('dashboard');
 
-                // 2. Akun & Profil (Gunakan Controller bawaan nanti, sementara kita arahkan ke dashboard/profil dummy)
-                Route::view('/profile', 'user.profile.index')->name('profile.index');
-
-                // 3. Tagihan & Pembayaran
+                // 1. Pembayaran & Tagihan
                 Route::get('/billing', [InvoiceController::class, 'index'])->name('billing.index');
                 Route::get('/billing/{invoice}', [InvoiceController::class, 'show'])->name('billing.show');
 
-                // 4. Layanan (Status, Ganti Paket, Isolir)
-                Route::view('/services', 'user.services.index')->name('services.index');
-
-                // 5. Keluhan (Ticketing Pelanggan)
-                Route::view('/tickets', 'user.tickets.index')->name('tickets.index');
-                Route::view('/tickets/create', 'user.tickets.create')->name('tickets.create');
-
-                // 6. Notifikasi
-                Route::view('/notifications', 'user.notifications.index')->name('notifications.index');
+                // 2. Pengajuan / Keluhan
+                Route::get('/complaints', function() { return view('client.complaints.index'); })->name('complaints.index');
+                Route::get('/complaints/create', function() { return view('client.complaints.create'); })->name('complaints.create');
+                Route::post('/complaints', function() { return back()->with('success', 'Laporan berhasil dikirim'); })->name('complaints.store');
             });
-});
+        });

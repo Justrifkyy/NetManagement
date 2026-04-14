@@ -9,6 +9,13 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $customer_id
  * @property int|null $technician_id
  * @property string $status
+ * @property string|null $type
+ * @property string|null $subject
+ * @property string|null $description
+ * @property string|null $technical_notes
+ * @property string|null $location_photo_path
+ * @property string|null $speedtest_photo_path
+ * @property string|null $evidence_photo_path
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  */

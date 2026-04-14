@@ -23,16 +23,16 @@ class TicketController extends Controller
             ->latest()
             ->get();
 
-        return view('technician.tickets.index', compact('tickets'));
+        return view('technician.ticket.index', compact('tickets'));
     }
 
     public function show(Ticket $ticket)
     {
         if ($ticket->status !== 'open') {
-            return redirect()->route('technician.tickets.index')->with('error', 'Tiket ini sudah tidak tersedia.');
+            return redirect()->route('technician.ticket.index')->with('error', 'Tiket ini sudah tidak tersedia.');
         }
 
-        return view('technician.tickets.show', compact('ticket'));
+        return view('technician.ticket.show', compact('ticket'));
     }
 
     public function claim(Ticket $ticket)
@@ -61,7 +61,7 @@ class TicketController extends Controller
             ->latest()
             ->get();
 
-        return view('technician.tickets.process.index', compact('tickets'));
+        return view('technician.ticket.process.index', compact('tickets'));
     }
 
     public function processInput(Ticket $ticket)
@@ -74,7 +74,7 @@ class TicketController extends Controller
             $ticket->update(['status' => 'in_progress']);
         }
 
-        return view('technician.tickets.process.update', compact('ticket', 'routers'));
+        return view('technician.ticket.process.update', compact('ticket', 'routers'));
     }
 
     public function processStore(Request $request, Ticket $ticket)
@@ -90,7 +90,7 @@ class TicketController extends Controller
     {
         if ($ticket->technician_id !== Auth::id()) abort(403);
 
-        return view('technician.tickets.process.show', compact('ticket'));
+        return view('technician.ticket.process.show', compact('ticket'));
     }
 
     public function processEdit(Ticket $ticket)
@@ -102,7 +102,7 @@ class TicketController extends Controller
         }
 
         $routers = NetworkAsset::where('is_active', true)->get();
-        return view('technician.tickets.process.edit', compact('ticket', 'routers'));
+        return view('technician.ticket.process.edit', compact('ticket', 'routers'));
     }
 
     public function processUpdate(Request $request, Ticket $ticket)
