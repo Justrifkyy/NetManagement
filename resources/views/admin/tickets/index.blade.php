@@ -13,8 +13,8 @@
             </div>
 
             @if (session('success'))
-                <div class="mb-4 px-4 sm:px-0 rounded-xl bg-green-50 p-4 border border-green-200">
-                    <p class="text-green-700">{{ session('success') }}</p>
+                <div class="mb-6 mx-4 sm:mx-0 bg-green-900/50 border border-green-500 text-green-300 p-4 rounded-lg">
+                    ✅ {{ session('success') }}
                 </div>
             @endif
 
@@ -118,12 +118,12 @@
                                     </td>
                                     <td class="px-6 py-4 text-sm">
                                         <div class="flex gap-2">
-                                            <a href="{{ route('admin.tickets.show', $ticket) }}" class="text-amber-400 hover:text-amber-300 font-medium text-xs" title="Lihat Detail">👁️</a>
-                                            <a href="{{ route('admin.tickets.edit', $ticket) }}" class="text-yellow-600 hover:text-yellow-900 font-medium text-xs" title="Edit">✏️</a>
+                                            <a href="{{ route('admin.tickets.show', $ticket) }}" class="text-cyan-400 hover:text-cyan-300 font-medium text-xs" title="Lihat Detail">👁️</a>
+                                            <a href="{{ route('admin.tickets.edit', $ticket) }}" class="text-purple-400 hover:text-purple-300 font-medium text-xs" title="Edit">✏️</a>
                                             <form action="{{ route('admin.tickets.destroy', $ticket) }}" method="POST" class="inline" onsubmit="return confirm('Hapus tiket ini?')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="text-red-600 hover:text-red-900 font-medium text-xs" title="Hapus">🗑️</button>
+                                                <button type="submit" class="text-red-400 hover:text-red-300 font-medium text-xs" title="Hapus">🗑️</button>
                                             </form>
                                         </div>
                                     </td>

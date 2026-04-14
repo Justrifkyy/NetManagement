@@ -2,7 +2,7 @@
     <div class="py-10 bg-slate-950 min-h-screen">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="mb-8">
-                <a href="{{ route('admin.tickets.index') }}" class="text-purple-600 hover:text-purple-900 font-medium">← Kembali</a>
+                <a href="{{ route('admin.tickets.index') }}" class="text-purple-400 hover:text-purple-300 font-medium">← Kembali</a>
                 <h2 class="text-3xl font-extrabold text-white mt-2">Detail Tiket #{{ $ticket->id }}</h2>
             </div>
 
@@ -73,30 +73,30 @@
                         <h3 class="text-lg font-bold text-white mb-4">Detail Pekerjaan</h3>
                         
                         @if ($ticket->survey_notes)
-                            <div class="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                                <h4 class="font-semibold text-blue-900">Catatan Survey:</h4>
-                                <p class="text-blue-800 mt-2">{{ $ticket->survey_notes }}</p>
+                            <div class="mb-4 p-4 bg-blue-900/30 rounded-lg border border-blue-700">
+                                <h4 class="font-semibold text-blue-300">🔍 Catatan Survey:</h4>
+                                <p class="text-blue-200 mt-2">{{ $ticket->survey_notes }}</p>
                             </div>
                         @endif
 
                         @if ($ticket->installation_notes)
-                            <div class="p-4 bg-green-50 rounded-lg border border-green-200">
-                                <h4 class="font-semibold text-green-900">Catatan Instalasi:</h4>
-                                <p class="text-green-800 mt-2">{{ $ticket->installation_notes }}</p>
+                            <div class="p-4 bg-green-900/30 rounded-lg border border-green-700">
+                                <h4 class="font-semibold text-green-300">🔧 Catatan Instalasi:</h4>
+                                <p class="text-green-200 mt-2">{{ $ticket->installation_notes }}</p>
                             </div>
                         @endif
                     </div>
                 @endif
 
                 <div class="flex gap-4 mt-8 pt-8 border-t border-slate-800">
-                    <a href="{{ route('admin.tickets.edit', $ticket) }}" class="px-6 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 font-medium">
-                        Edit
+                    <a href="{{ route('admin.tickets.edit', $ticket) }}" class="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium">
+                        ✏️ Edit
                     </a>
                     <form action="{{ route('admin.tickets.destroy', $ticket) }}" method="POST" class="inline" onsubmit="return confirm('Hapus tiket ini?')">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium">
-                            Hapus
+                            🗑️ Hapus
                         </button>
                     </form>
                 </div>

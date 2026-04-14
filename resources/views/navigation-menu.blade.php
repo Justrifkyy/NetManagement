@@ -74,13 +74,13 @@
                         <x-nav-link href="{{ route('technician.dashboard') }}" :active="request()->routeIs('technician.dashboard')">
                             {{ __('Dashboard') }}
                         </x-nav-link>
-                        <x-nav-link href="{{ route('technician.surveys.index') }}" :active="request()->routeIs('technician.surveys.*')">
+                        <x-nav-link href="{{ route('technician.survey.index') }}" :active="request()->routeIs('technician.survey.*')">
                             {{ __('Survey') }}
                         </x-nav-link>
-                        <x-nav-link href="{{ route('technician.installations.index') }}" :active="request()->routeIs('technician.installations.*')">
+                        <x-nav-link href="{{ route('technician.installation.index') }}" :active="request()->routeIs('technician.installation.*')">
                             {{ __('Instalasi') }}
                         </x-nav-link>
-                        <x-nav-link href="{{ route('technician.troubleshoots.index') }}" :active="request()->routeIs('technician.troubleshoots.*')">
+                        <x-nav-link href="{{ route('technician.ticket.index') }}" :active="request()->routeIs('technician.ticket.*')">
                             {{ __('Gangguan') }}
                         </x-nav-link>
                     @endif
@@ -296,16 +296,16 @@
                 <x-responsive-nav-link href="{{ route('technician.dashboard') }}" :active="request()->routeIs('technician.dashboard')">
                     {{ __('Dashboard') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('technician.surveys.index') }}" :active="request()->routeIs('technician.surveys.*')">
+                <x-responsive-nav-link href="{{ route('technician.survey.index') }}" :active="request()->routeIs('technician.survey.*')">
                     {{ __('Tugas Survey') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('technician.installations.index') }}" :active="request()->routeIs('technician.installations.*')">
+                <x-responsive-nav-link href="{{ route('technician.installation.index') }}" :active="request()->routeIs('technician.installation.*')">
                     {{ __('Tugas Instalasi') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('technician.troubleshoots.index') }}" :active="request()->routeIs('technician.troubleshoots.*')">
+                <x-responsive-nav-link href="{{ route('technician.ticket.index') }}" :active="request()->routeIs('technician.ticket.*')">
                     {{ __('Tiket Gangguan') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('technician.profile.index') }}" :active="request()->routeIs('technician.profile.*')">
+                <x-responsive-nav-link href="{{ route('technician.profile') }}" :active="request()->routeIs('technician.profile')">
                     {{ __('Profil Teknisi') }}
                 </x-responsive-nav-link>
             @endif

@@ -42,6 +42,7 @@ use App\Http\Controllers\Marketing\LeadController;
 use App\Http\Controllers\Technician\TechnicianDashboardController;
 use App\Http\Controllers\Technician\TicketController;
 use App\Http\Controllers\Technician\ProcessController;
+use App\Http\Controllers\Technician\TechnicianController;
 
 // 6. Import Controllers Customer
 use App\Http\Controllers\Customer\CustomerDashboardController;
@@ -235,38 +236,58 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::middleware(['role:technician'])->prefix('technician')->name('technician.')->group(function () {
             
             // 1. Dashboard Teknisi
-            Route::get('/dashboard', [TechnicianDashboardController::class, 'index'])->name('dashboard');
+            Route::get('/dashboard', [TechnicianController::class, 'dashboard'])->name('dashboard');
             
-            // 2. Tickets (Jobdesk - Daftar Tugas Tersedia)
+            // 2. Survey Management
+            Route::get('/survey', [TechnicianController::class, 'survey_list'])->name('survey.index');
+            Route::get('/survey/{lead_id}', [TechnicianController::class, 'survey_create'])->name('survey.create');
+            Route::get('/survey/{lead_id}/edit', [TechnicianController::class, 'survey_create'])->name('survey.edit');
+            Route::post('/survey/{lead_id}', [TechnicianController::class, 'survey_store'])->name('survey.store');
+            
+            // 3. Installation Management
+            Route::get('/installation', [TechnicianController::class, 'installation_list'])->name('installation.index');
+            Route::get('/installation/{lead_id}', [TechnicianController::class, 'installation_create'])->name('installation.create');
+            Route::get('/installation/{installation_id}/edit', [TechnicianController::class, 'installation_create'])->name('installation.edit');
+            Route::post('/installation/{lead_id}', [TechnicianController::class, 'installation_store'])->name('installation.store');
+            Route::get('/installation/{installation_id}/show', [TechnicianController::class, 'installation_show'])->name('installation.show');
+            
+            // 4. Device Configuration
+            Route::get('/installation/{installation_id}/device', [TechnicianController::class, 'device_form'])->name('device.form');
+            Route::post('/installation/{installation_id}/device', [TechnicianController::class, 'device_store'])->name('device.store');
+            
+            // 5. Network Configuration
+            Route::get('/installation/{installation_id}/network', [TechnicianController::class, 'network_form'])->name('network.form');
+            Route::post('/installation/{installation_id}/network', [TechnicianController::class, 'network_store'])->name('network.store');
+            
+            // 6. Internet Account
+            Route::get('/installation/{installation_id}/internet-account', [TechnicianController::class, 'internet_account_form'])->name('internet-account.form');
+            Route::post('/installation/{installation_id}/internet-account', [TechnicianController::class, 'internet_account_store'])->name('internet-account.store');
+            
+            // 7. Connection Test
+            Route::get('/installation/{installation_id}/connection-test', [TechnicianController::class, 'connection_test_form'])->name('connection-test.form');
+            Route::post('/installation/{installation_id}/connection-test', [TechnicianController::class, 'connection_test_store'])->name('connection-test.store');
+            
+            // 8. Handover Confirmation
+            Route::get('/installation/{installation_id}/handover', [TechnicianController::class, 'handover_form'])->name('handover.form');
+            Route::post('/installation/{installation_id}/handover', [TechnicianController::class, 'handover_store'])->name('handover.store');
+            
+            // 9. Tickets (Legacy routes)
             Route::get('/tickets', [TicketController::class, 'index'])->name('tickets.index');
             Route::get('/tickets/{ticket}', [TicketController::class, 'show'])->name('tickets.show');
             Route::post('/tickets/{ticket}/claim', [TicketController::class, 'claim'])->name('tickets.claim');
             
-            // 3. Process (Tugas Saya - Meja Kerja)
+            // 10. Alias for ticket routes
+            Route::get('/ticket', [TicketController::class, 'index'])->name('ticket.index');
+            
+            // 11. Process (Tugas Saya)
             Route::get('/process', [ProcessController::class, 'index'])->name('process.index');
             Route::get('/process/{ticket}', [ProcessController::class, 'show'])->name('process.show');
             Route::get('/process/{ticket}/edit', [ProcessController::class, 'edit'])->name('process.edit');
             Route::put('/process/{ticket}', [ProcessController::class, 'update'])->name('process.update');
             
-            // 4. Survey
-            Route::view('/surveys', 'technician.surveys.index')->name('surveys.index');
-            Route::view('/surveys/{id}', 'technician.surveys.show')->name('surveys.show');
-            Route::view('/surveys/{id}/edit', 'technician.surveys.edit')->name('surveys.edit');
-
-            // 5. Instalasi
-            Route::view('/installations', 'technician.installations.index')->name('installations.index');
-            Route::view('/installations/{id}', 'technician.installations.show')->name('installations.show');
-            Route::view('/installations/{id}/edit', 'technician.installations.edit')->name('installations.edit');
-
-            // 6. Gangguan (Troubleshoots)
-            Route::view('/troubleshoots', 'technician.troubleshoots.index')->name('troubleshoots.index');
-            Route::view('/troubleshoots/{id}', 'technician.troubleshoots.show')->name('troubleshoots.show');
-
-            // 7. Data Pelanggan Teknis
-            Route::view('/customers/{id}', 'technician.customers.show')->name('customers.show');
-
-            // 8. Akun & Profil
-            Route::view('/profile', 'technician.profile.index')->name('profile.index');
+            // 12. Profile & Account
+            Route::get('/profile', function() { return view('technician.profile'); })->name('profile');
+            Route::get('/password', function() { return view('technician.password'); })->name('password');
         });
 
         // ==========================================

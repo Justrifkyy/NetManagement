@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $name
  * @property string|null $mother_name
  * @property string|null $phone
+ * @property string|null $phone_backup
  * @property string|null $email
  * @property string|null $customer_type
  * @property string|null $business_name
@@ -30,10 +31,12 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $landmark
  * @property string|null $coordinates
  * @property string|null $promo_code
+ * @property float|null $installation_fee
  * @property string|null $status
  * @property string|null $source
  * @property \Carbon\Carbon|null $survey_date
  * @property \Carbon\Carbon|null $installation_date
+ * @property \Carbon\Carbon|null $registered_date
  * @property string|null $preferred_time
  * @property string|null $notes_summary
  * @property string|null $notes_obstacle
@@ -53,6 +56,7 @@ class Lead extends Model
         'name',
         'mother_name',
         'phone',
+        'phone_backup',
         'email',
         'customer_type',
         'business_name',
@@ -61,6 +65,7 @@ class Lead extends Model
         'emergency_relation',
         'address_ktp',
         'address_installation',
+        'address',
         'rt_rw',
         'village',
         'district',
@@ -71,8 +76,10 @@ class Lead extends Model
         'coordinates',
         'package_id',
         'promo_code',
+        'installation_fee',
         'status',
         'source',
+        'registered_date',
         'survey_date',
         'installation_date',
         'preferred_time',
@@ -87,6 +94,7 @@ class Lead extends Model
     protected $casts = [
         'survey_date' => 'date',
         'installation_date' => 'date',
+        'registered_date' => 'date',
     ];
 
     // Relasi ke Paket Internet
@@ -105,5 +113,47 @@ class Lead extends Model
     public function customerProfile()
     {
         return $this->hasOne(Customer::class, 'lead_id');
+    }
+
+    // Relasi ke Survey
+    public function survey()
+    {
+        return $this->hasOne(SurveyForm::class);
+    }
+
+    // Relasi ke Installation
+    public function installation()
+    {
+        return $this->hasOne(InstallationForm::class);
+    }
+
+    // Relasi ke Device Config
+    public function device()
+    {
+        return $this->hasOne(DeviceConfig::class);
+    }
+
+    // Relasi ke Network Config
+    public function network()
+    {
+        return $this->hasOne(NetworkConfig::class);
+    }
+
+    // Relasi ke Internet Account
+    public function internetAccount()
+    {
+        return $this->hasOne(InternetAccount::class);
+    }
+
+    // Relasi ke Connection Test
+    public function connectionTest()
+    {
+        return $this->hasOne(ConnectionTest::class);
+    }
+
+    // Relasi ke Handover Confirmation
+    public function handover()
+    {
+        return $this->hasOne(HandoverConfirmation::class);
     }
 }
