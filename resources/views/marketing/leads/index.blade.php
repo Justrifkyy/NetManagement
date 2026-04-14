@@ -110,7 +110,7 @@
 
                                         @if ($lead->status !== 'converted')
                                             <a href="{{ route('marketing.leads.edit', $lead->id) }}"
-                                                class="p-2 bg-white border border-slate-800 rounded-lg text-slate-400 hover:bg-yellow-50 hover:text-yellow-600 hover:border-yellow-300 transition shadow-sm"
+                                                class="p-2 bg-white border border-slate-800 rounded-lg text-slate-700 hover:bg-yellow-50 hover:text-yellow-700 hover:border-yellow-300 transition shadow-sm"
                                                 title="Edit Data">
                                                 <svg class="w-5 h-5" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
@@ -125,7 +125,7 @@
                                                 onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini secara permanen?');">
                                                 @csrf @method('DELETE')
                                                 <button type="submit"
-                                                    class="p-2 bg-white border border-slate-800 rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition shadow-sm"
+                                                    class="p-2 bg-white border border-slate-800 rounded-lg text-slate-700 hover:bg-red-50 hover:text-red-700 hover:border-red-300 transition shadow-sm"
                                                     title="Hapus Data">
                                                     <svg class="w-5 h-5" fill="none" stroke="currentColor"
                                                         viewBox="0 0 24 24">

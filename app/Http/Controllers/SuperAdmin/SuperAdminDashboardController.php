@@ -8,13 +8,14 @@ use App\Models\Customer;
 use App\Models\Subscription;
 use App\Models\Invoice;
 use App\Models\AuditLog;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class SuperAdminDashboardController extends Controller
 {
     public function index()
     {
-        // Technical System Statistics
+        // Technical System Statistics with optimized queries
         $stats = [
             'total_users' => User::count(),
             'total_staffs' => User::whereIn('role', ['admin', 'marketing', 'technician'])->count(),
@@ -25,11 +26,10 @@ class SuperAdminDashboardController extends Controller
             'active_sessions' => $this->getActiveSessions(),
         ];
 
-        // Recent Audit Logs
+        // Recent Audit Logs with eager loading and pagination
         $recentLogs = AuditLog::with('user')
             ->latest()
-            ->take(10)
-            ->get();
+            ->paginate(10);
 
         // System Services Status
         $servicesStatus = [
@@ -53,8 +53,9 @@ class SuperAdminDashboardController extends Controller
 
     private function getActiveSessions()
     {
-        return User::whereNotNull('last_activity_at')
-            ->where('last_activity_at', '>=', now()->subHours(24))
+        // Count active sessions from the last 24 hours
+        return DB::table('sessions')
+            ->where('last_activity', '>=', now()->subHours(24)->getTimestamp())
             ->count();
     }
 }

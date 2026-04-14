@@ -79,7 +79,7 @@
 
                     {{-- Personal Information --}}
                     <div class="bg-white rounded-xl shadow-lg border border-blue-200 p-6">
-                        <h4 class="text-lg font-bold text-blue-900 mb-6">👤 Informasi Personal</h4>
+                        <h4 class="text-lg font-bold text-blue-900 mb-6">Informasi Personal</h4>
                         <form class="space-y-4">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
@@ -129,7 +129,7 @@
 
                     {{-- Security Settings --}}
                     <div class="bg-white rounded-xl shadow-lg border border-blue-200 p-6">
-                        <h4 class="text-lg font-bold text-blue-900 mb-6">🔐 Keamanan</h4>
+                        <h4 class="text-lg font-bold text-blue-900 mb-6">Keamanan</h4>
                         <div class="space-y-4">
                             <button class="w-full flex items-center justify-between p-4 border border-blue-200 rounded-lg hover:bg-blue-50 transition">
                                 <div class="text-left">

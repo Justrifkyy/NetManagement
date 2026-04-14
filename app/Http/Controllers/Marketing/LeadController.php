@@ -24,9 +24,14 @@ class LeadController extends Controller
 
         // Admin/SuperAdmin lihat semua, Marketing lihat miliknya sendiri
         if (in_array($user->role, ['admin', 'super_admin'])) {
-            $leads = Lead::with('package')->orderBy('created_at', 'desc')->get();
+            $leads = Lead::with('package')
+                ->orderBy('created_at', 'desc')
+                ->paginate(15);
         } else {
-            $leads = Lead::with('package')->where('marketing_id', $user->id)->orderBy('created_at', 'desc')->get();
+            $leads = Lead::with('package')
+                ->where('marketing_id', $user->id)
+                ->orderBy('created_at', 'desc')
+                ->paginate(15);
         }
 
         // PERUBAHAN PATH VIEW

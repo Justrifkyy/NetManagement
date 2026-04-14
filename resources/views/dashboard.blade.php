@@ -21,7 +21,7 @@
                             <p class="text-slate-400 text-sm">Kelola profil dan preferensi Anda</p>
                         </div>
                         <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 hover:border-amber-500 transition">
-                            <div class="text-amber-500 mb-3 text-4xl">📞</div>
+                            <div class="text-amber-500 mb-3 text-4xl">�</div>
                             <h3 class="text-white font-bold mb-2">Bantuan & Dukungan</h3>
                             <p class="text-slate-400 text-sm">Hubungi tim support kami kapan saja</p>
                         </div>

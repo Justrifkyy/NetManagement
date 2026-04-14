@@ -109,11 +109,11 @@
                                     <td class="px-6 py-4 text-sm">
                                         <div class="flex gap-2">
                                             <a href="{{ route('admin.leads.show', $lead) }}" class="text-amber-400 hover:text-amber-300 font-medium text-xs" title="Lihat Detail">👁️</a>
-                                            <a href="{{ route('admin.leads.edit', $lead) }}" class="text-yellow-600 hover:text-yellow-900 font-medium text-xs" title="Edit">✏️</a>
+                                            <a href="{{ route('admin.leads.edit', $lead) }}" class="text-yellow-600 hover:text-yellow-900 font-medium text-xs" title="Edit">Edit</a>
                                             <form action="{{ route('admin.leads.destroy', $lead) }}" method="POST" class="inline" onsubmit="return confirm('Hapus lead ini?')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="text-red-600 hover:text-red-900 font-medium text-xs" title="Hapus">🗑️</button>
+                                                <button type="submit" class="text-red-600 hover:text-red-900 font-medium text-xs" title="Hapus">Delete</button>
                                             </form>
                                         </div>
                                     </td>

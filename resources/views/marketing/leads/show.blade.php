@@ -104,7 +104,7 @@
                             <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-100">
                                 <span class="block text-xs text-yellow-600 font-bold uppercase mb-1">Alamat Pemasangan
                                     (Domisili)</span>
-                                <p class="text-white font-medium">{{ $lead->address_installation }}</p>
+                                <p class="text-yellow-900 font-medium">{{ $lead->address_installation }}</p>
                             </div>
                             <div class="bg-slate-950 p-4 rounded-lg border border-slate-800">
                                 <span class="block text-xs text-slate-400 font-bold uppercase mb-1">Alamat Sesuai

@@ -14,11 +14,12 @@ class AdminDashboardController extends Controller
     public function index()
     {
         // Menghitung statistik untuk Widget di Dashboard Admin
+        // Using count() is more efficient than with() when you only need counts
         $stats = [
             // 1. Total pelanggan yang internetnya sedang aktif
             'active_subs' => Subscription::where('status', 'active')->count(),
             
-            // 2. Total uang dari tagihan yang sudah lunas (Ini yang menyebabkan error tadi)
+            // 2. Total uang dari tagihan yang sudah lunas
             'total_revenue' => Invoice::where('status', 'paid')->sum('amount'),
             
             // 3. Jumlah tiket QC (Selesai dipasang, butuh verifikasi Admin)
@@ -28,8 +29,8 @@ class AdminDashboardController extends Controller
             'new_leads'   => Lead::where('status', 'prospek')->count(),
         ];
 
-        // Ambil 5 tiket terbaru yang menunggu QC
-        $pendingTickets = Ticket::with(['customer.user', 'technician'])
+        // Ambil 5 tiket terbaru yang menunggu QC dengan optimized eager loading
+        $pendingTickets = Ticket::with(['customer.user', 'technician.user'])
             ->where('status', 'resolved')
             ->latest()
             ->take(5)

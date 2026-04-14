@@ -117,7 +117,7 @@
                                 <p class="text-xs text-blue-600 mt-1">Format: JPG, PNG (Max 5MB)</p>
                             </div>
                             <div>
-                                <label class="block text-sm font-semibold text-blue-900 mb-2">🏠 Foto Rumah/Lokasi</label>
+                                <label class="block text-sm font-semibold text-blue-900 mb-2">Foto Rumah/Lokasi</label>
                                 <input type="file" name="house_image" accept="image/*"
                                     class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent">
                                 <p class="text-xs text-blue-600 mt-1">Format: JPG, PNG (Max 5MB)</p>
@@ -396,7 +396,7 @@
 
                         <!-- Catatan Khusus -->
                         <div>
-                            <label class="block text-sm font-semibold text-blue-900 mb-2">⭐ Catatan Khusus</label>
+                            <label class="block text-sm font-semibold text-blue-900 mb-2">Catatan Khusus</label>
                             <textarea name="notes_special" rows="3"
                                 class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
                                 placeholder="Info tambahan: VIP, perlu follow-up khusus, budget terbatas, urgent, dsb">{{ old('notes_special') }}</textarea>

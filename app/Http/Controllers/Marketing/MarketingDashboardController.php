@@ -13,15 +13,16 @@ class MarketingDashboardController extends Controller
     {
         $marketingId = Auth::id();
 
-        // Statistik berdasarkan ENUM status yang baru
+        // Statistik berdasarkan ENUM status yang baru (optimized with single query)
+        $baseQuery = Lead::where('marketing_id', $marketingId);
         $stats = [
-            'total' => Lead::where('marketing_id', $marketingId)->count(),
-            'prospek' => Lead::where('marketing_id', $marketingId)->where('status', 'prospek')->count(),
-            'proses' => Lead::where('marketing_id', $marketingId)->whereIn('status', ['survey', 'instalasi'])->count(),
-            'converted' => Lead::where('marketing_id', $marketingId)->whereIn('status', ['aktif', 'converted'])->count(),
+            'total' => (clone $baseQuery)->count(),
+            'prospek' => (clone $baseQuery)->where('status', 'prospek')->count(),
+            'proses' => (clone $baseQuery)->whereIn('status', ['survey', 'instalasi'])->count(),
+            'converted' => (clone $baseQuery)->whereIn('status', ['aktif', 'converted'])->count(),
         ];
 
-        // 5 Prospek terakhir milik sales yang sedang login
+        // 5 Prospek terakhir milik sales yang sedang login dengan eager loading
         $recentLeads = Lead::where('marketing_id', $marketingId)
             ->with('package')
             ->latest()

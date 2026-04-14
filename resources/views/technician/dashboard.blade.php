@@ -35,7 +35,7 @@
                             <p class="text-4xl font-bold text-yellow-400 mt-2">{{ $pending_installations }}</p>
                         </div>
                         <div class="w-16 h-16 bg-yellow-400/10 rounded-full flex items-center justify-center border border-yellow-400/30">
-                            <span class="text-2xl">🔗</span>
+                            <span class="text-2xl">Link</span>
                         </div>
                     </div>
                     <a href="{{ route('technician.installation.index') }}" class="text-yellow-400 hover:text-yellow-300 text-sm mt-4 inline-block">Lihat Semua →</a>
@@ -45,7 +45,7 @@
                 <div class="bg-slate-800 border border-red-500 rounded-xl shadow-lg p-6 hover:shadow-xl transition">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-slate-400 text-sm font-semibold">🚨 Tiket Gangguan</p>
+                            <p class="text-slate-400 text-sm font-semibold">Tiket Gangguan</p>
                             <p class="text-4xl font-bold text-red-500 mt-2">{{ $trouble_tickets }}</p>
                         </div>
                         <div class="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center border border-red-500/30">
@@ -73,7 +73,7 @@
                         🎟️ Gangguan
                     </a>
                     <a href="{{ route('technician.profile') }}" class="bg-slate-700 border border-yellow-400 text-yellow-400 font-bold py-3 px-6 rounded-lg hover:bg-slate-600 transition text-center">
-                        👤 Profil
+                        Profil
                     </a>
                 </div>
             </div>
@@ -121,7 +121,7 @@
                     <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 hover:border-red-500 transition">
                         <div class="flex items-start justify-between mb-4">
                             <div>
-                                <h4 class="text-lg font-bold text-red-500">🚨 GANGGUAN</h4>
+                                <h4 class="text-lg font-bold text-red-500">GANGGUAN</h4>
                                 <p class="text-slate-400 text-sm mt-1">Penanganan tiket gangguan dan maintenance</p>
                             </div>
                             <span class="text-3xl">🎟️</span>

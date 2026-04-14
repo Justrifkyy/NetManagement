@@ -37,7 +37,7 @@
 
                 <div class="mt-8 pt-8 border-t border-slate-700">
                     <a href="{{ route('technician.password') }}" class="bg-yellow-500 hover:bg-yellow-600 text-slate-900 font-bold py-2 px-4 rounded-lg inline-block">
-                        🔐 Ganti Password
+                        Ganti Password
                     </a>
                 </div>
             </div>

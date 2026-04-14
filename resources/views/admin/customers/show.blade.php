@@ -2,7 +2,7 @@
     <div class="py-10 bg-slate-950 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="mb-8 px-4 sm:px-0">
-                <a href="{{ route('admin.customers.index') }}" class="text-purple-600 hover:text-purple-900">← Kembali</a>
+                <a href="{{ route('admin.customers.index') }}" class="text-purple-600 hover:text-purple-900">Kembali</a>
                 <h2 class="text-3xl font-extrabold text-white mt-2">Detail Pelanggan</h2>
             </div>
 

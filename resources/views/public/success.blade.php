@@ -14,8 +14,8 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
             </svg>
         </div>
-        <h2 class="mt-6 text-2xl font-extrabold text-white">Pendaftaran Terkirim!</h2>
-        <p class="mt-2 text-slate-300">
+        <h2 class="mt-6 text-2xl font-extrabold text-slate-900">Pendaftaran Terkirim!</h2>
+        <p class="mt-2 text-slate-600">
             Terima kasih telah mendaftar. Tim kami akan segera menghubungi Anda melalui WhatsApp untuk konfirmasi jadwal survey.
         </p>
         <div class="mt-6">

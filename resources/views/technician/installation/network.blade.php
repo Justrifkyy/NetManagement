@@ -6,7 +6,7 @@
             <div class="mb-8 px-4 sm:px-0">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h1 class="text-4xl font-bold text-yellow-400">🌐 Konfigurasi Jaringan</h1>
+                        <h1 class="text-4xl font-bold text-yellow-400">Konfigurasi Jaringan</h1>
                         <p class="text-slate-400 mt-1">Instalasi: <span class="text-yellow-300 font-semibold">{{ $installation->lead->name }}</span></p>
                     </div>
                     <a href="{{ route('technician.installation.show', $installation->id) }}" class="text-yellow-400 hover:text-yellow-300 font-semibold">← Kembali</a>

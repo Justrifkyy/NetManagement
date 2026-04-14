@@ -6,7 +6,7 @@
             <div class="mb-8 px-4 sm:px-0">
                 <div class="flex justify-between items-start">
                     <div>
-                        <h1 class="text-4xl font-black text-white">📝 Pusat Pengajuan</h1>
+                        <h1 class="text-4xl font-black text-white">Pusat Pengajuan</h1>
                         <p class="text-slate-400 mt-2">Laporkan masalah jaringan atau buat pengajuan baru</p>
                     </div>
                     <a href="{{ route('client.complaints.create') }}" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 font-bold rounded-lg hover:from-amber-400 hover:to-amber-500 shadow-lg transform hover:-translate-y-0.5 transition">
@@ -43,7 +43,7 @@
                             <p class="text-slate-400 mt-2 text-sm">Kecepatan internet terasa sangat lambat, hanya dapat 5 Mbps padahal paket 50 Mbps</p>
                         </div>
                         <a href="#" class="text-amber-400 hover:text-amber-300 font-semibold text-sm">
-                            Lihat Detail →
+                            Lihat Detail
                         </a>
                     </div>
                     <div class="flex items-center gap-4 text-xs text-slate-400 border-t border-slate-700 pt-4">
@@ -76,7 +76,7 @@
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                         <div>
-                            <p class="font-bold text-white">💳 Lihat Pembayaran</p>
+                            <p class="font-bold text-white">Lihat Pembayaran</p>
                             <p class="text-sm text-slate-400">Tagihan dan riwayat transaksi</p>
                         </div>
                     </div>
@@ -88,7 +88,7 @@
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                         </div>
                         <div>
-                            <p class="font-bold text-white">📧 Hubungi Support</p>
+                            <p class="font-bold text-white">Hubungi Support</p>
                             <p class="text-sm text-slate-400">support@netmanager.com</p>
                         </div>
                     </div>

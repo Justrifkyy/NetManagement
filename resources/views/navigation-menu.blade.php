@@ -10,7 +10,7 @@
 
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
 
-                    @if (!in_array(Auth::user()->role, ['marketing', 'technician', 'customer']))
+                    @if (!in_array(Auth::user()->role, ['marketing', 'technician', 'customer', 'super_admin']))
                         <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard') || request()->routeIs('*.dashboard')">
                             {{ __('Dashboard') }}
                         </x-nav-link>
@@ -87,10 +87,10 @@
 
                     @if (Auth::user()->role === 'customer')
                         <x-nav-link href="{{ route('client.billing.index') }}" :active="request()->routeIs('client.billing.*')">
-                            {{ __('💳 Pembayaran') }}
+                            {{ __('Pembayaran') }}
                         </x-nav-link>
                         <x-nav-link href="{{ route('client.complaints.index') }}" :active="request()->routeIs('client.complaints.*')">
-                            {{ __('📝 Pengajuan') }}
+                            {{ __('Pengajuan') }}
                         </x-nav-link>
                     @endif
 

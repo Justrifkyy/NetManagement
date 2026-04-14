@@ -8,7 +8,7 @@
                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                     Kembali
                 </a>
-                <h1 class="text-4xl font-black text-white mt-4">📝 Buat Pengajuan Baru</h1>
+                <h1 class="text-4xl font-black text-white mt-4">Buat Pengajuan Baru</h1>
                 <p class="text-slate-400 mt-2">Laporkan masalah yang Anda alami dengan jelas dan detail</p>
             </div>
 
@@ -31,7 +31,7 @@
                             </label>
                             <label class="flex items-center p-4 bg-slate-700/50 border border-slate-600 rounded-lg hover:border-amber-500 cursor-pointer transition">
                                 <input type="radio" name="category" value="billing_issue" class="w-4 h-4">
-                                <span class="ml-3 text-slate-300">💳 Pertanyaan Tagihan</span>
+                                <span class="ml-3 text-slate-300">Pertanyaan Tagihan</span>
                             </label>
                             <label class="flex items-center p-4 bg-slate-700/50 border border-slate-600 rounded-lg hover:border-amber-500 cursor-pointer transition">
                                 <input type="radio" name="category" value="other" class="w-4 h-4">
@@ -62,10 +62,10 @@
                         <label for="priority" class="block text-slate-300 font-bold mb-2">Tingkat Urgensi</label>
                         <select id="priority" name="priority" 
                             class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition">
-                            <option value="low">⭐ Rendah - Dapat ditangani kapan saja</option>
-                            <option value="medium" selected>⭐⭐ Sedang - Dalam beberapa hari</option>
-                            <option value="high">⭐⭐⭐ Tinggi - Perlu segera ditangani</option>
-                            <option value="urgent">🚨 Urgen - Internet sama sekali tidak bisa digunakan</option>
+                            <option value="low">Rendah - Dapat ditangani kapan saja</option>
+                            <option value="medium" selected>Sedang - Dalam beberapa hari</option>
+                            <option value="high">Tinggi - Perlu segera ditangani</option>
+                            <option value="urgent">Urgen - Internet sama sekali tidak bisa digunakan</option>
                         </select>
                     </div>
 
@@ -105,12 +105,12 @@
             <!-- Support Info -->
             <div class="mt-8 px-4 sm:px-0">
                 <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6">
-                    <h3 class="font-bold text-white mb-4">📞 Butuh Bantuan Cepat?</h3>
+                    <h3 class="font-bold text-white mb-4">Butuh Bantuan Cepat?</h3>
                     <p class="text-slate-400 text-sm mb-4">Hubungi customer support kami melalui:</p>
                     <div class="space-y-2 text-sm">
-                        <p class="text-slate-300"><strong>📧 Email:</strong> support@netmanager.com</p>
-                        <p class="text-slate-300"><strong>📱 WhatsApp:</strong> +62 821-XXXX-XXXX</p>
-                        <p class="text-slate-300"><strong>⏰ Jam Kerja:</strong> Senin - Jumat, 08:00 - 17:00</p>
+                        <p class="text-slate-300"><strong>Email:</strong> support@netmanager.com</p>
+                        <p class="text-slate-300"><strong>WhatsApp:</strong> +62 821-XXXX-XXXX</p>
+                        <p class="text-slate-300"><strong>Jam Kerja:</strong> Senin - Jumat, 08:00 - 17:00</p>
                     </div>
                 </div>
             </div>

@@ -142,10 +142,10 @@
                         <h4 class="text-lg font-bold text-blue-900 mb-4">⚙️ Aksi</h4>
                         <div class="space-y-3">
                             <button class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition flex items-center justify-center gap-2">
-                                <span>📞</span> Hubungi Pelanggan
+                                <span>Call</span> Hubungi Pelanggan
                             </button>
                             <button class="w-full px-4 py-2 bg-yellow-400 text-blue-900 rounded-lg font-bold hover:bg-yellow-500 transition flex items-center justify-center gap-2">
-                                <span>✏️</span> Edit Data
+                                <span>Edit</span> Edit Data
                             </button>
                             <button class="w-full px-4 py-2 bg-red-100 text-red-700 rounded-lg font-bold hover:bg-red-200 transition flex items-center justify-center gap-2">
                                 <span>🚫</span> Isolir Layanan

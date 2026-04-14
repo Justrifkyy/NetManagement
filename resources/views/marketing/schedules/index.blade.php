@@ -106,8 +106,8 @@
                                             <div class="flex-grow">
                                                 <h5 class="font-bold text-blue-900">{{ $type }} - Prospek {{ $i + 1 }}</h5>
                                                 <p class="text-sm text-blue-600 mt-1">
-                                                    👤 Nama Pelanggan {{ $i + 1 }}
-                                                    <span class="text-xs">| 📞 +62 812 3456 {{ str_pad($i * 100, 4, '0', STR_PAD_LEFT) }}</span>
+                                                    Nama Pelanggan {{ $i + 1 }}
+                                                    <span class="text-xs">| +62 812 3456 {{ str_pad($i * 100, 4, '0', STR_PAD_LEFT) }}</span>
                                                 </p>
                                                 <p class="text-xs text-blue-500 mt-1 line-clamp-1">
                                                     📍 Jl. Demo {{ $i + 1 }}, Kota Demo
@@ -174,7 +174,7 @@
 
                     {{-- Week Overview --}}
                     <div class="bg-white rounded-xl shadow-lg border border-blue-200 p-6">
-                        <h4 class="text-lg font-bold text-blue-900 mb-4">📊 Minggu Depan</h4>
+                        <h4 class="text-lg font-bold text-blue-900 mb-4">Minggu Depan</h4>
                         <div class="space-y-3">
                             @for ($i = 1; $i <= 7; $i++)
                                 <div class="flex items-center text-sm">

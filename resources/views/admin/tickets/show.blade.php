@@ -90,13 +90,13 @@
 
                 <div class="flex gap-4 mt-8 pt-8 border-t border-slate-800">
                     <a href="{{ route('admin.tickets.edit', $ticket) }}" class="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium">
-                        ✏️ Edit
+                        Edit
                     </a>
                     <form action="{{ route('admin.tickets.destroy', $ticket) }}" method="POST" class="inline" onsubmit="return confirm('Hapus tiket ini?')">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium">
-                            🗑️ Hapus
+                            Hapus
                         </button>
                     </form>
                 </div>

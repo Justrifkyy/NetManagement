@@ -16,9 +16,13 @@ class InvoiceController extends Controller
 
         if ($customer) {
             // Ambil tagihan berdasarkan subscription milik customer ini
-            $invoices = Invoice::whereHas('subscription', function($query) use ($customer) {
-                $query->where('customer_id', $customer->id);
-            })->latest()->get();
+            // Eager load subscription dan customer relationships to avoid N+1
+            $invoices = Invoice::with('subscription.customer')
+                ->whereHas('subscription', function($query) use ($customer) {
+                    $query->where('customer_id', $customer->id);
+                })
+                ->latest()
+                ->paginate(10);
         }
 
         return view('user.billing.index', compact('invoices'));
@@ -26,6 +30,9 @@ class InvoiceController extends Controller
 
     public function show(Invoice $invoice)
     {
+        // Eager load relationships to avoid N+1 queries
+        $invoice->load('subscription.customer.user');
+
         // Pastikan invoice ini milik user yang sedang login
         if ($invoice->subscription->customer->user_id !== Auth::id()) {
             abort(403, 'Akses Ditolak.');

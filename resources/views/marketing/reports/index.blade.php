@@ -30,7 +30,7 @@
                     <div class="flex items-center justify-between mb-4">
                         <h4 class="text-sm font-semibold text-blue-600 uppercase">Konversi</h4>
                         <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center text-yellow-700 font-bold">
-                            🎯
+                            Target
                         </div>
                     </div>
                     <p class="text-3xl font-bold text-yellow-700">18</p>
@@ -52,7 +52,7 @@
                     <div class="flex items-center justify-between mb-4">
                         <h4 class="text-sm font-semibold text-blue-600 uppercase">Revenue</h4>
                         <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center text-purple-700 font-bold">
-                            💰
+                            Revenue
                         </div>
                     </div>
                     <p class="text-3xl font-bold text-purple-700">Rp 5.4M</p>
@@ -84,7 +84,7 @@
 
                 {{-- Conversion by Status --}}
                 <div class="bg-white rounded-xl shadow-lg border border-blue-200 p-6">
-                    <h4 class="text-lg font-bold text-blue-900 mb-6">🎯 Status Prospek</h4>
+                    <h4 class="text-lg font-bold text-blue-900 mb-6">Status Prospek</h4>
                     <div class="space-y-4">
                         @php
                             $statuses = [

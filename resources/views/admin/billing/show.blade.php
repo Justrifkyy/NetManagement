@@ -93,7 +93,7 @@
                                 @csrf
                                 @method('POST')
                                 <button type="submit" class="w-full sm:w-auto px-10 py-3 bg-gradient-to-r from-amber-600 to-amber-700 text-white font-bold rounded-xl shadow-lg hover:from-amber-700 hover:to-amber-800 transition">
-                                    ✓ Tandai Sebagai LUNAS
+                                    Tandai Sebagai LUNAS
                                 </button>
                             </form>
                         @else

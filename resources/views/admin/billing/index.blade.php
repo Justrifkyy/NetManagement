@@ -75,7 +75,7 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-center">
                                         @if ($inv->status === 'paid')
                                             <span
-                                                class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-green-900/20 text-green-400 border border-green-700 uppercase">✓ Lunas</span>
+                                                class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-green-900/20 text-green-400 border border-green-700 uppercase">Lunas</span>
                                         @else
                                             <span
                                                 class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full bg-red-900/20 text-red-400 border border-red-700 uppercase">! Belum Bayar</span>

@@ -119,11 +119,11 @@
                                     <td class="px-6 py-4 text-sm">
                                         <div class="flex gap-2">
                                             <a href="{{ route('admin.tickets.show', $ticket) }}" class="text-cyan-400 hover:text-cyan-300 font-medium text-xs" title="Lihat Detail">👁️</a>
-                                            <a href="{{ route('admin.tickets.edit', $ticket) }}" class="text-purple-400 hover:text-purple-300 font-medium text-xs" title="Edit">✏️</a>
+                                            <a href="{{ route('admin.tickets.edit', $ticket) }}" class="text-purple-400 hover:text-purple-300 font-medium text-xs" title="Edit">Edit</a>
                                             <form action="{{ route('admin.tickets.destroy', $ticket) }}" method="POST" class="inline" onsubmit="return confirm('Hapus tiket ini?')">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="text-red-400 hover:text-red-300 font-medium text-xs" title="Hapus">🗑️</button>
+                                                <button type="submit" class="text-red-400 hover:text-red-300 font-medium text-xs" title="Hapus">Delete</button>
                                             </form>
                                         </div>
                                     </td>

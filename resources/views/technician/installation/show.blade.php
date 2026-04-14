@@ -6,7 +6,7 @@
             <div class="mb-8 px-4 sm:px-0">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h1 class="text-4xl font-bold text-yellow-400">📋 Detail Instalasi</h1>
+                        <h1 class="text-4xl font-bold text-yellow-400">Detail Instalasi</h1>
                         <p class="text-slate-400 mt-1">{{ $installation->lead->name }}</p>
                     </div>
                     <div class="space-x-3">
@@ -17,10 +17,10 @@
 
             <!-- Tabs Navigation -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-8 px-4 sm:px-0">
-                <a href="#instalasi" class="bg-yellow-400 text-slate-900 font-bold py-2 px-4 rounded-lg text-center text-sm">🔨 Instalasi</a>
-                <a href="#device" class="bg-slate-700 text-yellow-300 font-bold py-2 px-4 rounded-lg text-center text-sm">🖥️ Perangkat</a>
-                <a href="#network" class="bg-slate-700 text-yellow-300 font-bold py-2 px-4 rounded-lg text-center text-sm">🌐 Jaringan</a>
-                <a href="#test" class="bg-slate-700 text-yellow-300 font-bold py-2 px-4 rounded-lg text-center text-sm">⚡ Uji Koneksi</a>
+                <a href="#instalasi" class="bg-yellow-400 text-slate-900 font-bold py-2 px-4 rounded-lg text-center text-sm">Instalasi</a>
+                <a href="#device" class="bg-slate-700 text-yellow-300 font-bold py-2 px-4 rounded-lg text-center text-sm">Perangkat</a>
+                <a href="#network" class="bg-slate-700 text-yellow-300 font-bold py-2 px-4 rounded-lg text-center text-sm">Jaringan</a>
+                <a href="#test" class="bg-slate-700 text-yellow-300 font-bold py-2 px-4 rounded-lg text-center text-sm">Uji Koneksi</a>
             </div>
 
             <!-- Installation Data -->
@@ -36,7 +36,7 @@
                     </div>
                     <div>
                         <p class="text-slate-400 text-sm">Jenis Koneksi</p>
-                        <p class="text-yellow-300 font-bold">{{ $installation->connection_type == 'fiber' ? '🔌 Fiber' : '📡 Wireless' }}</p>
+                        <p class="text-yellow-300 font-bold">{{ $installation->connection_type == 'fiber' ? 'Fiber' : 'Wireless' }}</p>
                     </div>
                     <div>
                         <p class="text-slate-400 text-sm">Panjang Kabel</p>
@@ -46,11 +46,11 @@
                         <p class="text-slate-400 text-sm">Status Instalasi</p>
                         <p class="text-yellow-300 font-bold">
                             @if($installation->installation_status == 'berhasil')
-                                ✅ Berhasil
+                                Berhasil
                             @elseif($installation->installation_status == 'gagal')
-                                ❌ Gagal
+                                Gagal
                             @else
-                                ⏳ Pending
+                                Pending
                             @endif
                         </p>
                     </div>
@@ -66,7 +66,7 @@
                     </div>
                 @endif
                 <div class="mt-6 pt-6 border-t border-slate-700">
-                    <a href="{{ route('technician.installation.create', $installation->lead_id) }}" class="text-yellow-400 hover:text-yellow-300 font-semibold">✏️ Edit</a>
+                    <a href="{{ route('technician.installation.create', $installation->lead_id) }}" class="text-yellow-400 hover:text-yellow-300 font-semibold">Edit</a>
                 </div>
             </div>
 
@@ -100,7 +100,7 @@
                         </div>
                     </div>
                     <div class="mt-6 pt-6 border-t border-slate-700">
-                        <a href="{{ route('technician.device.form', $installation->id) }}" class="text-yellow-400 hover:text-yellow-300 font-semibold">✏️ Edit</a>
+                        <a href="{{ route('technician.device.form', $installation->id) }}" class="text-yellow-400 hover:text-yellow-300 font-semibold">Edit</a>
                     </div>
                 @else
                     <div class="bg-slate-700/50 border border-dashed border-slate-600 rounded-lg p-4">
@@ -142,7 +142,7 @@
                         </div>
                     </div>
                     <div class="mt-6 pt-6 border-t border-slate-700">
-                        <a href="{{ route('technician.network.form', $installation->id) }}" class="text-yellow-400 hover:text-yellow-300 font-semibold">✏️ Edit</a>
+                        <a href="{{ route('technician.network.form', $installation->id) }}" class="text-yellow-400 hover:text-yellow-300 font-semibold">Edit</a>
                     </div>
                 @else
                     <div class="bg-slate-700/50 border border-dashed border-slate-600 rounded-lg p-4">
@@ -186,7 +186,7 @@
                         </div>
                     </div>
                     <div class="mt-6 pt-6 border-t border-slate-700">
-                        <a href="{{ route('technician.connection-test.form', $installation->id) }}" class="text-yellow-400 hover:text-yellow-300 font-semibold">✏️ Edit</a>
+                        <a href="{{ route('technician.connection-test.form', $installation->id) }}" class="text-yellow-400 hover:text-yellow-300 font-semibold">Edit</a>
                     </div>
                 @else
                     <div class="bg-slate-700/50 border border-dashed border-slate-600 rounded-lg p-4">

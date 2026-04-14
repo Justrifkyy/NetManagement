@@ -115,7 +115,7 @@
                                 <p class="text-xs text-blue-600 mt-1">Format: JPG, PNG (Max 5MB)</p>
                             </div>
                             <div>
-                                <label class="block text-sm font-semibold text-blue-900 mb-2">🏠 Foto Rumah/Lokasi</label>
+                                <label class="block text-sm font-semibold text-blue-900 mb-2">Foto Rumah/Lokasi</label>
                                 @if ($lead->house_image_path)
                                     <p class="text-xs text-blue-600 mb-2">✓ Sudah upload: <a href="{{ asset('storage/' . $lead->house_image_path) }}" class="text-blue-700 font-semibold" target="_blank">Lihat</a></p>
                                 @endif
@@ -366,7 +366,7 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-semibold text-blue-900 mb-2">⭐ Catatan Khusus</label>
+                            <label class="block text-sm font-semibold text-blue-900 mb-2">Catatan Khusus</label>
                             <textarea name="notes_special" rows="3"
                                 class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent">{{ old('notes_special', $lead->notes_special) }}</textarea>
                         </div>
