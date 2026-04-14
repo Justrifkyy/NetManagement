@@ -10,7 +10,37 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $marketing_id
  * @property int|null $package_id
  * @property string $name
+ * @property string|null $mother_name
+ * @property string|null $phone
+ * @property string|null $email
+ * @property string|null $customer_type
+ * @property string|null $business_name
+ * @property string|null $emergency_name
+ * @property string|null $emergency_phone
+ * @property string|null $emergency_relation
+ * @property string|null $address_ktp
+ * @property string|null $address_installation
+ * @property string|null $address
+ * @property string|null $rt_rw
+ * @property string|null $village
+ * @property string|null $district
+ * @property string|null $city
+ * @property string|null $province
+ * @property string|null $postal_code
+ * @property string|null $landmark
+ * @property string|null $coordinates
+ * @property string|null $promo_code
  * @property string|null $status
+ * @property string|null $source
+ * @property \Carbon\Carbon|null $survey_date
+ * @property \Carbon\Carbon|null $installation_date
+ * @property string|null $preferred_time
+ * @property string|null $notes_summary
+ * @property string|null $notes_obstacle
+ * @property string|null $notes_special
+ * @property string|null $ktp_image_path
+ * @property string|null $house_image_path
+ * @property string|null $customer_image_path
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  */

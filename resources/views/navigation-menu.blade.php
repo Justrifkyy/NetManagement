@@ -10,9 +10,11 @@
 
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
 
-                    <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard') || request()->routeIs('*.dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
+                    @if (!in_array(Auth::user()->role, ['marketing', 'technician', 'customer']))
+                        <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard') || request()->routeIs('*.dashboard')">
+                            {{ __('Dashboard') }}
+                        </x-nav-link>
+                    @endif
 
                     @if (Auth::user()->role === 'super_admin')
                         <x-nav-link href="{{ route('superadmin.dashboard') }}" :active="request()->routeIs('superadmin.dashboard')">
@@ -65,12 +67,6 @@
                         </x-nav-link>
                         <x-nav-link href="{{ route('marketing.reports.index') }}" :active="request()->routeIs('marketing.reports.*')">
                             {{ __('Laporan') }}
-                        </x-nav-link>
-                    @endif
-
-                    @if (in_array(Auth::user()->role, ['technician', 'admin', 'super_admin']))
-                        <x-nav-link href="{{ route('technician.tickets.index') }}" :active="request()->routeIs('technician.tickets.*')">
-                            {{ __('Bursa Tugas') }}
                         </x-nav-link>
                     @endif
 
@@ -293,12 +289,6 @@
                 </x-responsive-nav-link>
                 <x-responsive-nav-link href="{{ route('marketing.profile.index') }}" :active="request()->routeIs('marketing.profile.*')">
                     {{ __('Profil Marketing') }}
-                </x-responsive-nav-link>
-            @endif
-
-            @if (in_array(Auth::user()->role, ['technician', 'admin', 'super_admin']))
-                <x-responsive-nav-link href="{{ route('technician.tickets.index') }}" :active="request()->routeIs('technician.tickets.*')">
-                    {{ __('Bursa Tugas') }}
                 </x-responsive-nav-link>
             @endif
 

@@ -1,15 +1,15 @@
 <x-app-layout>
-    <div class="py-10 bg-sky-50 min-h-screen">
+    <div class="py-10 bg-blue-50 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
             <div class="flex flex-col md:flex-row justify-between items-center mb-8 px-4 sm:px-0">
                 <div class="mb-4 md:mb-0 text-center md:text-left">
-                    <h2 class="text-3xl font-bold text-white">Daftar Prospek (Leads)</h2>
-                    <p class="text-slate-400 mt-1">Kelola data calon pelanggan & konversi penjualan.</p>
+                    <h2 class="text-3xl font-bold text-blue-900">Daftar Prospek (Leads)</h2>
+                    <p class="text-blue-600 mt-1">Kelola data calon pelanggan & konversi penjualan.</p>
                 </div>
                 <div>
                     <a href="{{ route('marketing.leads.create') }}"
-                        class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-sky-500 to-blue-600 border border-transparent rounded-full font-bold text-white tracking-widest hover:from-sky-600 hover:to-blue-700 shadow-lg transform hover:-translate-y-0.5 transition duration-200">
+                        class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 border border-transparent rounded-full font-bold text-blue-900 tracking-widest hover:from-yellow-500 hover:to-yellow-600 shadow-lg transform hover:-translate-y-0.5 transition duration-200">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4">
                             </path>
@@ -30,9 +30,9 @@
                 </div>
             @endif
 
-            <div class="hidden md:block bg-white overflow-hidden shadow-xl sm:rounded-2xl border border-slate-800">
+            <div class="hidden md:block bg-white overflow-hidden shadow-xl sm:rounded-2xl border border-blue-200">
                 <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gradient-to-r from-sky-600 to-blue-600 text-white">
+                    <thead class="bg-gradient-to-r from-yellow-400 to-yellow-500 text-blue-900">
                         <tr>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Pelanggan</th>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Paket Minat</th>
@@ -43,49 +43,50 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-100">
+                        @php /** @var \Illuminate\Support\Collection $leads */ @endphp
                         @forelse($leads as $lead)
-                            <tr class="hover:bg-sky-50 transition duration-150">
+                            <tr class="hover:bg-blue-50 transition duration-150">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
                                         <div class="flex-shrink-0 h-10 w-10">
                                             <div
-                                                class="h-10 w-10 rounded-full bg-sky-100 flex items-center justify-center text-sky-700 font-bold text-lg border border-sky-200 uppercase">
+                                                class="h-10 w-10 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-700 font-bold text-lg border border-yellow-300 uppercase">
                                                 {{ substr($lead->name, 0, 1) }}
                                             </div>
                                         </div>
                                         <div class="ml-4">
-                                            <div class="text-sm font-bold text-white">{{ $lead->name }}</div>
-                                            <div class="text-xs text-slate-400">{{ $lead->phone }}</div>
+                                            <div class="text-sm font-bold text-blue-900">{{ $lead->name }}</div>
+                                            <div class="text-xs text-blue-600">{{ $lead?->phone ?? '-' }}</div>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span
-                                        class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-md bg-blue-50 text-blue-700 border border-blue-100">
+                                        class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-md bg-blue-100 text-blue-800 border border-blue-200">
                                         {{ $lead->package->name ?? 'Belum Pilih' }}
                                     </span>
-                                    <div class="text-xs text-slate-400 mt-1">{{ $lead->created_at->format('d M Y') }}
+                                    <div class="text-xs text-blue-600 mt-1">{{ $lead->created_at->format('d M Y') }}
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <div class="text-sm text-slate-300 truncate max-w-xs"
+                                    <div class="text-sm text-blue-800 truncate max-w-xs"
                                         title="{{ $lead->address_installation }}">
                                         {{ Str::limit($lead->address_installation, 35) }}
                                     </div>
-                                    <div class="text-xs text-slate-400">{{ $lead->district ?? '-' }},
+                                    <div class="text-xs text-blue-600">{{ $lead->district ?? '-' }},
                                         {{ $lead->city ?? '-' }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-center">
                                     @php
                                         $statusClasses = [
-                                            'prospek' => 'bg-slate-800 text-white border-slate-800',
+                                            'prospek' => 'bg-blue-100 text-blue-800 border-blue-200',
                                             'survey' => 'bg-yellow-100 text-yellow-800 border-yellow-200',
                                             'instalasi' => 'bg-blue-100 text-blue-800 border-blue-200',
                                             'aktif' => 'bg-green-100 text-green-800 border-green-200',
                                             'batal' => 'bg-red-100 text-red-800 border-red-200',
-                                            'converted' => 'bg-purple-100 text-purple-800 border-purple-200',
+                                            'converted' => 'bg-green-100 text-green-800 border-green-200',
                                         ];
-                                        $currentClass = $statusClasses[$lead->status] ?? 'bg-slate-800 text-white';
+                                        $currentClass = $statusClasses[$lead->status] ?? 'bg-blue-100 text-blue-800';
                                     @endphp
                                     <span
                                         class="px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full border {{ $currentClass }} uppercase tracking-wide">
@@ -95,7 +96,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-center">
                                     <div class="flex items-center justify-center space-x-2">
                                         <a href="{{ route('marketing.leads.show', $lead->id) }}"
-                                            class="p-2 bg-white border border-slate-800 rounded-lg text-slate-400 hover:bg-sky-50 hover:text-sky-600 hover:border-sky-300 transition shadow-sm"
+                                            class="p-2 bg-white border border-blue-300 rounded-lg text-blue-600 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-400 transition shadow-sm"
                                             title="Lihat Detail">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
@@ -183,6 +184,7 @@
             </div>
 
             <div class="md:hidden space-y-4 px-4 sm:px-0">
+                @php /** @var \Illuminate\Support\Collection $leads */ @endphp
                 @forelse($leads as $lead)
                     <div class="bg-slate-900 rounded-xl shadow-md border border-slate-800 overflow-hidden relative">
                         <div class="absolute top-0 right-0 p-2">

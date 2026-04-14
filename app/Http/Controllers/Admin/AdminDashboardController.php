@@ -35,6 +35,6 @@ class AdminDashboardController extends Controller
             ->take(5)
             ->get();
 
-        return view('Admin.index', compact('stats', 'pendingTickets'));
+        return view('admin.dashboard.index', compact('stats', 'pendingTickets'));
     }
 }

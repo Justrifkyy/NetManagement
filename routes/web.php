@@ -41,6 +41,7 @@ use App\Http\Controllers\Marketing\LeadController;
 // 5. Import Controllers Technician
 use App\Http\Controllers\Technician\TechnicianDashboardController;
 use App\Http\Controllers\Technician\TicketController;
+use App\Http\Controllers\Technician\ProcessController;
 
 // 6. Import Controllers Customer
 use App\Http\Controllers\Customer\CustomerDashboardController;
@@ -116,6 +117,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
             // Billing
             Route::get('/billing', [\App\Http\Controllers\Admin\BillingController::class, 'index'])->name('billing.index');
             Route::get('/billing/{invoice}', [\App\Http\Controllers\Admin\BillingController::class, 'show'])->name('billing.show');
+            Route::post('/billing/{invoice}/mark-as-paid', [\App\Http\Controllers\Admin\BillingController::class, 'markAsPaid'])->name('billing.markAsPaid');
             
             // Integrations
             Route::get('/integrations', [IntegrationController::class, 'index'])->name('integrations.index');
@@ -208,25 +210,26 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
             Route::post('/maintenance/backup', [MaintenanceController::class, 'backupDatabase'])->name('maintenance.backupDatabase');
             Route::get('/maintenance/logs', [MaintenanceController::class, 'viewLogs'])->name('maintenance.viewLogs');
             Route::post('/maintenance/clear-logs', [MaintenanceController::class, 'clearLogs'])->name('maintenance.clearLogs');
-
-
-    // ==========================================
-    // ZONE 2: MARKETING AREA
-    // ==========================================
-    Route::middleware(['role:marketing'])
-        ->prefix('marketing')
-        ->name('marketing.')
-        ->group(function () {
-            Route::get('/dashboard', [MarketingDashboardController::class, 'index'])->name('dashboard');
-            Route::resource('leads', LeadController::class);
-            Route::view('/customers', 'marketing.customers.index')->name('customers.index');
-            Route::view('/customers/{id}', 'marketing.customers.show')->name('customers.show');
-            Route::view('/schedules', 'marketing.schedules.index')->name('schedules.index');
-            Route::view('/reports', 'marketing.reports.index')->name('reports.index');
-            Route::view('/profile', 'marketing.profile.index')->name('profile.index');
         });
 
-// ==========================================
+        // ==========================================
+        // ZONE 2: MARKETING AREA
+        // ==========================================
+        Route::middleware(['role:marketing'])
+            ->prefix('marketing')
+            ->name('marketing.')
+            ->group(function () {
+                Route::get('/dashboard', [MarketingDashboardController::class, 'index'])->name('dashboard');
+                Route::resource('leads', LeadController::class);
+                Route::post('/leads/{lead}/convert', [LeadController::class, 'convert'])->name('leads.convert');
+                Route::view('/customers', 'marketing.customers.index')->name('customers.index');
+                Route::view('/customers/{id}', 'marketing.customers.show')->name('customers.show');
+                Route::view('/schedules', 'marketing.schedules.index')->name('schedules.index');
+                Route::view('/reports', 'marketing.reports.index')->name('reports.index');
+                Route::view('/profile', 'marketing.profile.index')->name('profile.index');
+            });
+
+        // ==========================================
         // ZONE 3: TECHNICIAN AREA
         // ==========================================
         Route::middleware(['role:technician'])->prefix('technician')->name('technician.')->group(function () {
@@ -234,53 +237,63 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
             // 1. Dashboard Teknisi
             Route::get('/dashboard', [TechnicianDashboardController::class, 'index'])->name('dashboard');
             
-            // 2. Survey
+            // 2. Tickets (Jobdesk - Daftar Tugas Tersedia)
+            Route::get('/tickets', [TicketController::class, 'index'])->name('tickets.index');
+            Route::get('/tickets/{ticket}', [TicketController::class, 'show'])->name('tickets.show');
+            Route::post('/tickets/{ticket}/claim', [TicketController::class, 'claim'])->name('tickets.claim');
+            
+            // 3. Process (Tugas Saya - Meja Kerja)
+            Route::get('/process', [ProcessController::class, 'index'])->name('process.index');
+            Route::get('/process/{ticket}', [ProcessController::class, 'show'])->name('process.show');
+            Route::get('/process/{ticket}/edit', [ProcessController::class, 'edit'])->name('process.edit');
+            Route::put('/process/{ticket}', [ProcessController::class, 'update'])->name('process.update');
+            
+            // 4. Survey
             Route::view('/surveys', 'technician.surveys.index')->name('surveys.index');
             Route::view('/surveys/{id}', 'technician.surveys.show')->name('surveys.show');
             Route::view('/surveys/{id}/edit', 'technician.surveys.edit')->name('surveys.edit');
 
-            // 3. Instalasi
+            // 5. Instalasi
             Route::view('/installations', 'technician.installations.index')->name('installations.index');
             Route::view('/installations/{id}', 'technician.installations.show')->name('installations.show');
             Route::view('/installations/{id}/edit', 'technician.installations.edit')->name('installations.edit');
 
-            // 4. Gangguan (Troubleshoots)
+            // 6. Gangguan (Troubleshoots)
             Route::view('/troubleshoots', 'technician.troubleshoots.index')->name('troubleshoots.index');
             Route::view('/troubleshoots/{id}', 'technician.troubleshoots.show')->name('troubleshoots.show');
 
-            // 5. Data Pelanggan Teknis
+            // 7. Data Pelanggan Teknis
             Route::view('/customers/{id}', 'technician.customers.show')->name('customers.show');
 
-            // 6. Akun & Profil
+            // 8. Akun & Profil
             Route::view('/profile', 'technician.profile.index')->name('profile.index');
         });
 
-    // ==========================================
-    // ZONE 4: CUSTOMER / CLIENT AREA
-    // ==========================================
-    Route::middleware(['role:customer'])
-        ->prefix('client')
-        ->name('client.')
-        ->group(function () {
-            // 1. Dashboard (Beranda)
-            Route::get('/dashboard', [CustomerDashboardController::class, 'index'])->name('dashboard');
+        // ==========================================
+        // ZONE 4: CUSTOMER / CLIENT AREA
+        // ==========================================
+        Route::middleware(['role:customer'])
+            ->prefix('client')
+            ->name('client.')
+            ->group(function () {
+                // 1. Dashboard (Beranda)
+                Route::get('/dashboard', [CustomerDashboardController::class, 'index'])->name('dashboard');
 
-            // 2. Akun & Profil (Gunakan Controller bawaan nanti, sementara kita arahkan ke dashboard/profil dummy)
-            Route::view('/profile', 'user.profile.index')->name('profile.index');
+                // 2. Akun & Profil (Gunakan Controller bawaan nanti, sementara kita arahkan ke dashboard/profil dummy)
+                Route::view('/profile', 'user.profile.index')->name('profile.index');
 
-            // 3. Tagihan & Pembayaran
-            Route::get('/billing', [InvoiceController::class, 'index'])->name('billing.index');
-            Route::get('/billing/{invoice}', [InvoiceController::class, 'show'])->name('billing.show');
+                // 3. Tagihan & Pembayaran
+                Route::get('/billing', [InvoiceController::class, 'index'])->name('billing.index');
+                Route::get('/billing/{invoice}', [InvoiceController::class, 'show'])->name('billing.show');
 
-            // 4. Layanan (Status, Ganti Paket, Isolir)
-            Route::view('/services', 'user.services.index')->name('services.index');
+                // 4. Layanan (Status, Ganti Paket, Isolir)
+                Route::view('/services', 'user.services.index')->name('services.index');
 
-            // 5. Keluhan (Ticketing Pelanggan)
-            Route::view('/tickets', 'user.tickets.index')->name('tickets.index');
-            Route::view('/tickets/create', 'user.tickets.create')->name('tickets.create');
+                // 5. Keluhan (Ticketing Pelanggan)
+                Route::view('/tickets', 'user.tickets.index')->name('tickets.index');
+                Route::view('/tickets/create', 'user.tickets.create')->name('tickets.create');
 
-            // 6. Notifikasi
-            Route::view('/notifications', 'user.notifications.index')->name('notifications.index');
-        });
-});
+                // 6. Notifikasi
+                Route::view('/notifications', 'user.notifications.index')->name('notifications.index');
+            });
 });

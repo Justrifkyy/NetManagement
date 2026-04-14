@@ -20,6 +20,10 @@ class Ticket extends Model
         'type',
         'subject',
         'status',
+        'description',
+        'technical_notes',
+        'notes',
+        'completion_date',
 
         // --- 1. SURVEY ---
         'survey_status',

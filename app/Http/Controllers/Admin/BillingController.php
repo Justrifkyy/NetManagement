@@ -21,14 +21,14 @@ class BillingController extends Controller
             'unpaid_count'    => Invoice::where('status', 'unpaid')->count(),
         ];
 
-        return view('Admin.billing.index', compact('invoices', 'stats'));
+        return view('admin.billing.index', compact('invoices', 'stats'));
     }
 
     // 2. Tampilkan Detail Tagihan (Invoice)
     public function show(Invoice $invoice)
     {
         $invoice->load(['subscription.customer.user', 'subscription.package']);
-        return view('Admin.billing.show', compact('invoice'));
+        return view('admin.billing.show', compact('invoice'));
     }
 
     // 3. Konfirmasi Pembayaran Manual (Oleh Admin)
@@ -53,7 +53,7 @@ class BillingController extends Controller
     public function edit(Invoice $invoice)
     {
         $invoice->load(['subscription.customer.user', 'subscription.package']);
-        return view('Admin.billing.edit', compact('invoice'));
+        return view('admin.billing.edit', compact('invoice'));
     }
 
     // Simpan Perubahan Tagihan

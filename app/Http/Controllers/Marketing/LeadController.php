@@ -218,6 +218,11 @@ class LeadController extends Controller
     }
 
     // 8. CONVERT: Jadi Pelanggan & Buat Tiket
+    public function convert(Request $request, Lead $lead)
+    {
+        return $this->convertToCustomer($request, $lead);
+    }
+
     public function convertToCustomer(Request $request, Lead $lead)
     {
         if ($lead->status === 'converted' || $lead->status === 'aktif') {

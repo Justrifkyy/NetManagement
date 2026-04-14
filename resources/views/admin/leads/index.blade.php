@@ -80,12 +80,13 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
+                            @php /** @var \Illuminate\Support\Collection $leads */ @endphp
                             @forelse ($leads as $lead)
                                 <tr class="hover:bg-slate-950 transition">
                                     <td class="px-6 py-4 text-sm font-medium text-white">{{ $lead->name }}</td>
                                     <td class="px-6 py-4 text-sm">
-                                        <div class="font-medium text-white">{{ $lead->phone }}</div>
-                                        <div class="text-xs text-slate-400">{{ $lead->email ?? '-' }}</div>
+                                        <div class="font-medium text-white">{{ $lead?->phone ?? '-' }}</div>
+                                        <div class="text-xs text-slate-400">{{ $lead?->email ?? '-' }}</div>
                                     </td>
                                     <td class="px-6 py-4 text-sm">
                                         @if ($lead->package)
@@ -131,7 +132,9 @@
 
             <!-- Pagination -->
             <div class="mt-6 px-4 sm:px-0">
-                {{ $leads->links() }}
+                @if($leads instanceof \Illuminate\Pagination\Paginator)
+                    {{ $leads->links() }}
+                @endif
             </div>
         </div>
     </div>
