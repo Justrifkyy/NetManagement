@@ -58,13 +58,10 @@
                                                     bg-orange-900 text-orange-200
                                                     @break
                                                 @case('installation')
-                                                    bg-green-900 text-green-200
                                                     @break
                                                 @case('survey')
-                                                    bg-blue-900 text-blue-200
                                                     @break
                                                 @default
-                                                    bg-slate-700 text-slate-100
                                             @endswitch
                                         ">
                                             {{ ucfirst($ticket->type) }}

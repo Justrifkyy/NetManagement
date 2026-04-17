@@ -20,9 +20,9 @@
                             <h3 class="text-sm font-semibold text-slate-300 uppercase">Tipe Tiket</h3>
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium mt-1 @switch($ticket->type)
                                 @case('survey') bg-blue-900 text-blue-200 @break
-                                @case('installation') bg-green-900 text-green-200 @break
-                                @case('troubleshoot') bg-amber-900 text-amber-200 @break
-                                @default bg-slate-700 text-slate-100
+                                @case('installation') @break
+                                @case('troubleshoot') @break
+                                @default
                             @endswitch">
                                 {{ ucfirst($ticket->type) }}
                             </span>
@@ -40,10 +40,10 @@
                             <h3 class="text-sm font-semibold text-slate-300 uppercase">Status</h3>
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium mt-1 @switch($ticket->status)
                                 @case('open') bg-red-900 text-red-200 @break
-                                @case('assigned') bg-blue-900 text-blue-200 @break
-                                @case('in_progress') bg-amber-900 text-amber-200 @break
-                                @case('resolved') bg-green-900 text-green-200 @break
-                                @case('closed') bg-slate-700 text-slate-100 @break
+                                @case('assigned') @break
+                                @case('in_progress') @break
+                                @case('resolved') @break
+                                @case('closed') @break
                             @endswitch">
                                 {{ ucfirst(str_replace('_', ' ', $ticket->status)) }}
                             </span>
