@@ -89,7 +89,7 @@
                                     </td>
                                     <td class="px-6 py-4 text-sm">
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium @switch($ticket->type)
-                                            @case('survey') bg-blue-900 text-blue-200 @break
+                                            @case('survey') bg-blue-100 text-blue-800 @break
                                             @case('installation') @break
                                             @case('troubleshoot') @break
                                             @default
@@ -100,7 +100,7 @@
                                     <td class="px-6 py-4 text-sm text-slate-300">{{ $ticket->subject }}</td>
                                     <td class="px-6 py-4 text-sm">
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium @switch($ticket->status)
-                                            @case('open') bg-red-900 text-red-200 @break
+                                            @case('open') bg-red-100 text-red-800 @break
                                             @case('assigned') @break
                                             @case('in_progress') @break
                                             @case('resolved') @break

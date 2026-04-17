@@ -12,61 +12,68 @@ return new class extends Migration
     public function up(): void
     {
         // Add performance indexes to frequently queried columns
+        // Using raw SQL with IF NOT EXISTS to avoid duplicate index errors
         
-        if (Schema::hasTable('users')) {
-            Schema::table('users', function (Blueprint $table) {
-                $table->index('role');
-                $table->index('is_active');
-            });
+        $connection = Schema::connection(null)->getConnection();
+        
+        try {
+            $connection->statement("ALTER TABLE `users` ADD INDEX `users_role_index`(`role`)");
+        } catch (\Exception $e) {
+            // Index already exists
+        }
+        
+        try {
+            $connection->statement("ALTER TABLE `users` ADD INDEX `users_is_active_index`(`is_active`)");
+        } catch (\Exception $e) {
+            // Index already exists
         }
 
-        if (Schema::hasTable('leads')) {
-            Schema::table('leads', function (Blueprint $table) {
-                $table->index('marketing_id');
-                $table->index('status');
-                $table->index(['marketing_id', 'status']);
-            });
+        try {
+            $connection->statement("ALTER TABLE `leads` ADD INDEX `leads_marketing_id_index`(`marketing_id`)");
+        } catch (\Exception $e) {
+            // Index already exists
         }
 
-        if (Schema::hasTable('tickets')) {
-            Schema::table('tickets', function (Blueprint $table) {
-                $table->index('status');
-                $table->index('technician_id');
-                $table->index('customer_id');
-                $table->index(['technician_id', 'status']);
-            });
+        try {
+            $connection->statement("ALTER TABLE `leads` ADD INDEX `leads_status_index`(`status`)");
+        } catch (\Exception $e) {
+            // Index already exists
         }
 
-        if (Schema::hasTable('invoices')) {
-            Schema::table('invoices', function (Blueprint $table) {
-                $table->index('status');
-                $table->index('subscription_id');
-            });
+        try {
+            $connection->statement("ALTER TABLE `tickets` ADD INDEX `tickets_status_index`(`status`)");
+        } catch (\Exception $e) {
+            // Index already exists
         }
 
-        if (Schema::hasTable('subscriptions')) {
-            Schema::table('subscriptions', function (Blueprint $table) {
-                $table->index('customer_id');
-                $table->index('status');
-            });
+        try {
+            $connection->statement("ALTER TABLE `tickets` ADD INDEX `tickets_technician_id_index`(`technician_id`)");
+        } catch (\Exception $e) {
+            // Index already exists
         }
 
-        if (Schema::hasTable('customers')) {
-            Schema::table('customers', function (Blueprint $table) {
-                $table->index('user_id');
-            });
+        try {
+            $connection->statement("ALTER TABLE `tickets` ADD INDEX `tickets_customer_id_index`(`customer_id`)");
+        } catch (\Exception $e) {
+            // Index already exists
         }
 
-        if (Schema::hasTable('audit_logs')) {
-            Schema::table('audit_logs', function (Blueprint $table) {
-                $table->index('user_id');
-            });
+        try {
+            $connection->statement("ALTER TABLE `invoices` ADD INDEX `invoices_status_index`(`status`)");
+        } catch (\Exception $e) {
+            // Index already exists
         }
 
-        if (Schema::hasTable('sessions')) {
-            Schema::table('sessions', function (Blueprint $table) {
-                $table->index('last_activity');
-            });
+        try {
+            $connection->statement("ALTER TABLE `subscriptions` ADD INDEX `subscriptions_customer_id_index`(`customer_id`)");
+        } catch (\Exception $e) {
+            // Index already exists
+        }
+
+        try {
+            $connection->statement("ALTER TABLE `customers` ADD INDEX `customers_user_id_index`(`user_id`)");
+        } catch (\Exception $e) {
+            // Index already exists
         }
     }
 

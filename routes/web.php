@@ -230,6 +230,55 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
                 Route::view('/profile', 'marketing.profile.index')->name('profile.index');
             });
 
+    // ==========================================
+    // EMAIL NOTIFICATION TEST ROUTES
+    // ==========================================
+    Route::get('/test/email-config', function () {
+        return [
+            'status' => 'ok',
+            'mailer' => config('mail.mailer'),
+            'host' => config('mail.host'),
+            'port' => config('mail.port'),
+            'from' => config('mail.from.address'),
+            'from_name' => config('mail.from.name'),
+        ];
+    });
+
+    Route::get('/test/send-email', function () {
+        try {
+            $user = Auth::user();
+            $testEmail = $user ? $user->email : 'test@example.com';
+            
+            \Illuminate\Support\Facades\Mail::raw(
+                'Test email from NetManagement',
+                function ($message) use ($testEmail) {
+                    $message->to($testEmail)->subject('Test Email');
+                }
+            );
+
+            return ['status' => 'success', 'sent_to' => $testEmail];
+        } catch (\Exception $e) {
+            return ['status' => 'error', 'message' => $e->getMessage()];
+        }
+    });
+
+    Route::get('/test/notification/{ticketId}', function ($ticketId) {
+        try {
+            $ticket = \App\Models\Ticket::find($ticketId);
+            if (!$ticket) return ['error' => 'Ticket not found'];
+
+            if (!$ticket->customer || !$ticket->customer->user) {
+                return ['error' => 'Ticket customer or user not found'];
+            }
+
+            \App\Services\NotificationService::notifyTicketCreated($ticket);
+
+            return ['status' => 'success', 'sent_to' => $ticket->customer->user->email];
+        } catch (\Exception $e) {
+            return ['error' => $e->getMessage()];
+        }
+    });
+
         // ==========================================
         // ZONE 3: TECHNICIAN AREA
         // ==========================================

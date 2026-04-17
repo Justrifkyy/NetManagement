@@ -19,7 +19,7 @@
                         <div>
                             <h3 class="text-sm font-semibold text-slate-300 uppercase">Tipe Tiket</h3>
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium mt-1 @switch($ticket->type)
-                                @case('survey') bg-blue-900 text-blue-200 @break
+                                @case('survey') bg-blue-100 text-blue-800 @break
                                 @case('installation') @break
                                 @case('troubleshoot') @break
                                 @default
@@ -39,7 +39,7 @@
                         <div>
                             <h3 class="text-sm font-semibold text-slate-300 uppercase">Status</h3>
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium mt-1 @switch($ticket->status)
-                                @case('open') bg-red-900 text-red-200 @break
+                                @case('open') bg-red-100 text-red-800 @break
                                 @case('assigned') @break
                                 @case('in_progress') @break
                                 @case('resolved') @break
