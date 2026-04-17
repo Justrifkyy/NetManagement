@@ -11,6 +11,16 @@ export default {
         './resources/views/**/*.blade.php',
     ],
 
+    safelist: [
+        // Badge colors for ticket types
+        'bg-blue-900', 'text-blue-200',
+        'bg-green-900', 'text-green-200',
+        'bg-amber-900', 'text-amber-200',
+        'bg-slate-700', 'text-slate-100',
+        // Badge colors for ticket status
+        'bg-red-900', 'text-red-200',
+    ],
+
     theme: {
         extend: {
             fontFamily: {

@@ -55,16 +55,16 @@
                                         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
                                             @switch($ticket->type)
                                                 @case('repair')
-                                                    bg-orange-900/30 text-orange-300 border border-orange-700
+                                                    bg-orange-900 text-orange-200
                                                     @break
                                                 @case('installation')
-                                                    bg-green-900/30 text-green-300 border border-green-700
+                                                    bg-green-900 text-green-200
                                                     @break
                                                 @case('survey')
-                                                    bg-blue-900/30 text-blue-300 border border-blue-700
+                                                    bg-blue-900 text-blue-200
                                                     @break
                                                 @default
-                                                    bg-slate-700 text-slate-300 border border-slate-600
+                                                    bg-slate-700 text-slate-100
                                             @endswitch
                                         ">
                                             {{ ucfirst($ticket->type) }}
