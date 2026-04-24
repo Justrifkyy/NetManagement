@@ -30,7 +30,7 @@ class AdminDashboardController extends Controller
         ];
 
         // Ambil 5 tiket terbaru yang menunggu QC dengan optimized eager loading
-        $pendingTickets = Ticket::with(['customer.user', 'technician.user'])
+        $pendingTickets = Ticket::with(['customer.user', 'technician'])
             ->where('status', 'resolved')
             ->latest()
             ->take(5)

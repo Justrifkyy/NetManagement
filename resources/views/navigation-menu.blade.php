@@ -26,12 +26,12 @@
                         <x-nav-link href="{{ route('superadmin.settings.index') }}" :active="request()->routeIs('superadmin.settings.*')">
                             {{ __('Pengaturan') }}
                         </x-nav-link>
-                    @endif
-
-                    @if (in_array(Auth::user()->role, ['admin', 'super_admin']))
                         <x-nav-link href="{{ route('admin.dashboard') }}" :active="request()->routeIs('admin.dashboard')">
                             {{ __('Dashboard Admin') }}
                         </x-nav-link>
+                    @endif
+
+                    @if (in_array(Auth::user()->role, ['admin', 'super_admin']))
                         <x-nav-link href="{{ route('admin.customers.index') }}" :active="request()->routeIs('admin.customers.*')">
                             {{ __('Pelanggan') }}
                         </x-nav-link>
