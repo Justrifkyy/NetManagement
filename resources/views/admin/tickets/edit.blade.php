@@ -30,8 +30,7 @@
                                 class="w-full px-4 py-3 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
                                 <option value="survey" @selected($ticket->type === 'survey')>Survey</option>
                                 <option value="installation" @selected($ticket->type === 'installation')>Instalasi</option>
-                                <option value="troubleshoot" @selected($ticket->type === 'troubleshoot')>Perbaikan</option>
-                                <option value="maintenance" @selected($ticket->type === 'maintenance')>Maintenance</option>
+                                <option value="repair" @selected($ticket->type === 'repair')>Perbaikan</option>
                             </select>
                         </div>
                     </div>

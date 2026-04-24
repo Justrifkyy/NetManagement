@@ -10,9 +10,23 @@ use Illuminate\Support\Facades\Auth;
 
 class CustomerController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $customers = Customer::with(['user', 'subscriptions'])->paginate(15);
+        $query = Customer::with(['user', 'subscriptions']);
+
+        // Search by customer code, name, or phone number
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('customer_code', 'like', "%{$search}%")
+                  ->orWhereHas('user', function ($userQuery) use ($search) {
+                      $userQuery->where('name', 'like', "%{$search}%");
+                  })
+                  ->orWhere('phone_number', 'like', "%{$search}%");
+            });
+        }
+
+        $customers = $query->paginate(15);
         return view('admin.customers.index', compact('customers'));
     }
 

@@ -30,8 +30,7 @@
                                 <option value="">Pilih Tipe</option>
                                 <option value="survey">Survey</option>
                                 <option value="installation">Instalasi</option>
-                                <option value="troubleshoot">Perbaikan</option>
-                                <option value="maintenance">Maintenance</option>
+                                <option value="repair">Perbaikan</option>
                             </select>
                             @error('type') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
                         </div>

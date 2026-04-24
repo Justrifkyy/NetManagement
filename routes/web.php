@@ -129,6 +129,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
             
             // Reports & Logs
             Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+            Route::get('/reports/customers', [ReportController::class, 'customerReport'])->name('reports.customers');
+            Route::get('/reports/arrears', [ReportController::class, 'arrearsReport'])->name('reports.arrears');
             Route::get('/logs', [LogController::class, 'index'])->name('logs.index');
             Route::get('/logs/{log}', [LogController::class, 'show'])->name('logs.show');
             Route::get('/logs/export', [LogController::class, 'export'])->name('logs.export');

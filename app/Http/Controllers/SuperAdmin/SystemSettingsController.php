@@ -23,13 +23,16 @@ class SystemSettingsController extends Controller
             'company_phone' => 'required|string',
             'company_email' => 'required|email',
             'company_address' => 'required|string',
-            'maintenance_mode' => 'boolean',
+            'maintenance_mode' => 'nullable|boolean',
             'timezone' => 'required|string',
             'currency' => 'required|string',
-            'enable_two_factor' => 'boolean',
+            'enable_two_factor' => 'nullable',
             'password_expiry_days' => 'required|integer',
             'backup_frequency' => 'required|string',
         ]);
+
+        // Handle checkbox yang mungkin tidak dikirim ketika unchecked
+        $validated['enable_two_factor'] = $request->has('enable_two_factor') ? 1 : 0;
 
         foreach ($validated as $key => $value) {
             SystemSetting::updateOrCreate(

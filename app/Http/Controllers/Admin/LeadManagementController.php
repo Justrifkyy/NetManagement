@@ -56,10 +56,25 @@ class LeadManagementController extends Controller
             'name' => 'required|string|max:255',
             'phone' => 'required|string',
             'email' => 'nullable|email',
+            'customer_type' => 'nullable|string',
+            'mother_name' => 'nullable|string',
+            'business_name' => 'nullable|string',
+            'address_ktp' => 'nullable|string',
             'address_installation' => 'required|string',
+            'rt_rw' => 'nullable|string',
+            'village' => 'nullable|string',
+            'district' => 'nullable|string',
+            'city' => 'nullable|string',
             'package_id' => 'required|exists:packages,id',
-            'status' => 'required|in:prospek,survey_pending,survey_done,install_pending,installed,rejected',
+            'status' => 'required|in:prospect,contacted,qualified,proposal_sent,negotiation,converted,lost',
+            'source' => 'nullable|string',
+            'promo_code' => 'nullable|string',
+            'survey_date' => 'nullable|date',
+            'installation_date' => 'nullable|date',
+            'preferred_time' => 'nullable|string',
             'notes_summary' => 'nullable|string',
+            'notes_obstacle' => 'nullable|string',
+            'notes_special' => 'nullable|string',
         ]);
 
         Lead::create($validated);
@@ -89,15 +104,25 @@ class LeadManagementController extends Controller
             'name' => 'required|string|max:255',
             'phone' => 'required|string',
             'email' => 'nullable|email',
+            'customer_type' => 'nullable|string',
             'mother_name' => 'nullable|string',
+            'business_name' => 'nullable|string',
             'address_ktp' => 'nullable|string',
             'address_installation' => 'required|string',
+            'rt_rw' => 'nullable|string',
+            'village' => 'nullable|string',
+            'district' => 'nullable|string',
+            'city' => 'nullable|string',
             'package_id' => 'required|exists:packages,id',
-            'status' => 'required|in:prospek,survey_pending,survey_done,install_pending,installed,rejected',
+            'status' => 'required|in:prospect,contacted,qualified,proposal_sent,negotiation,converted,lost',
+            'source' => 'nullable|string',
+            'promo_code' => 'nullable|string',
             'survey_date' => 'nullable|date',
             'installation_date' => 'nullable|date',
+            'preferred_time' => 'nullable|string',
             'notes_summary' => 'nullable|string',
             'notes_obstacle' => 'nullable|string',
+            'notes_special' => 'nullable|string',
         ]);
 
         $lead->update($validated);
@@ -115,7 +140,7 @@ class LeadManagementController extends Controller
     public function updateStatus(Request $request, Lead $lead)
     {
         $validated = $request->validate([
-            'status' => 'required|in:prospek,survey_pending,survey_done,install_pending,installed,rejected',
+            'status' => 'required|in:prospect,contacted,qualified,proposal_sent,negotiation,converted,lost',
         ]);
 
         $lead->update($validated);
