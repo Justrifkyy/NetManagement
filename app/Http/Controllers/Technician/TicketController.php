@@ -17,9 +17,10 @@ class TicketController extends Controller
 
     public function index()
     {
-        // Hanya tiket OPEN (Belum diambil siapapun)
+        // Hanya tiket OPEN dengan tipe REPAIR (Belum diambil siapapun)
         $tickets = Ticket::with(['customer.user'])
             ->where('status', 'open')
+            ->where('type', 'repair')
             ->latest()
             ->get();
 

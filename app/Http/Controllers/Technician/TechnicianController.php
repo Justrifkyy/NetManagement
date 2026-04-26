@@ -11,6 +11,7 @@ use App\Models\NetworkConfig;
 use App\Models\InternetAccount;
 use App\Models\ConnectionTest;
 use App\Models\HandoverConfirmation;
+use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,9 +22,9 @@ class TechnicianController extends Controller
     {
         $today_tasks = InstallationForm::where('installation_date', today())->count();
         $pending_installations = InstallationForm::whereNull('installation_status')->count();
-        $trouble_tickets = Lead::where('status', 'gangguan')->count();
+        $repair_tickets = Ticket::where('type', 'repair')->where('status', 'open')->count();
 
-        return view('technician.dashboard', compact('today_tasks', 'pending_installations', 'trouble_tickets'));
+        return view('technician.dashboard', compact('today_tasks', 'pending_installations', 'repair_tickets'));
     }
 
     // Survey Management
@@ -31,6 +32,32 @@ class TechnicianController extends Controller
     {
         $surveys = SurveyForm::with('lead', 'technician')->latest()->paginate(15);
         return view('technician.survey.index', compact('surveys'));
+    }
+
+    // Get Available Leads for Survey (tidak punya SurveyForm)
+    public function available_surveys_list()
+    {
+        $available_leads = Lead::whereDoesntHave('survey')
+            ->with('package', 'marketing')
+            ->whereIn('status', ['prospect', 'contacted', 'qualified'])
+            ->latest()
+            ->paginate(15);
+
+        return view('technician.surveys.index', compact('available_leads'));
+    }
+
+    // Get Available Leads for Installation (tidak punya InstallationForm)
+    public function available_installations_list()
+    {
+        $available_leads = Lead::whereDoesntHave('installation')
+            ->whereHas('survey', function ($q) {
+                $q->where('survey_status', 'layak');
+            })
+            ->with('package', 'marketing', 'survey')
+            ->latest()
+            ->paginate(15);
+
+        return view('technician.installations.index', compact('available_leads'));
     }
 
     public function survey_create($lead_id)
