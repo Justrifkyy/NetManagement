@@ -291,12 +291,14 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
             
             // 2. Survey Management
             Route::get('/survey', [TechnicianController::class, 'survey_list'])->name('survey.index');
+            Route::get('/surveys', [TechnicianController::class, 'available_surveys_list'])->name('surveys.index');
             Route::get('/survey/{lead_id}', [TechnicianController::class, 'survey_create'])->name('survey.create');
             Route::get('/survey/{lead_id}/edit', [TechnicianController::class, 'survey_create'])->name('survey.edit');
             Route::post('/survey/{lead_id}', [TechnicianController::class, 'survey_store'])->name('survey.store');
             
             // 3. Installation Management
             Route::get('/installation', [TechnicianController::class, 'installation_list'])->name('installation.index');
+            Route::get('/installations', [TechnicianController::class, 'available_installations_list'])->name('installations.index');
             Route::get('/installation/{lead_id}', [TechnicianController::class, 'installation_create'])->name('installation.create');
             Route::get('/installation/{installation_id}/edit', [TechnicianController::class, 'installation_create'])->name('installation.edit');
             Route::post('/installation/{lead_id}', [TechnicianController::class, 'installation_store'])->name('installation.store');
