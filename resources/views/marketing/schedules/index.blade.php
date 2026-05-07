@@ -1,215 +1,182 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-white leading-tight">
-            {{ __('Jadwal & Timeline') }}
-        </h2>
-    </x-slot>
+    <div class="py-10 bg-slate-950 min-h-screen selection:bg-indigo-500/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-    <div class="py-10 bg-blue-50 min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-
-            <div class="flex flex-col md:flex-row justify-between items-center mb-8 px-4 sm:px-0">
-                <div>
-                    <h3 class="text-3xl font-bold text-blue-900">Jadwal & Follow-up</h3>
-                    <p class="text-blue-600 mt-1">Kelola jadwal follow-up dan timeline dengan prospek & pelanggan</p>
+            <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div class="fade-in">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="p-2 bg-indigo-500/10 rounded-lg border border-indigo-500/20 text-indigo-400">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <span class="text-[10px] font-black text-indigo-500 uppercase tracking-[0.2em]">Activity Planner</span>
+                    </div>
+                    <h1 class="text-4xl font-black text-white tracking-tighter">Jadwal & <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-300">Timeline</span></h1>
+                    <p class="text-slate-400 mt-2 font-medium">Kelola ritme kerja, janji temu, dan tindak lanjut (follow-up) prospek pelanggan.</p>
                 </div>
-                <button class="mt-4 md:mt-0 px-6 py-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-blue-900 rounded-lg font-bold hover:from-yellow-500 hover:to-yellow-600 transition">
-                    + Tambah Jadwal
+                <button class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-indigo-600 text-white text-xs font-black uppercase tracking-widest rounded-2xl shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:bg-indigo-500 hover:shadow-[0_0_30px_rgba(79,70,229,0.5)] transition-all duration-300 transform hover:-translate-y-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                    Tambah Jadwal
                 </button>
             </div>
 
-            {{-- Filter & View Toggle --}}
-            <div class="bg-white rounded-xl shadow-md p-4 mb-6 border border-blue-200">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                    <div>
-                        <label class="block text-xs font-semibold text-blue-600 uppercase mb-2">Filter Tipe</label>
-                        <select class="w-full px-3 py-2 text-sm border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                            <option>Semua Jadwal</option>
-                            <option>Follow-up</option>
-                            <option>Survei</option>
-                            <option>Presentasi</option>
+            {{-- Advanced Filter Card --}}
+            <div class="bg-slate-900/80 backdrop-blur-md rounded-[2rem] shadow-2xl border border-slate-800 p-8 mb-10 relative overflow-hidden">
+                <div class="absolute -left-20 -top-20 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="relative z-10 grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Kategori Tugas</label>
+                        <select class="w-full px-5 py-3.5 bg-slate-800/50 border border-slate-700 text-white rounded-2xl focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all font-bold appearance-none cursor-pointer">
+                            <option class="bg-slate-900">Semua Jadwal</option>
+                            <option class="bg-slate-900">Follow-up</option>
+                            <option class="bg-slate-900">Survei</option>
+                            <option class="bg-slate-900">Presentasi</option>
                         </select>
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-blue-600 uppercase mb-2">Status</label>
-                        <select class="w-full px-3 py-2 text-sm border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                            <option>Semua Status</option>
-                            <option>Belum Dijadwalkan</option>
-                            <option>Terjadwal</option>
-                            <option>Selesai</option>
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Status Progres</label>
+                        <select class="w-full px-5 py-3.5 bg-slate-800/50 border border-slate-700 text-white rounded-2xl focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 font-bold appearance-none cursor-pointer">
+                            <option class="bg-slate-900">Semua Status</option>
+                            <option class="bg-slate-900">Terjadwal</option>
+                            <option class="bg-slate-900">Selesai</option>
                         </select>
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-blue-600 uppercase mb-2">Periode</label>
-                        <select class="w-full px-3 py-2 text-sm border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                            <option>Minggu Ini</option>
-                            <option>Bulan Ini</option>
-                            <option>Semua</option>
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Rentang Waktu</label>
+                        <select class="w-full px-5 py-3.5 bg-slate-800/50 border border-slate-700 text-white rounded-2xl focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 font-bold appearance-none cursor-pointer">
+                            <option class="bg-slate-900">Minggu Ini</option>
+                            <option class="bg-slate-900">Bulan Ini</option>
                         </select>
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-blue-600 uppercase mb-2">&nbsp;</label>
-                        <button class="w-full px-3 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 transition">
-                            🔍 Terapkan
-                        </button>
-                    </div>
+                    <button class="w-full py-4 bg-slate-800 border border-slate-700 text-white font-black rounded-2xl hover:bg-indigo-600 hover:border-indigo-500 transition-all duration-300 uppercase tracking-widest text-[10px]">
+                        Terapkan Filter
+                    </button>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-10">
 
-                {{-- Timeline View --}}
-                <div class="lg:col-span-3">
+                {{-- Timeline Column --}}
+                <div class="lg:col-span-3 space-y-8">
+                    @for ($day = 0; $day < 7; $day++)
+                        @php
+                            $date = now()->addDays($day);
+                            $isToday = $day === 0;
+                            $count = rand(1, 3);
+                        @endphp
 
-                    {{-- Day Sections --}}
-                    <div class="space-y-6">
-
-                        @for ($day = 0; $day < 7; $day++)
-                            @php
-                                $date = now()->addDays($day);
-                                $isToday = $day === 0;
-                                $count = rand(1, 4);
-                            @endphp
-
-                            <div class="bg-white rounded-xl shadow-lg border-l-4 {{ $isToday ? 'border-l-yellow-500' : 'border-l-blue-300' }} border border-blue-200 overflow-hidden">
-                                <div class="px-6 py-4 {{ $isToday ? 'bg-yellow-50' : 'bg-blue-50' }}">
-                                    <div class="flex items-center justify-between">
-                                        <div>
-                                            <h4 class="text-lg font-bold {{ $isToday ? 'text-yellow-700' : 'text-blue-900' }}">
-                                                {{ $date->format('l, d F Y') }}
-                                            </h4>
-                                            <span class="text-xs {{ $isToday ? 'text-yellow-600' : 'text-blue-600' }} font-semibold">
-                                                @if($isToday) 📌 Hari Ini @endif
-                                            </span>
-                                        </div>
-                                        <span class="inline-block px-3 py-1 {{ $isToday ? 'bg-yellow-200 text-yellow-700' : 'bg-blue-100 text-blue-700' }} rounded-full font-bold text-sm">
-                                            {{ $count }} jadwal
-                                        </span>
-                                    </div>
+                        <div class="relative">
+                            <div class="flex items-center gap-4 mb-6">
+                                <div class="px-5 py-2 rounded-xl {{ $isToday ? 'bg-indigo-500 text-white shadow-[0_0_15px_rgba(79,70,229,0.4)]' : 'bg-slate-900 border border-slate-800 text-slate-400' }} font-black text-xs uppercase tracking-widest">
+                                    {{ $date->format('l, d F') }}
                                 </div>
+                                @if($isToday)
+                                    <span class="text-[10px] font-black text-indigo-400 uppercase tracking-widest animate-pulse">● Hari Ini</span>
+                                @endif
+                                <div class="h-px bg-slate-800 flex-grow"></div>
+                                <span class="text-[10px] font-bold text-slate-600 uppercase">{{ $count }} Items</span>
+                            </div>
 
-                                <div class="p-6 space-y-4">
-                                    @for ($i = 0; $i < $count; $i++)
-                                        @php
-                                            $types = ['Follow-up', 'Survei', 'Presentasi', 'Instalasi'];
-                                            $type = $types[$i % count($types)];
-                                            $time = sprintf('%02d:%02d', rand(8, 17), [0, 30][$i % 2]);
-                                            $status = ['Belum Dimulai', 'Sedang Berlangsung', 'Selesai'][$i % 3];
-                                        @endphp
+                            <div class="space-y-4 ml-2 border-l-2 border-slate-900 pl-8">
+                                @for ($i = 0; $i < $count; $i++)
+                                    @php
+                                        $types = ['Follow-up', 'Survei', 'Presentasi', 'Instalasi'];
+                                        $type = $types[$i % count($types)];
+                                        $time = sprintf('%02d:%02d', rand(8, 17), [0, 30][$i % 2]);
+                                        $status = ['Belum Dimulai', 'Selesai'][$i % 2];
+                                    @endphp
 
-                                        <div class="flex gap-4 pb-4 border-b border-blue-100 last:border-b-0 last:pb-0 hover:bg-blue-50 p-3 rounded-lg transition">
-                                            <div class="flex-shrink-0 text-center w-16">
-                                                <div class="font-bold text-blue-700 text-lg">{{ $time }}</div>
-                                                <div class="text-xs text-blue-600 mt-1">WIB</div>
+                                    <div class="group relative bg-slate-900/50 backdrop-blur-md border border-slate-800 rounded-[2rem] p-6 hover:border-indigo-500/30 transition-all duration-300">
+                                        <div class="absolute -left-[2.55rem] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-4 border-slate-950 group-hover:scale-125 transition-transform {{ $status == 'Selesai' ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'bg-slate-700' }}"></div>
+
+                                        <div class="flex flex-col md:flex-row md:items-center gap-6">
+                                            <div class="flex-shrink-0">
+                                                <div class="text-2xl font-black text-white font-mono tracking-tighter">{{ $time }}</div>
+                                                <div class="text-[10px] font-black text-slate-600 uppercase tracking-widest text-center md:text-left">WITA</div>
                                             </div>
 
                                             <div class="flex-grow">
-                                                <h5 class="font-bold text-blue-900">{{ $type }} - Prospek {{ $i + 1 }}</h5>
-                                                <p class="text-sm text-blue-600 mt-1">
-                                                    Nama Pelanggan {{ $i + 1 }}
-                                                    <span class="text-xs">| +62 812 3456 {{ str_pad($i * 100, 4, '0', STR_PAD_LEFT) }}</span>
-                                                </p>
-                                                <p class="text-xs text-blue-500 mt-1 line-clamp-1">
-                                                    📍 Jl. Demo {{ $i + 1 }}, Kota Demo
-                                                </p>
-
-                                                <div class="flex items-center gap-2 mt-3">
-                                                    @php
-                                                        $statusColor = match($status) {
-                                                            'Belum Dimulai' => 'yellow',
-                                                            'Sedang Berlangsung' => 'blue',
-                                                            'Selesai' => 'green',
-                                                        };
-                                                    @endphp
-                                                    <span class="px-2 py-1 text-xs font-bold rounded bg-{{ $statusColor }}-100 text-{{ $statusColor }}-700">
-                                                        ● {{ $status }}
-                                                    </span>
-                                                    <span class="text-xs text-blue-500">Durasi: 30 menit</span>
+                                                <div class="flex items-center gap-2 mb-1">
+                                                    <h5 class="font-black text-white text-lg tracking-tight group-hover:text-indigo-400 transition-colors">{{ $type }}</h5>
+                                                    <span class="text-slate-700">•</span>
+                                                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">ID #{{ 1000 + $i }}</span>
+                                                </div>
+                                                <p class="text-sm text-slate-300 font-medium">Customer: <span class="text-white">Prospek {{ $i + 1 }}</span> | +62 812 3456 xxxx</p>
+                                                <div class="flex items-center gap-3 mt-3">
+                                                    <div class="flex items-center gap-1.5 px-3 py-1 bg-slate-800 rounded-lg border border-slate-700">
+                                                        <svg class="w-3 h-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                                                        <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest line-clamp-1">Area: Gowa, Sulawesi Selatan</span>
+                                                    </div>
+                                                    @if($status == 'Selesai')
+                                                        <span class="px-2 py-0.5 text-[9px] font-black bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded uppercase tracking-widest shadow-inner">Complete</span>
+                                                    @else
+                                                        <span class="px-2 py-0.5 text-[9px] font-black bg-amber-500/10 text-amber-500 border border-amber-500/20 rounded uppercase tracking-widest shadow-inner">Upcoming</span>
+                                                    @endif
                                                 </div>
                                             </div>
 
-                                            <div class="flex-shrink-0 flex items-center gap-2">
-                                                <button class="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition" title="Edit">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-7-4a3 3 0 00-3 3m3-3h6m0 0v6m0-6a3 3 0 013 3v6"></path>
-                                                    </svg>
+                                            <div class="flex md:flex-col gap-2">
+                                                <button class="p-2.5 bg-slate-800 text-slate-400 hover:text-indigo-400 rounded-xl transition-all border border-slate-700">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                                 </button>
-                                                <button class="p-2 text-red-600 hover:bg-red-100 rounded-lg transition" title="Hapus">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                                    </svg>
+                                                <button class="p-2.5 bg-slate-800 text-slate-400 hover:text-rose-500 rounded-xl transition-all border border-slate-700">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                                 </button>
                                             </div>
                                         </div>
-                                    @endfor
-                                </div>
+                                    </div>
+                                @endfor
                             </div>
-                        @endfor
-
-                    </div>
-
+                        </div>
+                    @endfor
                 </div>
 
-                {{-- Sidebar: Summary & Upcoming --}}
-                <div class="space-y-6">
-
-                    {{-- Today Summary --}}
-                    <div class="bg-gradient-to-br from-yellow-100 to-yellow-50 rounded-xl shadow-lg p-6 border border-yellow-300">
-                        <h4 class="text-lg font-bold text-yellow-900 mb-4">📅 Hari Ini</h4>
-                        <div class="space-y-3">
-                            <div class="flex items-center justify-between">
-                                <span class="text-yellow-800 font-medium">Total Jadwal</span>
-                                <span class="text-2xl font-bold text-yellow-700">4</span>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-yellow-800 font-medium">Selesai</span>
-                                <span class="text-2xl font-bold text-green-600">2</span>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-yellow-800 font-medium">Sisa</span>
-                                <span class="text-2xl font-bold text-orange-600">2</span>
-                            </div>
+                {{-- Sidebar Column --}}
+                <div class="space-y-8">
+                    <div class="bg-gradient-to-br from-indigo-600 to-purple-600 rounded-[2rem] p-8 shadow-2xl relative overflow-hidden group">
+                        <div class="absolute -right-4 -bottom-4 text-white/10 group-hover:scale-110 transition-transform">
+                            <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
                         </div>
-                    </div>
-
-                    {{-- Week Overview --}}
-                    <div class="bg-white rounded-xl shadow-lg border border-blue-200 p-6">
-                        <h4 class="text-lg font-bold text-blue-900 mb-4">Minggu Depan</h4>
-                        <div class="space-y-3">
-                            @for ($i = 1; $i <= 7; $i++)
-                                <div class="flex items-center text-sm">
-                                    <span class="text-xs text-blue-600 font-semibold w-8">{{ now()->addDays($i)->format('l')|substr(0,3) }}</span>
-                                    <div class="flex-grow ml-2">
-                                        <div class="flex gap-1">
-                                            @for ($j = 0; $j < rand(2, 5); $j++)
-                                                <div class="h-2 flex-1 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-full"></div>
-                                            @endfor
-                                        </div>
-                                    </div>
-                                    <span class="text-xs text-blue-700 font-bold ml-2">{{ rand(2, 5) }}</span>
+                        <h4 class="text-xs font-black text-white uppercase tracking-[0.2em] mb-6 relative z-10">Ringkasan Hari Ini</h4>
+                        <div class="space-y-6 relative z-10">
+                            <div>
+                                <p class="text-white/60 text-[10px] font-black uppercase tracking-widest">Target Tercapai</p>
+                                <div class="flex items-end gap-2">
+                                    <span class="text-4xl font-black text-white tracking-tighter">75%</span>
+                                    <span class="text-xs font-bold text-indigo-200 mb-1.5">3/4 Tugas</span>
                                 </div>
-                            @endfor
+                                <div class="w-full h-1.5 bg-white/20 rounded-full mt-2">
+                                    <div class="w-3/4 h-full bg-white rounded-full shadow-[0_0_10px_rgba(255,255,255,0.5)]"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    {{-- Quick Add --}}
-                    <div class="bg-white rounded-xl shadow-lg border border-blue-200 p-6">
-                        <h4 class="text-lg font-bold text-blue-900 mb-4">⚡ Aksi Cepat</h4>
-                        <button class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition text-sm mb-2">
-                            + Follow-up Email
-                        </button>
-                        <button class="w-full px-4 py-2 bg-blue-100 text-blue-700 rounded-lg font-bold hover:bg-blue-200 transition text-sm mb-2">
-                            + Meeting Video Call
-                        </button>
-                        <button class="w-full px-4 py-2 bg-yellow-100 text-yellow-700 rounded-lg font-bold hover:bg-yellow-200 transition text-sm">
-                            + Reminder
-                        </button>
+                    <div class="bg-slate-900 border border-slate-800 rounded-[2rem] p-8 shadow-xl">
+                        <h4 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] mb-6">Template Aksi Cepat</h4>
+                        <div class="space-y-3">
+                            <button class="w-full flex items-center justify-between p-4 bg-slate-800/50 hover:bg-indigo-600 rounded-2xl border border-slate-700 hover:border-indigo-500 transition-all duration-300 group">
+                                <span class="text-xs font-bold text-slate-300 group-hover:text-white uppercase tracking-widest">WhatsApp Follow-up</span>
+                                <svg class="w-4 h-4 text-indigo-500 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                            </button>
+                            <button class="w-full flex items-center justify-between p-4 bg-slate-800/50 hover:bg-emerald-600 rounded-2xl border border-slate-700 hover:border-emerald-500 transition-all duration-300 group">
+                                <span class="text-xs font-bold text-slate-300 group-hover:text-white uppercase tracking-widest">Reminder Tagihan</span>
+                                <svg class="w-4 h-4 text-emerald-500 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                            </button>
+                            <button class="w-full flex items-center justify-between p-4 bg-slate-800/50 hover:bg-rose-600 rounded-2xl border border-slate-700 hover:border-rose-500 transition-all duration-300 group">
+                                <span class="text-xs font-bold text-slate-300 group-hover:text-white uppercase tracking-widest">Reschedule Janji</span>
+                                <svg class="w-4 h-4 text-rose-500 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                            </button>
+                        </div>
                     </div>
-
                 </div>
 
             </div>
 
         </div>
     </div>
+
+    <style>
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
 </x-app-layout>

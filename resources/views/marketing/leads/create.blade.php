@@ -1,420 +1,252 @@
 <x-app-layout>
-    <div class="py-10 bg-blue-50 min-h-screen">
-        <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-10 bg-slate-950 min-h-screen selection:bg-sky-500/30">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            <!-- Header -->
-            <div class="mb-8 px-4 sm:px-0">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h1 class="text-4xl font-bold text-blue-900">Registrasi Prospek Baru</h1>
-                        <p class="text-blue-600 mt-1">Isikan data lengkap calon pelanggan</p>
-                    </div>
-                    <a href="{{ route('marketing.leads.index') }}" class="text-blue-600 hover:text-blue-800 font-semibold">← Kembali</a>
+            <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div class="fade-in">
+                    <a href="{{ route('marketing.leads.index') }}" class="inline-flex items-center text-sm font-semibold text-slate-500 hover:text-white transition-colors mb-4 group">
+                        <svg class="w-4 h-4 mr-1.5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        Kembali ke Pipeline
+                    </a>
+                    <h1 class="text-4xl font-black text-white tracking-tighter">Entry <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-indigo-400">Prospek Baru</span></h1>
+                    <p class="text-slate-400 mt-2 font-medium">Lengkapi parameter data calon pelanggan untuk inisiasi proses survey.</p>
                 </div>
             </div>
 
             @if ($errors->any())
-                <div class="mb-6 mx-4 sm:mx-0 bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-r">
-                    <p class="font-bold mb-2">⚠️ Terdapat kesalahan:</p>
-                    <ul class="list-disc ml-6 text-sm space-y-1">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
+                <div class="mb-8 p-5 bg-rose-500/10 border border-rose-500/20 rounded-[2rem] flex items-start gap-4">
+                    <div class="p-2 bg-rose-500 rounded-xl text-white shadow-[0_0_15px_rgba(225,29,72,0.4)]">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    </div>
+                    <div>
+                        <p class="text-rose-400 font-black text-xs uppercase tracking-widest mb-2">Terdapat Kendala Input:</p>
+                        <ul class="list-disc ml-4 text-sm text-rose-300/80 space-y-1 font-medium">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
                 </div>
             @endif
 
-            <!-- Form Container -->
-            <form action="{{ route('marketing.leads.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+            <form action="{{ route('marketing.leads.store') }}" method="POST" enctype="multipart/form-data" class="space-y-10">
                 @csrf
 
-                <!-- SECTION 1: DATA IDENTITAS CALON PELANGGAN -->
-                <div class="bg-white rounded-xl shadow-lg border border-blue-200 overflow-hidden">
-                    <div class="bg-gradient-to-r from-yellow-400 to-yellow-500 px-6 py-4 flex items-center">
-                        <div class="flex items-center justify-center w-10 h-10 bg-white/30 rounded-full mr-3">
-                            <svg class="w-6 h-6 text-blue-900" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                            </svg>
+                <div class="bg-slate-900/80 backdrop-blur-md rounded-[2.5rem] shadow-2xl border border-slate-800 overflow-hidden relative">
+                    <div class="absolute -right-20 -top-20 w-72 h-72 bg-sky-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="bg-gradient-to-r from-sky-600/20 to-transparent px-10 py-6 border-b border-slate-800/60 flex items-center gap-4">
+                        <div class="p-2.5 bg-sky-500 rounded-2xl shadow-[0_0_20px_rgba(14,165,233,0.3)] text-slate-950">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                         </div>
-                        <h2 class="text-xl font-bold text-blue-900">DATA IDENTITAS CALON PELANGGAN</h2>
+                        <h2 class="text-xl font-black text-white tracking-tight uppercase">Data Identitas Pelanggan</h2>
                     </div>
-                    <div class="p-6 space-y-6">
 
-                        <!-- Jenis Pelanggan -->
-                        <div x-data="{ customerType: '{{ old('customer_type', 'personal') }}' }">
-                            <label class="block text-sm font-bold text-blue-900 mb-3">Jenis Pelanggan <span class="text-red-500">*</span></label>
+                    <div class="p-10 space-y-8">
+                        <div x-data="{ customerType: '{{ old('customer_type', 'personal') }}' }" class="space-y-4">
+                            <label class="block text-xs font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Kategori Akun <span class="text-rose-500">*</span></label>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <label class="flex items-center p-4 border-2 rounded-lg cursor-pointer transition" 
-                                    :class="customerType == 'personal' ? 'border-yellow-400 bg-yellow-50' : 'border-blue-200 hover:border-blue-300'">
-                                    <input type="radio" name="customer_type" value="personal" x-model="customerType" class="w-4 h-4 text-yellow-500">
-                                    <span class="ml-3 font-semibold text-blue-900">👤 Perorangan</span>
+                                <label class="relative flex items-center p-5 cursor-pointer bg-slate-800/30 border-2 rounded-2xl transition-all duration-300 group overflow-hidden"
+                                    :class="customerType == 'personal' ? 'border-sky-500 bg-sky-500/5' : 'border-slate-700 hover:border-slate-600'">
+                                    <input type="radio" name="customer_type" value="personal" x-model="customerType" class="hidden">
+                                    <div class="w-5 h-5 rounded-full border-2 border-slate-600 flex items-center justify-center" :class="customerType == 'personal' ? 'border-sky-500' : ''">
+                                        <div class="w-2.5 h-2.5 rounded-full bg-sky-500 transition-opacity" :class="customerType == 'personal' ? 'opacity-100' : 'opacity-0'"></div>
+                                    </div>
+                                    <span class="ml-4 font-bold uppercase text-xs tracking-widest transition-colors" :class="customerType == 'personal' ? 'text-sky-400' : 'text-slate-400'">Perorangan (Residensial)</span>
                                 </label>
-                                <label class="flex items-center p-4 border-2 rounded-lg cursor-pointer transition" 
-                                    :class="customerType == 'business' ? 'border-yellow-400 bg-yellow-50' : 'border-blue-200 hover:border-blue-300'">
-                                    <input type="radio" name="customer_type" value="business" x-model="customerType" class="w-4 h-4 text-yellow-500">
-                                    <span class="ml-3 font-semibold text-blue-900">🏢 Bisnis / Usaha</span>
+                                <label class="relative flex items-center p-5 cursor-pointer bg-slate-800/30 border-2 rounded-2xl transition-all duration-300 group overflow-hidden"
+                                    :class="customerType == 'business' ? 'border-sky-500 bg-sky-500/5' : 'border-slate-700 hover:border-slate-600'">
+                                    <input type="radio" name="customer_type" value="business" x-model="customerType" class="hidden">
+                                    <div class="w-5 h-5 rounded-full border-2 border-slate-600 flex items-center justify-center" :class="customerType == 'business' ? 'border-sky-500' : ''">
+                                        <div class="w-2.5 h-2.5 rounded-full bg-sky-500 transition-opacity" :class="customerType == 'business' ? 'opacity-100' : 'opacity-0'"></div>
+                                    </div>
+                                    <span class="ml-4 font-bold uppercase text-xs tracking-widest transition-colors" :class="customerType == 'business' ? 'text-sky-400' : 'text-slate-400'">Bisnis / Instansi (Corporate)</span>
                                 </label>
                             </div>
-                        </div>
 
-                        <!-- Nama Lengkap -->
-                        <div>
-                            <label class="block text-sm font-semibold text-blue-900 mb-2">Nama Lengkap (Sesuai KTP) <span class="text-red-500">*</span></label>
-                            <input type="text" name="name" value="{{ old('name') }}" required
-                                class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                                placeholder="Contoh: Budi Santoso">
-                        </div>
-
-                        <!-- Nama Usaha (Conditional) -->
-                        <div x-data="{ customerType: '{{ old('customer_type', 'personal') }}' }" x-show="customerType == 'business'">
-                            <label class="block text-sm font-semibold text-blue-900 mb-2">Nama Usaha/Instansi</label>
-                            <input type="text" name="business_name" value="{{ old('business_name') }}"
-                                class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                                placeholder="Contoh: PT. Maju Jaya">
-                        </div>
-
-                        <!-- Grid 2 Kolom -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- No. HP Utama -->
-                            <div>
-                                <label class="block text-sm font-semibold text-blue-900 mb-2">Nomor HP Utama (WhatsApp) <span class="text-red-500">*</span></label>
-                                <input type="text" name="phone" value="{{ old('phone') }}" required
-                                    class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                                    placeholder="08123456789">
-                            </div>
-
-                            <!-- No. HP Cadangan -->
-                            <div>
-                                <label class="block text-sm font-semibold text-blue-900 mb-2">Nomor HP Cadangan</label>
-                                <input type="text" name="phone_backup" value="{{ old('phone_backup') }}"
-                                    class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                                    placeholder="08987654321">
-                            </div>
-
-                            <!-- Email -->
-                            <div>
-                                <label class="block text-sm font-semibold text-blue-900 mb-2">Email</label>
-                                <input type="email" name="email" value="{{ old('email') }}"
-                                    class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                                    placeholder="contoh@email.com">
-                            </div>
-
-                            <!-- Nama Ibu Kandung -->
-                            <div>
-                                <label class="block text-sm font-semibold text-blue-900 mb-2">Nama Ibu Kandung</label>
-                                <input type="text" name="mother_name" value="{{ old('mother_name') }}"
-                                    class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                                    placeholder="Untuk verifikasi data">
+                            <div x-show="customerType == 'business'" class="mt-6 space-y-2 animate-fade-in">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Nama Usaha / Perusahaan</label>
+                                <input type="text" name="business_name" value="{{ old('business_name') }}" placeholder="PT. Nama Perusahaan"
+                                    class="w-full px-5 py-4 bg-slate-800/50 border border-slate-700 text-white rounded-2xl focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-all">
                             </div>
                         </div>
 
-                        <!-- Foto KTP / Foto Rumah / Foto Pelanggan -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-blue-200">
-                            <div>
-                                <label class="block text-sm font-semibold text-blue-900 mb-2">📷 Foto KTP</label>
-                                <input type="file" name="ktp_image" accept="image/*"
-                                    class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent">
-                                <p class="text-xs text-blue-600 mt-1">Format: JPG, PNG (Max 5MB)</p>
+                        <div class="space-y-2">
+                            <label class="block text-xs font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Nama Lengkap (Sesuai KTP) <span class="text-rose-500">*</span></label>
+                            <input type="text" name="name" value="{{ old('name') }}" required placeholder="Masukkan nama lengkap pelanggan"
+                                class="w-full px-5 py-4 bg-slate-800/50 border border-slate-700 text-white rounded-2xl focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-all font-bold">
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="space-y-2">
+                                <label class="block text-xs font-black text-slate-500 uppercase tracking-[0.2em] ml-1">WhatsApp Utama <span class="text-rose-500">*</span></label>
+                                <input type="text" name="phone" value="{{ old('phone') }}" required placeholder="0812..."
+                                    class="w-full px-5 py-4 bg-slate-800/50 border border-slate-700 text-white rounded-2xl focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-all font-mono tracking-wider">
                             </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-blue-900 mb-2">Foto Rumah/Lokasi</label>
-                                <input type="file" name="house_image" accept="image/*"
-                                    class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent">
-                                <p class="text-xs text-blue-600 mt-1">Format: JPG, PNG (Max 5MB)</p>
+                            <div class="space-y-2">
+                                <label class="block text-xs font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Nomor Cadangan</label>
+                                <input type="text" name="phone_backup" value="{{ old('phone_backup') }}" placeholder="08..."
+                                    class="w-full px-5 py-4 bg-slate-800/50 border border-slate-700 text-white rounded-2xl focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-all font-mono tracking-wider">
                             </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-blue-900 mb-2">👤 Foto Pelanggan</label>
-                                <input type="file" name="customer_image" accept="image/*"
-                                    class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent">
-                                <p class="text-xs text-blue-600 mt-1">Format: JPG, PNG (Max 5MB)</p>
+                            <div class="space-y-2">
+                                <label class="block text-xs font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Email</label>
+                                <input type="email" name="email" value="{{ old('email') }}" placeholder="pelanggan@email.com"
+                                    class="w-full px-5 py-4 bg-slate-800/50 border border-slate-700 text-white rounded-2xl focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-all">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-xs font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Nama Ibu Kandung</label>
+                                <input type="text" name="mother_name" value="{{ old('mother_name') }}" placeholder="Untuk verifikasi keamanan"
+                                    class="w-full px-5 py-4 bg-slate-800/50 border border-slate-700 text-white rounded-2xl focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-all">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-slate-800/60">
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Berkas Identitas (KTP)</label>
+                                <div class="relative group">
+                                    <input type="file" name="ktp_image" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                    <div class="p-4 bg-slate-800/50 border-2 border-dashed border-slate-700 rounded-2xl flex flex-col items-center justify-center group-hover:border-sky-500/50 transition-colors">
+                                        <svg class="w-6 h-6 text-slate-500 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+                                        <span class="text-[10px] font-bold text-slate-500 uppercase">Upload KTP</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Dokumentasi Lokasi</label>
+                                <div class="relative group">
+                                    <input type="file" name="house_image" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                    <div class="p-4 bg-slate-800/50 border-2 border-dashed border-slate-700 rounded-2xl flex flex-col items-center justify-center group-hover:border-sky-500/50 transition-colors">
+                                        <svg class="w-6 h-6 text-slate-500 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                                        <span class="text-[10px] font-bold text-slate-500 uppercase">Foto Lokasi</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Foto Calon Pelanggan</label>
+                                <div class="relative group">
+                                    <input type="file" name="customer_image" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                    <div class="p-4 bg-slate-800/50 border-2 border-dashed border-slate-700 rounded-2xl flex flex-col items-center justify-center group-hover:border-sky-500/50 transition-colors">
+                                        <svg class="w-6 h-6 text-slate-500 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                        <span class="text-[10px] font-bold text-slate-500 uppercase">Upload Wajah</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- SECTION 2: DATA ALAMAT -->
-                <div class="bg-white rounded-xl shadow-lg border border-blue-200 overflow-hidden">
-                    <div class="bg-gradient-to-r from-yellow-400 to-yellow-500 px-6 py-4 flex items-center">
-                        <div class="flex items-center justify-center w-10 h-10 bg-white/30 rounded-full mr-3">
-                            <svg class="w-6 h-6 text-blue-900" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
-                            </svg>
+                <div class="bg-slate-900/80 backdrop-blur-md rounded-[2.5rem] shadow-2xl border border-slate-800 overflow-hidden relative">
+                    <div class="bg-gradient-to-r from-indigo-600/20 to-transparent px-10 py-6 border-b border-slate-800/60 flex items-center gap-4">
+                        <div class="p-2.5 bg-indigo-500 rounded-2xl shadow-[0_0_20px_rgba(79,70,229,0.3)] text-white">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                         </div>
-                        <h2 class="text-xl font-bold text-blue-900">DATA ALAMAT PEMASANGAN</h2>
+                        <h2 class="text-xl font-black text-white tracking-tight uppercase">Penempatan Lokasi</h2>
                     </div>
-                    <div class="p-6 space-y-6">
-
-                        <!-- Alamat Lengkap -->
-                        <div>
-                            <label class="block text-sm font-semibold text-blue-900 mb-2">Alamat Lengkap <span class="text-red-500">*</span></label>
-                            <textarea name="address" rows="3" required
-                                class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                                placeholder="Isikan alamat lengkap dimana instalasi dilakukan">{{ old('address') }}</textarea>
+                    <div class="p-10 space-y-8">
+                        <div class="space-y-2">
+                            <label class="block text-xs font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Alamat Pemasangan <span class="text-rose-500">*</span></label>
+                            <textarea name="address" rows="3" required placeholder="Isikan alamat lengkap penarikan jaringan"
+                                class="w-full px-5 py-4 bg-slate-800/50 border border-slate-700 text-white rounded-2xl focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all">{{ old('address') }}</textarea>
                         </div>
 
-                        <!-- Alamat KTP (jika berbeda dengan lokasi instalasi) -->
-                        <div>
-                            <label class="block text-sm font-semibold text-blue-900 mb-2">Alamat KTP (jika berbeda)</label>
-                            <textarea name="address_ktp" rows="2"
-                                class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                                placeholder="Isikan jika berbeda dengan alamat instalasi">{{ old('address_ktp') }}</textarea>
-                        </div>
-
-                        <!-- Grid 4 Kolom -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- RT/RW -->
-                            <div>
-                                <label class="block text-sm font-semibold text-blue-900 mb-2">RT/RW</label>
-                                <input type="text" name="rt_rw" value="{{ old('rt_rw') }}"
-                                    class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                                    placeholder="Contoh: 05/08">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">RT/RW</label>
+                                <input type="text" name="rt_rw" value="{{ old('rt_rw') }}" placeholder="00/00"
+                                    class="w-full px-5 py-4 bg-slate-800/50 border border-slate-700 text-white rounded-2xl focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all">
                             </div>
-
-                            <!-- Kelurahan/Desa -->
-                            <div>
-                                <label class="block text-sm font-semibold text-blue-900 mb-2">Kelurahan/Desa <span class="text-red-500">*</span></label>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Kelurahan <span class="text-rose-500">*</span></label>
                                 <input type="text" name="village" value="{{ old('village') }}" required
-                                    class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                                    placeholder="Contoh: Kelurahan Maju Jaya">
+                                    class="w-full px-5 py-4 bg-slate-800/50 border border-slate-700 text-white rounded-2xl focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all">
                             </div>
-
-                            <!-- Kecamatan -->
-                            <div>
-                                <label class="block text-sm font-semibold text-blue-900 mb-2">Kecamatan <span class="text-red-500">*</span></label>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Kecamatan <span class="text-rose-500">*</span></label>
                                 <input type="text" name="district" value="{{ old('district') }}" required
-                                    class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                                    placeholder="Contoh: Kecamatan Terusan">
-                            </div>
-
-                            <!-- Kota/Kabupaten -->
-                            <div>
-                                <label class="block text-sm font-semibold text-blue-900 mb-2">Kota/Kabupaten <span class="text-red-500">*</span></label>
-                                <input type="text" name="city" value="{{ old('city') }}" required
-                                    class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                                    placeholder="Contoh: Bandung">
-                            </div>
-
-                            <!-- Provinsi -->
-                            <div>
-                                <label class="block text-sm font-semibold text-blue-900 mb-2">Provinsi</label>
-                                <input type="text" name="province" value="{{ old('province') }}"
-                                    class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                                    placeholder="Contoh: Jawa Barat">
-                            </div>
-
-                            <!-- Kode Pos -->
-                            <div>
-                                <label class="block text-sm font-semibold text-blue-900 mb-2">Kode Pos</label>
-                                <input type="text" name="postal_code" value="{{ old('postal_code') }}"
-                                    class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                                    placeholder="Contoh: 40127">
+                                    class="w-full px-5 py-4 bg-slate-800/50 border border-slate-700 text-white rounded-2xl focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all">
                             </div>
                         </div>
 
-                        <!-- Patokan Lokasi -->
-                        <div>
-                            <label class="block text-sm font-semibold text-blue-900 mb-2">Patokan Lokasi</label>
-                            <textarea name="landmark" rows="2"
-                                class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                                placeholder="Contoh: Dekat minimarket, samping rumah berwarna merah">{{ old('landmark') }}</textarea>
-                        </div>
-
-                        <!-- Titik Lokasi Google Maps -->
-                        <div>
-                            <label class="block text-sm font-semibold text-blue-900 mb-2">Titik Lokasi Google Maps</label>
-                            <input type="text" name="coordinates" value="{{ old('coordinates') }}"
-                                class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                                placeholder="Contoh: -6.9147, 107.6098">
-                            <p class="text-xs text-blue-600 mt-1">Diperoleh dari Google Maps (klik lokasi → salin koordinat)</p>
+                        <div class="space-y-2 text-center sm:text-left">
+                            <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Titik Koordinat (Google Maps)</label>
+                            <input type="text" name="coordinates" value="{{ old('coordinates') }}" placeholder="-6.123, 106.123"
+                                class="w-full px-5 py-4 bg-slate-800/50 border border-slate-700 text-sky-400 rounded-2xl focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-all font-mono tracking-widest">
                         </div>
                     </div>
                 </div>
 
-                <!-- SECTION 3: DATA PAKET YANG DIPILIH -->
-                <div class="bg-white rounded-xl shadow-lg border border-blue-200 overflow-hidden">
-                    <div class="bg-gradient-to-r from-yellow-400 to-yellow-500 px-6 py-4 flex items-center">
-                        <div class="flex items-center justify-center w-10 h-10 bg-white/30 rounded-full mr-3">
-                            <svg class="w-6 h-6 text-blue-900" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                            </svg>
+                <div class="bg-slate-900/80 backdrop-blur-md rounded-[2.5rem] shadow-2xl border border-slate-800 overflow-hidden">
+                    <div class="bg-gradient-to-r from-amber-600/20 to-transparent px-10 py-6 border-b border-slate-800/60 flex items-center gap-4">
+                        <div class="p-2.5 bg-amber-500 rounded-2xl shadow-[0_0_20px_rgba(245,158,11,0.3)] text-slate-950">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                         </div>
-                        <h2 class="text-xl font-bold text-blue-900">DATA PAKET YANG DIPILIH</h2>
+                        <h2 class="text-xl font-black text-white tracking-tight uppercase">Paket Layanan</h2>
                     </div>
-                    <div class="p-6 space-y-6">
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Paket Internet -->
-                            <div>
-                                <label class="block text-sm font-semibold text-blue-900 mb-2">Paket Internet <span class="text-red-500">*</span></label>
-                                <select name="package_id" required
-                                    class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent">
-                                    <option value="">-- Pilih Paket --</option>
+                    <div class="p-10 space-y-8">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="space-y-2">
+                                <label class="block text-xs font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Pilih Produk <span class="text-rose-500">*</span></label>
+                                <select name="package_id" required class="w-full px-5 py-4 bg-slate-800/50 border border-slate-700 text-white rounded-2xl focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 appearance-none cursor-pointer font-bold">
+                                    <option value="" class="bg-slate-900">-- Klik untuk memilih paket --</option>
                                     @foreach ($packages as $package)
-                                        <option value="{{ $package->id }}" @selected(old('package_id') == $package->id)>
-                                            {{ $package->name }} - Rp {{ number_format($package->price, 0, ',', '.') }}/bln
+                                        <option value="{{ $package->id }}" @selected(old('package_id') == $package->id) class="bg-slate-900">
+                                            {{ $package->name }} - Rp {{ number_format($package->price, 0, ',', '.') }}
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
-
-                            <!-- Biaya Pemasangan -->
-                            <div>
-                                <label class="block text-sm font-semibold text-blue-900 mb-2">Biaya Pemasangan</label>
-                                <input type="number" name="installation_fee" value="{{ old('installation_fee', 0) }}"
-                                    class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                                    placeholder="0" min="0">
-                                <p class="text-xs text-blue-600 mt-1">Isikan jika ada biaya tambahan instalasi</p>
+                            <div class="space-y-2">
+                                <label class="block text-xs font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Biaya Registrasi/OTC</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none font-bold text-slate-500">Rp</div>
+                                    <input type="number" name="installation_fee" value="{{ old('installation_fee', 0) }}"
+                                        class="w-full pl-12 pr-5 py-4 bg-slate-800/50 border border-slate-700 text-amber-400 rounded-2xl focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all font-bold">
+                                </div>
                             </div>
-                        </div>
-
-                        <!-- Promo -->
-                        <div>
-                            <label class="block text-sm font-semibold text-blue-900 mb-2">Kode Promo / Penawaran Khusus</label>
-                            <input type="text" name="promo_code" value="{{ old('promo_code') }}"
-                                class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                                placeholder="Contoh: PROMO2024, HEMAT10, atau kosongkan jika tidak ada">
                         </div>
                     </div>
                 </div>
 
-                <!-- SECTION 4: DATA STATUS PROSPEK -->
-                <div class="bg-white rounded-xl shadow-lg border border-blue-200 overflow-hidden">
-                    <div class="bg-gradient-to-r from-yellow-400 to-yellow-500 px-6 py-4 flex items-center">
-                        <div class="flex items-center justify-center w-10 h-10 bg-white/30 rounded-full mr-3">
-                            <svg class="w-6 h-6 text-blue-900" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
-                            </svg>
-                        </div>
-                        <h2 class="text-xl font-bold text-blue-900">DATA STATUS PROSPEK</h2>
-                    </div>
-                    <div class="p-6 space-y-6">
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Status Prospek -->
-                            <div>
-                                <label class="block text-sm font-semibold text-blue-900 mb-2">Status Prospek <span class="text-red-500">*</span></label>
-                                <select name="status" required
-                                    class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent">
-                                    <option value="prospek" @selected(old('status', 'prospek') == 'prospek')>🆕 Prospek Baru</option>
-                                    <option value="survey" @selected(old('status') == 'survey')>📋 Menunggu Survey</option>
-                                    <option value="instalasi" @selected(old('status') == 'instalasi')>🔧 Menunggu Instalasi</option>
-                                    <option value="aktif" @selected(old('status') == 'aktif')>✅ Aktif</option>
-                                    <option value="batal" @selected(old('status') == 'batal')>❌ Batal</option>
+                <div class="bg-slate-900/80 backdrop-blur-md rounded-[2.5rem] shadow-2xl border border-slate-800 overflow-hidden relative">
+                    <div class="p-10">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="space-y-2">
+                                <label class="block text-xs font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Inisiasi Status <span class="text-rose-500">*</span></label>
+                                <select name="status" required class="w-full px-5 py-4 bg-slate-800/50 border border-slate-700 text-white rounded-2xl focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 font-bold">
+                                    <option value="prospek" @selected(old('status', 'prospek') == 'prospek')>New Prospect</option>
+                                    <option value="survey" @selected(old('status') == 'survey')>Ready to Survey</option>
                                 </select>
                             </div>
-
-                            <!-- Sumber Pelanggan -->
-                            <div>
-                                <label class="block text-sm font-semibold text-blue-900 mb-2">Sumber Pelanggan <span class="text-red-500">*</span></label>
-                                <select name="source" required
-                                    class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent">
-                                    <option value="">-- Pilih Sumber --</option>
-                                    <option value="iklan" @selected(old('source') == 'iklan')>📢 Iklan (Google, FB, Instagram)</option>
-                                    <option value="referensi" @selected(old('source') == 'referensi')>👥 Referensi / Teman</option>
-                                    <option value="sosial_media" @selected(old('source') == 'sosial_media')>📱 Media Sosial</option>
-                                    <option value="walk_in" @selected(old('source') == 'walk_in')>🏪 Kunjungan Langsung</option>
-                                    <option value="telepon" @selected(old('source') == 'telepon')>☎️ Telepon Masuk</option>
-                                    <option value="lainnya" @selected(old('source') == 'lainnya')>📎 Lainnya</option>
+                            <div class="space-y-2">
+                                <label class="block text-xs font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Lead Source <span class="text-rose-500">*</span></label>
+                                <select name="source" required class="w-full px-5 py-4 bg-slate-800/50 border border-slate-700 text-white rounded-2xl focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 font-bold">
+                                    <option value="" class="bg-slate-900">-- Pilih Sumber --</option>
+                                    <option value="iklan" class="bg-slate-900">Digital Ads (FB/IG/Google)</option>
+                                    <option value="referensi" class="bg-slate-900">Referensi Teman</option>
+                                    <option value="sosial_media" class="bg-slate-900">Organic Social Media</option>
+                                    <option value="walk_in" class="bg-slate-900">Walk-in Customer</option>
                                 </select>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- SECTION 5: DATA PENJADWALAN -->
-                <div class="bg-white rounded-xl shadow-lg border border-blue-200 overflow-hidden">
-                    <div class="bg-gradient-to-r from-yellow-400 to-yellow-500 px-6 py-4 flex items-center">
-                        <div class="flex items-center justify-center w-10 h-10 bg-white/30 rounded-full mr-3">
-                            <svg class="w-6 h-6 text-blue-900" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/>
-                            </svg>
-                        </div>
-                        <h2 class="text-xl font-bold text-blue-900">DATA PENJADWALAN</h2>
-                    </div>
-                    <div class="p-6 space-y-6">
-
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <!-- Tanggal Registrasi -->
-                            <div>
-                                <label class="block text-sm font-semibold text-blue-900 mb-2">📅 Tanggal Registrasi</label>
-                                <input type="date" name="registered_date" value="{{ old('registered_date', now()->format('Y-m-d')) }}"
-                                    class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent">
-                            </div>
-
-                            <!-- Jadwal Survey -->
-                            <div>
-                                <label class="block text-sm font-semibold text-blue-900 mb-2">🔍 Jadwal Survey</label>
-                                <input type="date" name="survey_date" value="{{ old('survey_date') }}"
-                                    class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent">
-                            </div>
-
-                            <!-- Jadwal Instalasi -->
-                            <div>
-                                <label class="block text-sm font-semibold text-blue-900 mb-2">⚙️ Jadwal Instalasi</label>
-                                <input type="date" name="installation_date" value="{{ old('installation_date') }}"
-                                    class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent">
-                            </div>
-                        </div>
-
-                        <!-- Waktu yang Diinginkan -->
-                        <div>
-                            <label class="block text-sm font-semibold text-blue-900 mb-2">Catatan Waktu Diinginkan Pelanggan</label>
-                            <textarea name="preferred_time" rows="2"
-                                class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                                placeholder="Contoh: Hari kerja saja, lebih suka sore hari, dsb">{{ old('preferred_time') }}</textarea>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SECTION 6: CATATAN INTERNAL -->
-                <div class="bg-white rounded-xl shadow-lg border border-blue-200 overflow-hidden">
-                    <div class="bg-gradient-to-r from-yellow-400 to-yellow-500 px-6 py-4 flex items-center">
-                        <div class="flex items-center justify-center w-10 h-10 bg-white/30 rounded-full mr-3">
-                            <svg class="w-6 h-6 text-blue-900" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
-                            </svg>
-                        </div>
-                        <h2 class="text-xl font-bold text-blue-900">CATATAN INTERNAL</h2>
-                    </div>
-                    <div class="p-6 space-y-6">
-
-                        <!-- Ringkasan Komunikasi -->
-                        <div>
-                            <label class="block text-sm font-semibold text-blue-900 mb-2">📝 Ringkasan Komunikasi</label>
-                            <textarea name="notes_summary" rows="3"
-                                class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                                placeholder="Ringkas percakapan dengan calon pelanggan, kesan umum, kesiapan mereka">{{ old('notes_summary') }}</textarea>
-                        </div>
-
-                        <!-- Kendala/Hambatan -->
-                        <div>
-                            <label class="block text-sm font-semibold text-blue-900 mb-2">⚠️ Kendala / Hambatan</label>
-                            <textarea name="notes_obstacle" rows="3"
-                                class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                                placeholder="Kendala teknis, hambatan pembayaran, keberatan harga, dsb">{{ old('notes_obstacle') }}</textarea>
-                        </div>
-
-                        <!-- Catatan Khusus -->
-                        <div>
-                            <label class="block text-sm font-semibold text-blue-900 mb-2">Catatan Khusus</label>
-                            <textarea name="notes_special" rows="3"
-                                class="w-full px-4 py-2 border border-blue-300 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                                placeholder="Info tambahan: VIP, perlu follow-up khusus, budget terbatas, urgent, dsb">{{ old('notes_special') }}</textarea>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Form Actions -->
-                <div class="flex flex-col md:flex-row gap-4 px-4 sm:px-0">
-                    <button type="submit" class="flex-1 bg-gradient-to-r from-yellow-400 to-yellow-500 text-blue-900 font-bold py-3 rounded-lg hover:from-yellow-500 hover:to-yellow-600 transition shadow-lg">
-                        ✓ Simpan Prospek Baru
+                <div class="flex flex-col md:flex-row gap-4">
+                    <button type="submit" class="flex-[2] px-8 py-5 bg-sky-600 text-white font-black rounded-3xl shadow-[0_0_25px_rgba(14,165,233,0.3)] hover:bg-sky-500 hover:shadow-[0_0_35px_rgba(14,165,233,0.5)] transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-3 text-lg tracking-tight uppercase">
+                        Selesaikan & Simpan Prospek
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </button>
-                    <a href="{{ route('marketing.leads.index') }}" class="flex-1 bg-white border border-blue-300 text-blue-900 font-bold py-3 rounded-lg hover:bg-blue-50 transition text-center">
-                        ← Batal / Kembali
+                    <a href="{{ route('marketing.leads.index') }}" class="flex-1 px-8 py-5 bg-slate-900 text-slate-400 font-bold rounded-3xl border border-slate-800 hover:bg-slate-800 hover:text-white transition-all duration-300 flex items-center justify-center text-lg text-center leading-none">
+                        Batal
                     </a>
                 </div>
 
             </form>
+
+            <div class="mt-12 text-center">
+                <p class="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em]">
+                    Quality Sales Input &bull; PT. Mandiri Global Data &bull; 2026
+                </p>
+            </div>
         </div>
     </div>
 </x-app-layout>
