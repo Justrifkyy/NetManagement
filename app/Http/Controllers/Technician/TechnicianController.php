@@ -22,9 +22,9 @@ class TechnicianController extends Controller
     {
         $today_tasks = InstallationForm::where('installation_date', today())->count();
         $pending_installations = InstallationForm::whereNull('installation_status')->count();
-        $repair_tickets = Ticket::where('type', 'repair')->where('status', 'open')->count();
+        $trouble_tickets = Ticket::where('type', 'repair')->where('status', 'open')->count();
 
-        return view('technician.dashboard', compact('today_tasks', 'pending_installations', 'repair_tickets'));
+        return view('technician.dashboard', compact('today_tasks', 'pending_installations', 'trouble_tickets'));
     }
 
     // Survey Management
@@ -60,14 +60,14 @@ class TechnicianController extends Controller
         return view('technician.installations.index', compact('available_leads'));
     }
 
-    public function survey_create($lead_id)
+    public function survey_create(int $lead_id)
     {
         $lead = Lead::findOrFail($lead_id);
         $survey = SurveyForm::where('lead_id', $lead_id)->first() ?? new SurveyForm();
         return view('technician.survey.create', compact('lead', 'survey'));
     }
 
-    public function survey_store(Request $request, $lead_id)
+    public function survey_store(Request $request, int $lead_id)
     {
         $lead = Lead::findOrFail($lead_id);
         
@@ -98,14 +98,14 @@ class TechnicianController extends Controller
         return view('technician.installation.index', compact('installations'));
     }
 
-    public function installation_create($lead_id)
+    public function installation_create(int $lead_id)
     {
         $lead = Lead::findOrFail($lead_id);
         $installation = InstallationForm::where('lead_id', $lead_id)->first() ?? new InstallationForm();
         return view('technician.installation.create', compact('lead', 'installation'));
     }
 
-    public function installation_store(Request $request, $lead_id)
+    public function installation_store(Request $request, int $lead_id)
     {
         $lead = Lead::findOrFail($lead_id);
 
@@ -126,14 +126,14 @@ class TechnicianController extends Controller
     }
 
     // Device Configuration
-    public function device_form($installation_id)
+    public function device_form(int $installation_id)
     {
         $installation = InstallationForm::findOrFail($installation_id);
         $device = $installation->deviceConfig() ?? new DeviceConfig();
         return view('technician.installation.device', compact('installation', 'device'));
     }
 
-    public function device_store(Request $request, $installation_id)
+    public function device_store(Request $request, int $installation_id)
     {
         $installation = InstallationForm::findOrFail($installation_id);
 
@@ -154,14 +154,14 @@ class TechnicianController extends Controller
     }
 
     // Network Configuration
-    public function network_form($installation_id)
+    public function network_form(int $installation_id)
     {
         $installation = InstallationForm::findOrFail($installation_id);
         $network = $installation->networkConfig() ?? new NetworkConfig();
         return view('technician.installation.network', compact('installation', 'network'));
     }
 
-    public function network_store(Request $request, $installation_id)
+    public function network_store(Request $request, int $installation_id)
     {
         $installation = InstallationForm::findOrFail($installation_id);
 
@@ -182,14 +182,14 @@ class TechnicianController extends Controller
     }
 
     // Internet Account
-    public function internet_account_form($installation_id)
+    public function internet_account_form(int $installation_id)
     {
         $installation = InstallationForm::findOrFail($installation_id);
         $account = InternetAccount::where('installation_id', $installation_id)->first() ?? new InternetAccount();
         return view('technician.installation.internet-account', compact('installation', 'account'));
     }
 
-    public function internet_account_store(Request $request, $installation_id)
+    public function internet_account_store(Request $request, int $installation_id)
     {
         $installation = InstallationForm::findOrFail($installation_id);
 
@@ -209,14 +209,14 @@ class TechnicianController extends Controller
     }
 
     // Connection Test
-    public function connection_test_form($installation_id)
+    public function connection_test_form(int $installation_id)
     {
         $installation = InstallationForm::findOrFail($installation_id);
         $test = $installation->connectionTest() ?? new ConnectionTest();
         return view('technician.installation.connection-test', compact('installation', 'test'));
     }
 
-    public function connection_test_store(Request $request, $installation_id)
+    public function connection_test_store(Request $request, int $installation_id)
     {
         $installation = InstallationForm::findOrFail($installation_id);
 
@@ -242,14 +242,14 @@ class TechnicianController extends Controller
     }
 
     // Handover Confirmation
-    public function handover_form($installation_id)
+    public function handover_form(int $installation_id)
     {
         $installation = InstallationForm::findOrFail($installation_id);
         $handover = $installation->handoverConfirmation() ?? new HandoverConfirmation();
         return view('technician.installation.handover', compact('installation', 'handover'));
     }
 
-    public function handover_store(Request $request, $installation_id)
+    public function handover_store(Request $request, int $installation_id)
     {
         $installation = InstallationForm::findOrFail($installation_id);
 
@@ -269,7 +269,7 @@ class TechnicianController extends Controller
     }
 
     // Installation Detail
-    public function installation_show($installation_id)
+    public function installation_show(int $installation_id)
     {
         $installation = InstallationForm::with([
             'lead',
