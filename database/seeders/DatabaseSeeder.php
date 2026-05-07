@@ -57,7 +57,7 @@ class DatabaseSeeder extends Seeder
 
         // ==========================================
         // 2. DATA PAKET INTERNET
-        // ==========================================
+        // ==========================================  
         $paketBasic = Package::create([
             'name' => 'Home Basic 10 Mbps',
             'price' => 150000,

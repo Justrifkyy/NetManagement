@@ -1,109 +1,146 @@
 <x-app-layout>
-    <div class="py-10 bg-slate-900 min-h-screen">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-10 bg-slate-950 min-h-screen selection:bg-emerald-500/30">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            <!-- Header -->
-            <div class="mb-8 px-4 sm:px-0">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h1 class="text-4xl font-bold text-yellow-400">✅ Serah Terima / Handover</h1>
-                        <p class="text-slate-400 mt-1">Instalasi: <span class="text-yellow-300 font-semibold">{{ $installation->lead->name }}</span></p>
-                    </div>
-                    <a href="{{ route('technician.installation.show', $installation->id) }}" class="text-yellow-400 hover:text-yellow-300 font-semibold">← Kembali</a>
+            <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div class="fade-in">
+                    <a href="{{ route('technician.installation.show', $installation->id) }}" class="inline-flex items-center text-sm font-semibold text-slate-500 hover:text-white transition-colors mb-4 group">
+                        <svg class="w-4 h-4 mr-1.5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        Kembali ke Detail Instalasi
+                    </a>
+                    <h1 class="text-4xl font-black text-white tracking-tighter">Finalisasi <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200">Handover</span></h1>
+                    <p class="text-slate-400 mt-2 font-medium">Instalasi: <span class="text-emerald-400 font-bold underline decoration-emerald-500/30 underline-offset-4">{{ $installation->lead->name }}</span></p>
                 </div>
             </div>
 
             @if ($errors->any())
-                <div class="mb-6 mx-4 sm:mx-0 bg-red-900/50 border-l-4 border-red-500 text-red-300 p-4 rounded-r">
-                    <p class="font-bold mb-2">⚠️ Terdapat kesalahan:</p>
-                    <ul class="list-disc ml-6 text-sm space-y-1">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
+                <div class="mb-8 p-5 bg-rose-500/10 border border-rose-500/20 rounded-[2rem] flex items-start gap-4">
+                    <div class="p-2 bg-rose-500 rounded-xl text-white shadow-[0_0_15px_rgba(225,29,72,0.4)]">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    </div>
+                    <div>
+                        <p class="text-rose-400 font-black text-xs uppercase tracking-widest mb-2">Kendala Finalisasi:</p>
+                        <ul class="list-disc ml-4 text-sm text-rose-300/80 space-y-1 font-medium">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
                 </div>
             @endif
 
-            <form action="{{ route('technician.handover.store', $installation->id) }}" method="POST" class="space-y-6">
+            <form action="{{ route('technician.handover.store', $installation->id) }}" method="POST" class="space-y-8">
                 @csrf
 
-                <!-- DATA SERAH TERIMA -->
-                <div class="bg-slate-800 rounded-xl shadow-lg border border-slate-700 overflow-hidden">
-                    <div class="bg-gradient-to-r from-yellow-500 to-yellow-400 px-6 py-4 flex items-center">
-                        <h2 class="text-xl font-bold text-slate-900">DATA SERAH TERIMA INTERNET</h2>
-                    </div>
-                    <div class="p-6 space-y-6">
+                <div class="bg-slate-900/80 backdrop-blur-md rounded-[2.5rem] shadow-2xl border border-slate-800 overflow-hidden relative">
+                    <div class="absolute -right-20 -top-20 w-72 h-72 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
 
-                        <!-- Konfirmasi Internet Aktif -->
-                        <div>
-                            <label class="block text-sm font-bold text-yellow-400 mb-3">Konfirmasi Internet Aktif <span class="text-red-500">*</span></label>
-                            <div class="bg-slate-700 border-2 border-slate-600 rounded-lg p-4">
-                                <label class="flex items-center cursor-pointer">
-                                    <input type="checkbox" name="internet_active_confirmation" value="1" {{ old('internet_active_confirmation', $handover->internet_active_confirmation) ? 'checked' : '' }} class="w-5 h-5 text-yellow-400 rounded">
-                                    <span class="ml-3 font-semibold text-yellow-300">🟢 Saya konfirmasi bahwa internet pelanggan sudah aktif dan berfungsi dengan baik</span>
-                                </label>
+                    <div class="bg-gradient-to-r from-emerald-600/20 to-transparent px-10 py-6 border-b border-slate-800/60 flex items-center gap-4">
+                        <div class="p-2.5 bg-emerald-500 rounded-2xl shadow-[0_0_20px_rgba(16,185,129,0.3)] text-slate-950">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <h2 class="text-xl font-black text-white tracking-tight uppercase">Konfirmasi Penyelesaian</h2>
+                    </div>
+
+                    <div class="p-10 space-y-10">
+                        <div class="space-y-4">
+                            <label class="block text-xs font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Status Aktivitas Layanan <span class="text-rose-500">*</span></label>
+                            <label class="relative flex items-center p-6 cursor-pointer bg-slate-800/30 border-2 border-slate-700/50 rounded-3xl hover:bg-slate-800 transition-all duration-300 group overflow-hidden">
+                                <input type="checkbox" name="internet_active_confirmation" value="1" {{ old('internet_active_confirmation', $handover->internet_active_confirmation) ? 'checked' : '' }} class="hidden peer">
+                                <div class="absolute inset-0 bg-emerald-500/5 opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+                                
+                                <div class="w-6 h-6 rounded-lg border-2 border-slate-600 flex items-center justify-center peer-checked:border-emerald-500 peer-checked:bg-emerald-500 transition-all z-10">
+                                    <svg class="w-4 h-4 text-slate-950 opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                                
+                                <div class="ml-4 z-10">
+                                    <span class="block text-slate-200 font-bold group-hover:text-white transition-colors peer-checked:text-emerald-400 text-sm tracking-tight">Konfirmasi Internet Aktif & Stabil</span>
+                                    <span class="text-[10px] text-slate-500 font-medium peer-checked:text-emerald-500/60 mt-0.5 block uppercase tracking-widest">Layanan sudah dapat digunakan pelanggan</span>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-xs font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Tanggal Serah Terima <span class="text-rose-500">*</span></label>
+                            <div class="relative group">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 group-focus-within:text-emerald-400 transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                </div>
+                                <input type="date" name="handover_date" value="{{ old('handover_date', $handover->handover_date?->format('Y-m-d')) }}" required
+                                    class="w-full pl-12 pr-4 py-4 bg-slate-800/50 border border-slate-700 text-white rounded-2xl focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all font-medium">
                             </div>
                         </div>
 
-                        <!-- Tanggal Serah Terima -->
-                        <div>
-                            <label class="block text-sm font-bold text-yellow-400 mb-2">Tanggal Serah Terima <span class="text-red-500">*</span></label>
-                            <input type="date" name="handover_date" value="{{ old('handover_date', $handover->handover_date?->format('Y-m-d')) }}" required
-                                class="w-full px-4 py-2 bg-slate-700 border border-slate-600 text-slate-100 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent">
-                        </div>
-
-                        <!-- Catatan Akhir Teknisi -->
-                        <div>
-                            <label class="block text-sm font-bold text-yellow-400 mb-2">📝 Catatan Akhir Teknisi</label>
-                            <textarea name="final_technician_notes" rows="5"
-                                class="w-full px-4 py-2 bg-slate-700 border border-slate-600 text-slate-100 rounded-lg focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
-                                placeholder="Catatan final: Semua pekerjaan selesai, kondisi pelanggan puas, rekomendasi maintenance, dll">{{ old('final_technician_notes', $handover->final_technician_notes) }}</textarea>
+                        <div class="space-y-2">
+                            <label class="block text-xs font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Catatan Akhir Teknisi Lapangan</label>
+                            <textarea name="final_technician_notes" rows="4"
+                                class="w-full px-5 py-4 bg-slate-800/50 border border-slate-700 text-white rounded-[1.5rem] focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all placeholder-slate-600 font-medium leading-relaxed"
+                                placeholder="Tuliskan kesimpulan akhir: Kondisi pelanggan puas, material tersisa, atau saran pemeliharaan kedepannya...">{{ old('final_technician_notes', $handover->final_technician_notes) }}</textarea>
                         </div>
                     </div>
                 </div>
 
-                <!-- Summary Cards -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mx-4 sm:mx-0">
-                    <!-- Installation Summary -->
-                    <div class="bg-slate-800 border border-slate-700 rounded-lg p-4">
-                        <h4 class="text-yellow-400 font-bold mb-3 flex items-center">
-                            <span class="w-6 h-6 bg-yellow-400 text-slate-900 rounded-full flex items-center justify-center mr-2 text-sm font-bold">✓</span>
-                            Ringkasan Instalasi
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-slate-900/50 border border-slate-800 rounded-3xl p-6 hover:border-emerald-500/30 transition-all duration-300 group">
+                        <h4 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] mb-4 flex items-center gap-2 group-hover:text-emerald-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4"></path></svg>
+                            Log Instalasi
                         </h4>
-                        <ul class="space-y-2 text-sm text-slate-300">
-                            <li><strong>Teknisi:</strong> {{ auth()->user()->name }}</li>
-                            <li><strong>Tanggal:</strong> {{ $installation->installation_date?->format('d M Y') ?? '-' }}</li>
-                            <li><strong>Jenis Koneksi:</strong> {{ $installation->connection_type ?? '-' }}</li>
-                            <li><strong>Status:</strong> {{ $installation->installation_status ?? 'Pending' }}</li>
-                        </ul>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs text-slate-500 font-medium tracking-tight">Teknisi Eksekutor</span>
+                                <span class="text-xs text-white font-bold tracking-tight">{{ auth()->user()->name }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs text-slate-500 font-medium tracking-tight">Waktu Pengerjaan</span>
+                                <span class="text-xs text-white font-bold tracking-tight">{{ $installation->installation_date?->format('d M Y') ?? '-' }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs text-slate-500 font-medium tracking-tight">Media Koneksi</span>
+                                <span class="text-xs px-2 py-0.5 bg-slate-800 rounded-md text-emerald-400 font-black uppercase text-[9px] tracking-widest border border-emerald-500/20">{{ $installation->connection_type ?? '-' }}</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Network Summary -->
-                    <div class="bg-slate-800 border border-slate-700 rounded-lg p-4">
-                        <h4 class="text-yellow-400 font-bold mb-3 flex items-center">
-                            <span class="w-6 h-6 bg-yellow-400 text-slate-900 rounded-full flex items-center justify-center mr-2 text-sm font-bold">✓</span>
-                            Ringkasan Jaringan
+                    <div class="bg-slate-900/50 border border-slate-800 rounded-3xl p-6 hover:border-emerald-500/30 transition-all duration-300 group">
+                        <h4 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] mb-4 flex items-center gap-2 group-hover:text-emerald-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            Konfigurasi Aktif
                         </h4>
-                        <ul class="space-y-2 text-sm text-slate-300">
-                            <li><strong>Router:</strong> {{ $installation->networkConfig->router_area ?? '-' }}</li>
-                            <li><strong>Port:</strong> {{ $installation->networkConfig->port_interface ?? '-' }}</li>
-                            <li><strong>Mode:</strong> {{ $installation->networkConfig->connection_mode ?? '-' }}</li>
-                            <li><strong>OLT:</strong> {{ $installation->networkConfig->olt_access_point ?? '-' }}</li>
-                        </ul>
+                        <div class="space-y-3 text-sm">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs text-slate-500 font-medium tracking-tight">Placement Router</span>
+                                <span class="text-xs text-white font-bold tracking-tight">{{ $installation->networkConfig->router_area ?? '-' }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs text-slate-500 font-medium tracking-tight">Access Point OLT</span>
+                                <span class="text-xs text-white font-bold tracking-tight">{{ $installation->networkConfig->olt_access_point ?? '-' }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs text-slate-500 font-medium tracking-tight">Interface Port</span>
+                                <span class="text-xs text-white font-bold tracking-tight">{{ $installation->networkConfig->port_interface ?? '-' }}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Buttons -->
-                <div class="flex flex-col md:flex-row gap-4 px-4 sm:mx-0 mx-4">
-                    <button type="submit" class="flex-1 bg-gradient-to-r from-green-600 to-green-500 text-white font-bold py-3 rounded-lg hover:from-green-700 hover:to-green-600 transition shadow-lg">
-                        ✓ Selesaikan Instalasi
+                <div class="flex flex-col md:flex-row gap-4">
+                    <button type="submit" class="flex-[2] px-8 py-5 bg-emerald-600 text-slate-950 font-black rounded-3xl shadow-[0_0_25px_rgba(16,185,129,0.3)] hover:bg-emerald-500 hover:shadow-[0_0_35px_rgba(16,185,129,0.5)] transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-3 text-lg tracking-tight uppercase">
+                        Selesaikan Instalasi & Tutup Tiket
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                     </button>
-                    <a href="{{ route('technician.installation.show', $installation->id) }}" class="flex-1 bg-slate-700 border border-slate-600 text-yellow-300 font-bold py-3 rounded-lg hover:bg-slate-600 transition text-center">
-                        ← Kembali
+                    <a href="{{ route('technician.installation.show', $installation->id) }}" class="flex-1 px-8 py-5 bg-slate-900 text-slate-400 font-bold rounded-3xl border border-slate-800 hover:bg-slate-800 hover:text-white transition-all duration-300 flex items-center justify-center gap-3 text-lg text-center">
+                        Batal
                     </a>
                 </div>
 
             </form>
+
+            <div class="mt-12 p-6 bg-slate-900/50 border border-slate-800 rounded-3xl text-center">
+                <p class="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em]">
+                    PT. Mandiri Global Data &bull; Quality Assurance System &bull; 2026
+                </p>
+            </div>
         </div>
     </div>
 </x-app-layout>
