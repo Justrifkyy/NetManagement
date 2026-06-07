@@ -5,11 +5,15 @@
         </h2>
     </x-slot>
 
+
+    <div class = "py-0 = bg">
+
+    </div>
     <div class="py-12 bg-slate-950 min-h-screen selection:bg-indigo-500/30">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-slate-900/80 backdrop-blur-md overflow-hidden shadow-2xl sm:rounded-[2.5rem] border border-slate-800 relative group">
                 
-                <div class="absolute -right-24 -top-24 w-96 h-96 bg-indigo-600/10 rounded-full blur-[100px] pointer-events-none"></div>
+                <div class="absolute -right-24 -top-24 w-96  h-96 bg-indigo-600/10 rounded-full blur-[100px] pointer-events-none"></div>
                 <div class="absolute -left-24 -bottom-24 w-80 h-80 bg-purple-600/10 rounded-full blur-[100px] pointer-events-none"></div>
 
                 <div class="p-10 md:p-16 text-center relative z-10">
