@@ -40,7 +40,6 @@
                             <h3 class="text-white font-black text-lg mb-2 tracking-tight">Panel Kontrol</h3>
                             <p class="text-slate-400 text-sm font-medium leading-relaxed">Akses dashboard analitik dan manajemen sesuai otoritas Anda.</p>
                         </div>
-
                         <div class="group/card bg-slate-800/40 p-8 rounded-[2rem] border border-slate-700/50 hover:border-purple-500/50 hover:bg-slate-800/60 transition-all duration-500 shadow-xl flex flex-col items-center">
                             <div class="w-16 h-16 bg-purple-500/10 rounded-2xl flex items-center justify-center mb-6 border border-purple-500/20 group-hover/card:bg-purple-500 group-hover/card:text-white transition-all duration-500">
                                 <svg class="w-8 h-8 text-purple-400 group-hover/card:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
