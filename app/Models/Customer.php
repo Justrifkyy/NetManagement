@@ -30,8 +30,7 @@ class Customer extends Model
         'phone_number',
         'address_installation',
         'coordinates',
-        
-        // Data Teknis (Diisi Admin/Teknisi)
+
         'pppoe_username',
         'pppoe_password',
         'is_isolated',
