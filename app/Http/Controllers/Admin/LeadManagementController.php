@@ -66,7 +66,7 @@ class LeadManagementController extends Controller
             'district' => 'nullable|string',
             'city' => 'nullable|string',
             'package_id' => 'required|exists:packages,id',
-            'status' => 'required|in:prospect,contacted,qualified,proposal_sent,negotiation,converted,lost',
+            'status' => 'required|in:prospek,survey,instalasi,aktif,batal',
             'source' => 'nullable|string',
             'promo_code' => 'nullable|string',
             'survey_date' => 'nullable|date',
@@ -114,7 +114,7 @@ class LeadManagementController extends Controller
             'district' => 'nullable|string',
             'city' => 'nullable|string',
             'package_id' => 'required|exists:packages,id',
-            'status' => 'required|in:prospect,contacted,qualified,proposal_sent,negotiation,converted,lost',
+            'status' => 'required|in:prospek,survey,instalasi,aktif,batal',
             'source' => 'nullable|string',
             'promo_code' => 'nullable|string',
             'survey_date' => 'nullable|date',
@@ -140,7 +140,7 @@ class LeadManagementController extends Controller
     public function updateStatus(Request $request, Lead $lead)
     {
         $validated = $request->validate([
-            'status' => 'required|in:prospect,contacted,qualified,proposal_sent,negotiation,converted,lost',
+            'status' => 'required|in:prospek,survey,instalasi,aktif,batal',
         ]);
 
         $lead->update($validated);

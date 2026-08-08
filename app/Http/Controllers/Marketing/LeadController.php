@@ -24,14 +24,9 @@ class LeadController extends Controller
 
         // Admin/SuperAdmin lihat semua, Marketing lihat miliknya sendiri
         if (in_array($user->role, ['admin', 'super_admin'])) {
-            $leads = Lead::with('package')
-                ->orderBy('created_at', 'desc')
-                ->paginate(15);
+            $leads = Lead::with('package')->orderBy('created_at', 'desc')->paginate(15);
         } else {
-            $leads = Lead::with('package')
-                ->where('marketing_id', $user->id)
-                ->orderBy('created_at', 'desc')
-                ->paginate(15);
+            $leads = Lead::with('package')->where('marketing_id', $user->id)->orderBy('created_at', 'desc')->paginate(15);
         }
 
         // PERUBAHAN PATH VIEW
@@ -42,7 +37,7 @@ class LeadController extends Controller
     public function create()
     {
         $packages = Package::where('is_active', true)->get();
-        
+
         // PERUBAHAN PATH VIEW
         return view('marketing.leads.create', compact('packages'));
     }
@@ -130,7 +125,7 @@ class LeadController extends Controller
         }
 
         $packages = Package::where('is_active', true)->get();
-        
+
         // PERUBAHAN PATH VIEW
         return view('marketing.leads.edit', compact('lead', 'packages'));
     }
@@ -153,19 +148,25 @@ class LeadController extends Controller
 
         $ktpPath = $lead->ktp_image_path;
         if ($request->hasFile('ktp_image')) {
-            if ($ktpPath && Storage::disk('public')->exists($ktpPath)) Storage::disk('public')->delete($ktpPath);
+            if ($ktpPath && Storage::disk('public')->exists($ktpPath)) {
+                Storage::disk('public')->delete($ktpPath);
+            }
             $ktpPath = $request->file('ktp_image')->store('uploads/ktp', 'public');
         }
 
         $housePath = $lead->house_image_path;
         if ($request->hasFile('house_image')) {
-            if ($housePath && Storage::disk('public')->exists($housePath)) Storage::disk('public')->delete($housePath);
+            if ($housePath && Storage::disk('public')->exists($housePath)) {
+                Storage::disk('public')->delete($housePath);
+            }
             $housePath = $request->file('house_image')->store('uploads/house', 'public');
         }
 
         $custPath = $lead->customer_image_path;
         if ($request->hasFile('customer_image')) {
-            if ($custPath && Storage::disk('public')->exists($custPath)) Storage::disk('public')->delete($custPath);
+            if ($custPath && Storage::disk('public')->exists($custPath)) {
+                Storage::disk('public')->delete($custPath);
+            }
             $custPath = $request->file('customer_image')->store('uploads/customer', 'public');
         }
 
@@ -214,9 +215,15 @@ class LeadController extends Controller
             abort(403);
         }
 
-        if ($lead->ktp_image_path && Storage::disk('public')->exists($lead->ktp_image_path)) Storage::disk('public')->delete($lead->ktp_image_path);
-        if ($lead->house_image_path && Storage::disk('public')->exists($lead->house_image_path)) Storage::disk('public')->delete($lead->house_image_path);
-        if ($lead->customer_image_path && Storage::disk('public')->exists($lead->customer_image_path)) Storage::disk('public')->delete($lead->customer_image_path);
+        if ($lead->ktp_image_path && Storage::disk('public')->exists($lead->ktp_image_path)) {
+            Storage::disk('public')->delete($lead->ktp_image_path);
+        }
+        if ($lead->house_image_path && Storage::disk('public')->exists($lead->house_image_path)) {
+            Storage::disk('public')->delete($lead->house_image_path);
+        }
+        if ($lead->customer_image_path && Storage::disk('public')->exists($lead->customer_image_path)) {
+            Storage::disk('public')->delete($lead->customer_image_path);
+        }
 
         $lead->delete();
         return redirect()->route('marketing.leads.index')->with('success', 'Data prospek dihapus permanen.');
@@ -260,8 +267,15 @@ class LeadController extends Controller
             // C. Update Status Lead
             $lead->update(['status' => 'converted']);
 
-            // D. Buat Tiket Instalasi (Terkirim ke Jobdesk Teknisi)
-            Ticket::create([
+            // D. Buat Form Instalasi terlebih dahulu sebagai Induk (Polymorphic)
+            $installationForm = \App\Models\InstallationForm::create([
+                'lead_id' => $lead->id,
+                'connection_type' => 'fiber', // Nilai bawaan
+                'status' => 'pending',
+            ]);
+
+            // E. Buat Tiket yang diikat (Morph) ke Form Instalasi tadi
+            $installationForm->ticket()->create([
                 'customer_id' => $customer->id,
                 'technician_id' => null, // Belum ada teknisi
                 'type' => 'installation',

@@ -32,23 +32,26 @@ return new class extends Migration
         });
 
         // 3. DEVICE CONFIGS (Detail Perangkat - 1 to 1 dengan Instalasi)
-        Schema::create('device_configs', function (Blueprint $table) {
+Schema::create('device_configs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('installation_id')->unique()->constrained('installation_forms')->cascadeOnDelete();
             $table->string('device_type')->nullable(); // Router, Modem, ONU
             $table->string('device_brand')->nullable();
             $table->string('mac_address')->nullable();
             $table->string('serial_number')->nullable();
+            $table->string('device_condition')->nullable(); 
             $table->timestamps();
         });
 
         // 4. NETWORK CONFIGS (Detail Jaringan - 1 to 1 dengan Instalasi)
-        Schema::create('network_configs', function (Blueprint $table) {
+Schema::create('network_configs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('installation_id')->unique()->constrained('installation_forms')->cascadeOnDelete();
             $table->foreignId('router_id')->nullable()->constrained('network_assets')->nullOnDelete();
             $table->string('vlan_id')->nullable();
             $table->string('odp_port')->nullable();
+            $table->string('port_interface')->nullable();
+            $table->string('connection_mode')->nullable();
             $table->timestamps();
         });
 
@@ -67,17 +70,9 @@ return new class extends Migration
         // Dibuat paling terakhir agar bisa mengikat formulir di atas
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
-            
-            // Relasi Polymorphic (Akan otomatis membuat kolom `ticketable_type` dan `ticketable_id`)
-            // Contoh isi: ticketable_type = 'App\Models\SurveyForm', ticketable_id = 1
             $table->nullableMorphs('ticketable'); 
-            
-            // Relasi Opsional (Hanya diisi jika ini tiket perbaikan pelanggan lama)
             $table->foreignId('customer_id')->nullable()->constrained('customers')->cascadeOnDelete();
-            
-            // Siapa teknisi yang mengambil tugas ini dari Bursa Tugas (Open Tickets)
             $table->foreignId('technician_id')->nullable()->constrained('users')->nullOnDelete();
-            
             $table->enum('type', ['survey', 'installation', 'repair']);
             $table->enum('status', ['open', 'assigned', 'in_progress', 'resolved', 'closed'])->default('open');
             $table->string('subject');

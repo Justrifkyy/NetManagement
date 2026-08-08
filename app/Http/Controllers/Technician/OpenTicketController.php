@@ -58,29 +58,39 @@ class TicketController extends Controller
     {
         $tickets = Ticket::with(['customer.user'])
             ->where('technician_id', Auth::id())
-            ->orderByRaw("FIELD(status, 'assigned', 'in_progress', 'resolved', 'closed')") 
+            ->orderByRaw("FIELD(status, 'assigned', 'in_progress', 'resolved', 'closed')")
             ->latest()
             ->get();
 
-        return view('technician.ticket.process.index', compact('tickets'));
+        return view('technician.my-tasks.index', compact('tickets'));
     }
 
     public function processInput(Ticket $ticket)
     {
-        if ($ticket->technician_id !== Auth::id()) abort(403);
-
+        if ($ticket->technician_id !== Auth::id()) {
+            abort(403);
+        }
         $routers = NetworkAsset::where('is_active', true)->get();
 
         if ($ticket->status === 'assigned') {
             $ticket->update(['status' => 'in_progress']);
         }
 
-        return view('technician.ticket.process.update', compact('ticket', 'routers'));
+        // Arahkan view secara dinamis berdasarkan jenis pekerjaan
+        if ($ticket->type === 'installation') {
+            return view('technician.my-tasks.form-installation', compact('ticket', 'routers'));
+        } elseif ($ticket->type === 'survey') {
+            return view('technician.my-tasks.form-survey', compact('ticket', 'routers'));
+        } elseif ($ticket->type === 'repair') {
+            return view('technician.my-tasks.form-repair', compact('ticket', 'routers'));
+        }
     }
 
     public function processStore(Request $request, Ticket $ticket)
     {
-        if ($ticket->technician_id !== Auth::id()) abort(403);
+        if ($ticket->technician_id !== Auth::id()) {
+            abort(403);
+        }
 
         $this->updateTicketData($request, $ticket);
 
@@ -89,14 +99,18 @@ class TicketController extends Controller
 
     public function processShow(Ticket $ticket)
     {
-        if ($ticket->technician_id !== Auth::id()) abort(403);
+        if ($ticket->technician_id !== Auth::id()) {
+            abort(403);
+        }
 
         return view('technician.ticket.process.show', compact('ticket'));
     }
 
     public function processEdit(Ticket $ticket)
     {
-        if ($ticket->technician_id !== Auth::id()) abort(403);
+        if ($ticket->technician_id !== Auth::id()) {
+            abort(403);
+        }
 
         if ($ticket->status === 'closed') {
             return back()->with('error', 'Tiket sudah ditutup oleh Admin, tidak bisa diedit.');
@@ -108,7 +122,9 @@ class TicketController extends Controller
 
     public function processUpdate(Request $request, Ticket $ticket)
     {
-        if ($ticket->technician_id !== Auth::id()) abort(403);
+        if ($ticket->technician_id !== Auth::id()) {
+            abort(403);
+        }
 
         $this->updateTicketData($request, $ticket);
 
@@ -177,5 +193,48 @@ class TicketController extends Controller
             'status' => 'resolved',
             'completed_at' => now(),
         ]);
+
+        if ($ticket->type === 'installation') {
+            // 1. Update form instalasinya
+            $ticket->ticketable->update([
+                'installation_date' => $request->installation_date,
+                'connection_type' => $request->connection_type,
+                'cable_length' => $request->cable_length,
+                'status' => $request->installation_status,
+                'notes' => $request->installation_notes,
+            ]);
+
+            // 2. Simpan konfigurasi Jaringan
+            \App\Models\NetworkConfig::updateOrCreate(
+                ['installation_id' => $ticket->ticketable->id],
+                [
+                    'lead_id' => $ticket->customer->lead_id,
+                    'router_area' => $request->router_id,
+                    'port_interface' => $request->port_interface,
+                    'vlan_id' => $request->vlan_id,
+                    'connection_mode' => $request->connection_mode,
+                ],
+            );
+
+            // 3. Simpan konfigurasi Perangkat
+            \App\Models\DeviceConfig::updateOrCreate(
+                ['installation_id' => $ticket->ticketable->id],
+                [
+                    'lead_id' => $ticket->customer->lead_id,
+                    'device_type' => $request->device_type,
+                    'device_brand' => $request->device_brand,
+                    'mac_address' => $request->device_mac,
+                    'serial_number' => $request->device_sn,
+                ],
+            );
+
+            // Catatan: Pastikan untuk menangani file upload dan path-nya jika ada di tabel lain
+        } elseif ($ticket->type === 'survey') {
+            $ticket->ticketable->update([
+                'survey_date' => $request->survey_date,
+                'survey_status' => $request->survey_status,
+                'survey_notes' => $request->survey_notes,
+            ]);
+        }
     }
 }

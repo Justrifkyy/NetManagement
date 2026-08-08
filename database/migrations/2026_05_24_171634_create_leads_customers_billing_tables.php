@@ -21,10 +21,8 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // 2. CUSTOMERS (Pelanggan Resmi yang sudah deal/aktif)
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
-            // Setiap customer harus punya akun login (user) dan berasal dari prospek (lead)
             $table->foreignId('user_id')->unique()->constrained('users')->cascadeOnDelete();
             $table->foreignId('lead_id')->unique()->constrained('leads')->cascadeOnDelete();
             
@@ -35,7 +33,6 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // 3. SUBSCRIPTIONS (Data Langganan Internet & Akun PPPoE)
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('customer_id')->constrained('customers')->cascadeOnDelete();
@@ -48,7 +45,6 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // 4. INVOICES (Tagihan Bulanan)
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
             $table->foreignId('subscription_id')->constrained('subscriptions')->cascadeOnDelete();

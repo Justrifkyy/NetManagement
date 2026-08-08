@@ -75,7 +75,6 @@ class TicketQCController extends Controller
                 'pppoe_password' => $ticket->pppoe_password,
                 'ip_address' => $ticket->connection_mode === 'Static IP' ? '192.168.1.100' : null,
                 'installation_date' => $ticket->installation_date ?? now(),
-                'billing_due_date' => Carbon::now()->addMonth()->day,
                 'status' => 'active',
             ]);
 

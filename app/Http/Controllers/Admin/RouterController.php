@@ -10,11 +10,7 @@ class RouterController extends Controller
 {
     public function index()
     {
-        $routers = NetworkAsset::where('type', 'Router')
-            ->orWhere('type', 'OLT')
-            ->orWhere('type', 'AP')
-            ->orWhere('type', 'ODP')
-            ->paginate(15);
+        $routers = NetworkAsset::where('type', 'Router')->orWhere('type', 'OLT')->orWhere('type', 'AP')->orWhere('type', 'ODP')->paginate(15);
 
         return view('admin.routers.index', compact('routers'));
     }
@@ -83,8 +79,20 @@ class RouterController extends Controller
     private function pingHost($host)
     {
         $exitcode = null;
-        $output = array();
-        exec("ping -c 4 $host", $output, $exitcode);
+        $output = [];
+
+        // Amankan input IP Address untuk mencegah Command Injection
+        $safeHost = escapeshellarg($host);
+
+        // Deteksi Sistem Operasi (Windows vs Linux/Mac)
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            // Windows menggunakan parameter -n
+            exec("ping -n 4 $safeHost", $output, $exitcode);
+        } else {
+            // Linux/Unix/Mac menggunakan parameter -c
+            exec("ping -c 4 $safeHost", $output, $exitcode);
+        }
+
         return $exitcode === 0;
     }
 }
