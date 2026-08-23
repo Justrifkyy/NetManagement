@@ -98,24 +98,47 @@
     <script>
         // Notifikasi Pop-up (Toast) saat Berhasil Tambah/Edit User
         @if(session('success'))
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 4000,
-                timerProgressBar: true,
-                background: '#0f172a', 
-                color: '#34d399',      
-                iconColor: '#34d399',
-                customClass: {
-                    popup: 'border border-slate-700 rounded-xl shadow-xl'
-                }
-            });
+            // Deteksi apakah ini pesan Reset Password
+            @if(Str::contains(session('success'), 'Temporary password:'))
+                Swal.fire({
+                    title: 'Berhasil Reset Password!',
+                    html: `
+                        <p class="text-slate-300 text-sm mb-4">Harap salin dan berikan password sementara ini kepada pegawai bersangkutan. Password ini tidak akan ditampilkan lagi.</p>
+                        <div class="bg-slate-950 p-5 rounded-xl border border-slate-700 shadow-inner">
+                            <span class="text-3xl font-mono font-bold text-emerald-400 tracking-widest select-all">{{ explode('Temporary password: ', session('success'))[1] }}</span>
+                        </div>
+                    `,
+                    icon: 'success',
+                    background: '#0f172a',
+                    color: '#f8fafc',
+                    confirmButtonColor: '#9333ea',
+                    confirmButtonText: 'Tutup & Selesai',
+                    allowOutsideClick: false, // Memaksa admin klik tombol tutup agar tidak terlewat
+                    customClass: {
+                        popup: 'border border-slate-700 rounded-2xl shadow-2xl'
+                    }
+                });
+            @else
+                // Notifikasi reguler (Toast) untuk aksi Tambah/Edit/Hapus
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 4000,
+                    timerProgressBar: true,
+                    background: '#0f172a', 
+                    color: '#34d399',      
+                    iconColor: '#34d399',
+                    customClass: {
+                        popup: 'border border-slate-700 rounded-xl shadow-xl'
+                    }
+                });
 
-            Toast.fire({
-                icon: 'success',
-                title: '{{ session("success") }}'
-            });
+                Toast.fire({
+                    icon: 'success',
+                    title: '{{ session("success") }}'
+                });
+            @endif
         @endif
 
         // Pop-up Konfirmasi Reset Password

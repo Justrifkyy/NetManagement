@@ -37,13 +37,15 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
+protected $fillable = [
         'name',
         'email',
         'password',
-        'role',             // Role: super_admin, admin, marketing, technician, customer
-        'marketing_code',   // Kode Sales (Unik)
-        'is_active',        // Status Aktif/Nonaktif
+        'role',
+        'marketing_code',
+        'is_active',
+        'phone_number', // Tambahkan ini agar tidak diblokir Laravel
+        'area_id',      // Tambahkan ini untuk relasi wilayah teknisi      // Status Aktif/Nonaktif
     ];
 
     /**

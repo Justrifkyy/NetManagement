@@ -9,22 +9,29 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EnsureUserHasRole
 {
-    public function handle(Request $request, Closure $next, ...$roles): Response
+public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        // Jika belum login, lempar ke login
         if (!Auth::check()) {
             return redirect()->route('login');
         }
 
         $user = Auth::user();
 
-        // Jika user memiliki salah satu dari role yang diizinkan, biarkan lewat
+        // TAMBAHAN: Kick paksa jika akun dinonaktifkan saat sedang login
+        if (!$user->is_active) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            
+            return redirect()->route('login')->withErrors([
+                'email' => 'Sesi berakhir. Akun Anda telah dinonaktifkan.'
+            ]);
+        }
+
         if (in_array($user->role, $roles)) {
             return $next($request);
         }
 
-        // JANGAN gunakan redirect('/dashboard') di sini karena bisa bikin Infinite Loop!
-        // Gunakan abort(403) untuk memunculkan pesan "Akses Ditolak"
         abort(403, 'Akses Ditolak. Anda tidak memiliki izin untuk halaman ini.');
     }
 }
