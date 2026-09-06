@@ -151,22 +151,22 @@
                 <div class="flex items-center gap-2 px-2 text-[10px] font-black text-sky-500 uppercase tracking-widest mb-3">
                     <span class="w-2 h-2 rounded-full bg-sky-500"></span> Technician
                 </div>
-                
+
                 <div class="space-y-1">
                     <x-sidebar-link href="{{ route('technician.dashboard') }}" :active="request()->routeIs('technician.dashboard')" icon="chart-pie">
                         {{ __('Dashboard') }}
                     </x-sidebar-link>
-                    
-                    <x-sidebar-link href="{{ route('technician.survey.index') }}" :active="request()->routeIs('technician.survey.*')" icon="search">
-                        {{ __('Survey') }}
+
+                    <x-sidebar-link href="{{ route('technician.ticket.index') }}" :active="request()->routeIs('technician.ticket.*')" icon="search">
+                        {{ __('Bursa Tugas') }}
                     </x-sidebar-link>
-                    
-                    <x-sidebar-link href="{{ route('technician.installation.index') }}" :active="request()->routeIs('technician.installation.*')" icon="wrench">
-                        {{ __('Instalasi') }}
+
+                    <x-sidebar-link href="{{ route('technician.process.index') }}" :active="request()->routeIs('technician.process.*')" icon="wrench">
+                        {{ __('Meja Kerja') }}
                     </x-sidebar-link>
-                    
-                    <x-sidebar-link href="{{ route('technician.ticket.index') }}" :active="request()->routeIs('technician.ticket.*')" icon="alert">
-                        {{ __('Gangguan') }}
+
+                    <x-sidebar-link href="{{ route('technician.history.index') }}" :active="request()->routeIs('technician.history.*')" icon="alert">
+                        {{ __('Riwayat Pekerjaan') }}
                     </x-sidebar-link>
                 </div>
             </div>

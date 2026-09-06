@@ -40,7 +40,8 @@ use App\Http\Controllers\Marketing\LeadController;
 
 // 5. Technician
 use App\Http\Controllers\Technician\TechnicianDashboardController;
-use App\Http\Controllers\Technician\TicketController; // Menggunakan controller yang sudah disatukan
+use App\Http\Controllers\Technician\TicketController;
+
 
 // 6. Customer
 use App\Http\Controllers\Customer\CustomerDashboardController;
@@ -203,9 +204,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('/dashboard', [TechnicianDashboardController::class, 'index'])->name('dashboard');
         
         // 1. Bursa Pekerjaan (Open Tickets)
-        Route::get('/open-tickets', [TicketController::class, 'index'])->name('ticket.index');
-        Route::get('/open-tickets/{ticket}', [TicketController::class, 'show'])->name('ticket.show');
-        Route::post('/open-tickets/{ticket}/claim', [TicketController::class, 'claim'])->name('ticket.claim');
+        Route::get('/open-tickets', [App\Http\Controllers\Technician\TicketController::class, 'index'])->name('ticket.index');
+        Route::get('/open-tickets/{ticket}', [App\Http\Controllers\Technician\TicketController::class, 'show'])->name('ticket.show');
+        Route::post('/open-tickets/{ticket}/take', [App\Http\Controllers\Technician\TicketController::class, 'take'])->name('ticket.take');
         
         // 2. Meja Kerja (My Tasks)
         Route::get('/my-tasks', [TicketController::class, 'processIndex'])->name('process.index');
@@ -214,6 +215,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('/my-tasks/{ticket}/show', [TicketController::class, 'processShow'])->name('process.show');
         Route::get('/my-tasks/{ticket}/edit', [TicketController::class, 'processEdit'])->name('process.edit');
         Route::put('/my-tasks/{ticket}', [TicketController::class, 'processUpdate'])->name('process.update');
+        // Rute Meja Kerja (My Tasks)
+Route::get('/my-tasks', [App\Http\Controllers\Technician\TicketController::class, 'processIndex'])->name('process.index');
+Route::get('/my-tasks/{ticket}', [App\Http\Controllers\Technician\TicketController::class, 'processShow'])->name('process.show');
         
         // View Pages Statis
         Route::view('/history', 'technician.history.index')->name('history.index');

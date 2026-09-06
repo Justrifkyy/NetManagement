@@ -79,7 +79,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 
-                <a href="{{ route('technician.tickets.index') }}"
+                <a href="{{ route('technician.ticket.index') }}"
                     class="group relative bg-slate-900/80 backdrop-blur-md overflow-hidden rounded-[2.5rem] border border-slate-800 hover:border-amber-500/50 transition-all duration-500 shadow-xl">
                     <div class="p-10 flex flex-col h-full">
                         <div class="w-16 h-16 bg-amber-500/10 rounded-2xl flex items-center justify-center mb-6 border border-amber-500/20 group-hover:bg-amber-500 group-hover:text-white transition-all duration-500 shadow-[0_0_20px_rgba(245,158,11,0.1)]">
