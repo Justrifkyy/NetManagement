@@ -220,7 +220,7 @@ Route::get('/my-tasks', [App\Http\Controllers\Technician\TicketController::class
 Route::get('/my-tasks/{ticket}', [App\Http\Controllers\Technician\TicketController::class, 'processShow'])->name('process.show');
         
         // View Pages Statis
-        Route::view('/history', 'technician.history.index')->name('history.index');
+        Route::get('/history', [TicketController::class, 'historyIndex'])->name('history.index');
         Route::view('/profile', 'technician.profile.index')->name('profile');
     });
 

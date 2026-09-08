@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\UploadedFile;
 
 class TicketController extends Controller
 {
@@ -98,5 +99,54 @@ class TicketController extends Controller
             'repair'       => view('technician.my-tasks.form-repair', compact('ticket')),
             default        => redirect()->route('technician.process.index')->with('error', 'Tipe tugas tidak dikenal.'),
         };
+    }
+
+    public function processUpdate(Request $request, Ticket $ticket)
+    {
+        abort_unless($ticket->technician_id === Auth::id(), 403);
+
+        $validated = $request->validate([
+            'survey_status' => 'nullable|string|max:100',
+            'survey_notes' => 'nullable|string',
+            'location_obstacle' => 'nullable|string',
+            'installation_status' => 'nullable|string|max:100',
+            'cable_length' => 'nullable|numeric|min:0',
+            'device_brand' => 'nullable|string|max:100',
+            'device_mac' => 'nullable|string|max:50',
+            'odp_port' => 'nullable|string|max:50',
+            'dbm_signal' => 'nullable|numeric',
+            'device_condition' => 'nullable|string|max:100',
+            'technical_notes' => 'nullable|string',
+            'connectivity_status' => 'nullable|string|max:100',
+            'location_photo_path' => 'nullable|image|max:5120',
+            'evidence_photo_path' => 'nullable|image|max:5120',
+        ]);
+
+        foreach (['location_photo_path' => 'uploads/teknisi/lokasi', 'evidence_photo_path' => 'uploads/teknisi/bukti'] as $field => $directory) {
+            if ($request->hasFile($field)) {
+                /** @var UploadedFile $file */
+                $validated[$field] = $request->file($field)->store($directory, 'public');
+            }
+        }
+
+        $ticket->update(array_merge($validated, [
+            'technical_notes' => $validated['technical_notes'] ?? $ticket->technical_notes,
+            'status' => 'resolved',
+            'completed_at' => now(),
+        ]));
+
+        return redirect()->route('technician.process.index')
+            ->with('success', 'Laporan pekerjaan berhasil disimpan.');
+    }
+
+    public function historyIndex()
+    {
+        $tickets = Ticket::with(['customer.user'])
+            ->where('technician_id', Auth::id())
+            ->whereIn('status', ['closed', 'resolved'])
+            ->latest('completed_at')
+            ->get();
+
+        return view('technician.history.index', compact('tickets'));
     }
 }
