@@ -182,7 +182,7 @@
                                     class="w-full px-5 py-4 bg-slate-800/50 border border-slate-700 text-white rounded-2xl focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all">
                             </div>
                             <div class="space-y-2">
-                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-sky-400">Titik Koordinat Peta</label>
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Titik Koordinat Peta</label>
                                 <input type="text" name="coordinates" value="{{ old('coordinates', $lead->coordinates) }}"
                                     class="w-full px-5 py-4 bg-slate-800/50 border border-slate-700 text-sky-400 rounded-2xl focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-all font-mono tracking-widest">
                             </div>
@@ -272,7 +272,7 @@
                                     class="w-full px-5 py-4 bg-slate-800/50 border border-slate-700 text-white rounded-2xl focus:ring-2 focus:ring-sky-500/50 focus:border-sky-500 transition-all font-medium">
                             </div>
                             <div class="space-y-2">
-                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-amber-400">Target Instalasi</label>
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Target Instalasi</label>
                                 <input type="date" name="installation_date" value="{{ old('installation_date', $lead->installation_date?->format('Y-m-d')) }}"
                                     class="w-full px-5 py-4 bg-slate-800/50 border border-slate-700 text-amber-400 rounded-2xl focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all font-bold">
                             </div>
@@ -310,7 +310,7 @@
                         Simpan Perubahan Data
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                     </button>
-                    <a href="{{ route('marketing.leads.show', $lead->id) }}" class="flex-1 px-8 py-5 bg-slate-900 text-slate-400 font-bold rounded-3xl border border-slate-800 hover:bg-slate-800 hover:text-white transition-all duration-300 flex items-center justify-center text-lg text-center leading-none uppercase text-xs tracking-widest">
+                    <a href="{{ route('marketing.leads.show', $lead->id) }}" class="flex-1 px-8 py-5 bg-slate-900 text-slate-400 font-bold rounded-3xl border border-slate-800 hover:bg-slate-800 hover:text-white transition-all duration-300 flex items-center justify-center text-lg text-center leading-none uppercase tracking-widest">
                         Batal
                     </a>
                 </div>
