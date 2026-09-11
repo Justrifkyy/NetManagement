@@ -57,6 +57,10 @@ abstract class DuskTestCase extends BaseTestCase
 
     protected function loginAsSeededRole(Browser $browser, string $role): Browser
     {
+        if ($role === 'technician') {
+            return $this->loginThroughForm($browser, $role);
+        }
+
         $user = $this->loginAsRole($role);
 
         return $browser->visit('/_dusk/logout')
