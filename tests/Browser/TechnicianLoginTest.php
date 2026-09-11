@@ -16,9 +16,9 @@ class TechnicianLoginTest extends DuskTestCase
         $this->browse(function (Browser $browser) {
             $browser->visit('/login')
                     // Memasukkan email teknisi
-                    ->type('email', 'teknisi@netmanager.local')
+                    ->type('#email', 'teknisi@netmanager.local')
                     // Memasukkan password
-                    ->type('password', 'password')
+                    ->type('#password', 'password')
                     // Mengeklik tombol submit form login
                     ->press('button[type="submit"]')
                     // Memastikan berhasil masuk ke halaman dashboard teknisi

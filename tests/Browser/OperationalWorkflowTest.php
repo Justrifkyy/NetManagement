@@ -14,7 +14,7 @@ class OperationalWorkflowTest extends DuskTestCase
     public function test_marketing_can_review_the_lead_pipeline(): void
     {
         $this->browse(function (Browser $browser): void {
-            $browser->loginAs($this->loginAsRole('marketing'))
+            $this->loginAsSeededRole($browser, 'marketing')
                 ->visit('/marketing/leads')
                 ->assertPathIs('/marketing/leads')
                 ->assertSee('Prospek')
@@ -27,7 +27,7 @@ class OperationalWorkflowTest extends DuskTestCase
     public function test_technician_can_open_the_ticket_queue_and_workbench(): void
     {
         $this->browse(function (Browser $browser): void {
-            $browser->loginAs($this->loginAsRole('technician'))
+            $this->loginAsSeededRole($browser, 'technician')
                 ->visit('/technician/open-tickets')
                 ->assertPathIs('/technician/open-tickets')
                 ->visit('/technician/my-tasks')
@@ -40,7 +40,7 @@ class OperationalWorkflowTest extends DuskTestCase
     public function test_admin_can_review_core_operations(): void
     {
         $this->browse(function (Browser $browser): void {
-            $browser->loginAs($this->loginAsRole('admin'))
+            $this->loginAsSeededRole($browser, 'admin')
                 ->visit('/admin/customers')
                 ->assertPathIs('/admin/customers')
                 ->visit('/admin/packages')
@@ -54,4 +54,3 @@ class OperationalWorkflowTest extends DuskTestCase
         });
     }
 }
-

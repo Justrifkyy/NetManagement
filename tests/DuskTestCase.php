@@ -50,9 +50,17 @@ abstract class DuskTestCase extends BaseTestCase
 
         return $browser->logout()
             ->visit('/login')
-            ->type('email', $user->email)
-            ->type('password', 'password')
+            ->type('#email', $user->email)
+            ->type('#password', 'password')
             ->press('button[type="submit"]');
+    }
+
+    protected function loginAsSeededRole(Browser $browser, string $role): Browser
+    {
+        $user = $this->loginAsRole($role);
+
+        return $browser->visit('/_dusk/logout')
+            ->visit('/_dusk/login/'.$user->getKey());
     }
 
     /**

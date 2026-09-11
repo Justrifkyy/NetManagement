@@ -11,72 +11,72 @@ class RoleDashboardTest extends DuskTestCase
     #[Group('smoke')]
     #[Group('uat')]
     #[Group('regression')]
-    public function test_every_seeded_role_reaches_its_dashboard(): void
+    public function test_super_admin_reaches_dashboard(): void
     {
-        $dashboards = [
-            'super_admin' => '/superadmin/dashboard',
-            'admin' => '/admin/dashboard',
-            'marketing' => '/marketing/dashboard',
-            'technician' => '/technician/dashboard',
-            'customer' => '/client/dashboard',
-        ];
+        $this->assertRolePages('super_admin', ['/superadmin/dashboard']);
+    }
 
-        foreach ($dashboards as $role => $dashboard) {
-            $this->browse(function (Browser $browser) use ($role, $dashboard): void {
-                $this->loginThroughForm($browser, $role)
-                    ->visit('/dashboard')
-                    ->assertPathIs($dashboard);
-            });
-        }
+    #[Group('smoke')]
+    #[Group('uat')]
+    #[Group('regression')]
+    public function test_admin_reaches_dashboard(): void
+    {
+        $this->assertRolePages('admin', ['/admin/dashboard']);
+    }
+
+    #[Group('smoke')]
+    #[Group('uat')]
+    #[Group('regression')]
+    public function test_marketing_reaches_dashboard(): void
+    {
+        $this->assertRolePages('marketing', ['/marketing/dashboard']);
+    }
+
+    #[Group('smoke')]
+    #[Group('uat')]
+    #[Group('regression')]
+    public function test_technician_reaches_dashboard(): void
+    {
+        $this->assertRolePages('technician', ['/technician/dashboard']);
+    }
+
+    #[Group('smoke')]
+    #[Group('uat')]
+    #[Group('regression')]
+    public function test_customer_reaches_dashboard(): void
+    {
+        $this->assertRolePages('customer', ['/client/dashboard']);
     }
 
     #[Group('security')]
     #[Group('regression')]
-    public function test_each_role_can_open_its_primary_application_pages(): void
+    public function test_each_role_can_open_primary_pages(): void
     {
-        $pages = [
-            'super_admin' => [
-                '/superadmin/users',
-                '/superadmin/roles',
-                '/superadmin/master',
-                '/superadmin/settings',
-                '/superadmin/audits',
-                '/superadmin/maintenance',
-            ],
-            'admin' => [
-                '/admin/customers',
-                '/admin/packages',
-                '/admin/routers',
-                '/admin/billing',
-                '/admin/reports',
-                '/admin/tickets',
-                '/admin/leads',
-            ],
-            'marketing' => [
-                '/marketing/leads',
-                '/marketing/reports',
-            ],
-            'technician' => [
-                '/technician/open-tickets',
-                '/technician/my-tasks',
-                '/technician/history',
-                '/technician/profile',
-            ],
-            'customer' => [
-                '/client/billing',
-                '/client/complaints',
-                '/client/complaints/create',
-            ],
+        $roles = [
+            'super_admin' => ['/superadmin/users', '/superadmin/roles', '/superadmin/master', '/superadmin/settings', '/superadmin/audits', '/superadmin/maintenance'],
+            'admin' => ['/admin/customers', '/admin/packages', '/admin/routers', '/admin/billing', '/admin/reports', '/admin/tickets', '/admin/leads'],
+            'marketing' => ['/marketing/leads', '/marketing/reports'],
+            'technician' => ['/technician/open-tickets', '/technician/my-tasks', '/technician/history', '/technician/profile'],
+            'customer' => ['/client/billing', '/client/complaints', '/client/complaints/create'],
         ];
 
-        foreach ($pages as $role => $paths) {
-            $this->browse(function (Browser $browser) use ($role, $paths): void {
-                $browser->loginAs($this->loginAsRole($role));
-
+        $this->browse(function (Browser $browser) use ($roles): void {
+            foreach ($roles as $role => $paths) {
+                $this->loginAsSeededRole($browser, $role);
                 foreach ($paths as $path) {
                     $browser->visit($path)->assertPathIs($path);
                 }
-            });
-        }
+            }
+        });
+    }
+
+    private function assertRolePages(string $role, array $paths): void
+    {
+        $this->browse(function (Browser $browser) use ($role, $paths): void {
+            $this->loginAsSeededRole($browser, $role);
+            foreach ($paths as $path) {
+                $browser->visit($path)->assertPathIs($path);
+            }
+        });
     }
 }
