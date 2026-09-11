@@ -151,6 +151,7 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
             'role' => 'customer',
             'phone_number' => '081234567890',
+            'email_verified_at' => now(),
             'is_active' => true,
         ]);
 

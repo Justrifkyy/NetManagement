@@ -75,7 +75,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         $user = Auth::user();
 
         return match ($user->role) {
-            'super_admin', 'admin' => redirect()->route('admin.dashboard'),
+            'super_admin' => redirect()->route('superadmin.dashboard'),
+            'admin' => redirect()->route('admin.dashboard'),
             'marketing' => redirect()->route('marketing.dashboard'),
             'technician' => redirect()->route('technician.dashboard'),
             'customer' => redirect()->route('client.dashboard'),
