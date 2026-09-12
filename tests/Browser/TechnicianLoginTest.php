@@ -14,14 +14,11 @@ class TechnicianLoginTest extends DuskTestCase
     public function test_teknisi_bisa_login(): void
     {
         $this->browse(function (Browser $browser) {
-            $browser->visit('/login')
-                    // Memasukkan email teknisi
+            $browser->logout()
+                    ->visit('/login')
                     ->type('#email', 'teknisi@netmanager.local')
-                    // Memasukkan password
                     ->type('#password', 'password')
-                    // Mengeklik tombol submit form login
                     ->press('button[type="submit"]')
-                    // Memastikan berhasil masuk ke halaman dashboard teknisi
                     ->assertPathIs('/technician/dashboard');
         });
     }

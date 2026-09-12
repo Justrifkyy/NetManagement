@@ -32,6 +32,9 @@
         </style>
     </head>
     <body class="bg-black">
+        <x-global-banner />
+        <x-toast />
+
         <!-- Guest Navigation Bar -->
         <nav class="bg-gray-900/95 backdrop-blur-md border-b border-yellow-500/10 shadow-lg sticky top-0 z-50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -48,9 +51,6 @@
                         </div>
                     </div>
                     <div class="flex items-center space-x-4">
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}" class="text-gray-300 hover:text-yellow-400 text-sm font-medium transition duration-200">Register</a>
-                        @endif
                         @if (Route::has('login'))
                             <a href="{{ route('login') }}" class="px-4 py-2 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-semibold rounded-lg hover:from-yellow-500 hover:to-yellow-600 transition duration-200">Login</a>
                         @endif

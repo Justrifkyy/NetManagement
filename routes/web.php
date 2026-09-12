@@ -10,7 +10,6 @@ use App\Models\User;
 |--------------------------------------------------------------------------
 */
 // 1. Public
-use App\Http\Controllers\Public\PublicRegistrationController;
 
 // 2. Admin
 use App\Http\Controllers\Admin\AdminDashboardController;
@@ -46,6 +45,7 @@ use App\Http\Controllers\Technician\TicketController;
 // 6. Customer
 use App\Http\Controllers\Customer\CustomerDashboardController;
 use App\Http\Controllers\Customer\InvoiceController;
+use App\Http\Controllers\Customer\ComplaintController;
 
 
 /*
@@ -56,11 +56,6 @@ use App\Http\Controllers\Customer\InvoiceController;
 Route::get('/', function () {
     return view('welcome');
 });
-
-Route::get('/daftar-internet', [PublicRegistrationController::class, 'index'])->name('public.register');
-Route::post('/daftar-internet', [PublicRegistrationController::class, 'store'])->name('public.register.store');
-Route::get('/pendaftaran-berhasil', [PublicRegistrationController::class, 'success'])->name('public.register.success');
-
 
 /*
 |--------------------------------------------------------------------------
@@ -237,9 +232,9 @@ Route::get('/my-tasks/{ticket}', [App\Http\Controllers\Technician\TicketControll
         Route::get('/billing/{invoice}', [InvoiceController::class, 'show'])->name('billing.show');
 
         // Pengajuan / Keluhan (Statis berdasarkan views)
-        Route::view('/complaints', 'client.complaints.index')->name('complaints.index');
+        Route::get('/complaints', [ComplaintController::class, 'index'])->name('complaints.index');
         Route::view('/complaints/create', 'client.complaints.create')->name('complaints.create');
-        Route::post('/complaints', function() { return back()->with('success', 'Laporan berhasil dikirim'); })->name('complaints.store');
+        Route::post('/complaints', [ComplaintController::class, 'store'])->name('complaints.store');
     });
 
 });

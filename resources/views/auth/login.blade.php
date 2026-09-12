@@ -41,6 +41,7 @@
                     autofocus 
                     autocomplete="username" 
                 />
+                <x-input-error for="email" class="mt-2 text-rose-400" />
             </div>
 
             <div class="space-y-2">
@@ -54,6 +55,7 @@
                     required 
                     autocomplete="current-password" 
                 />
+                <x-input-error for="password" class="mt-2 text-rose-400" />
             </div>
 
             <div class="flex items-center justify-between pt-2">
@@ -74,14 +76,5 @@
             </x-button>
         </form>
 
-        <!-- Register Link -->
-        <div class="mt-6 text-center border-t border-gray-800 pt-6">
-            <p class="text-gray-400 text-sm">
-                Don't have an account? 
-                <a href="{{ route('register') }}" class="text-yellow-400 hover:text-yellow-300 font-semibold transition duration-200">
-                    Create one
-                </a>
-            </p>
-        </div>
     </x-authentication-card>
 </x-guest-layout>

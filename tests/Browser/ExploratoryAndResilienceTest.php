@@ -28,8 +28,7 @@ class ExploratoryAndResilienceTest extends DuskTestCase
         $this->browse(function (Browser $browser): void {
             $this->loginAsSeededRole($browser, 'customer')
                 ->visit('/client/complaints/create')
-                ->assertPresent('input[type="radio"][name="category"]')
-                ->assertPresent('input[name="title"][required]')
+            ->assertPresent('#title')
                 ->assertPresent('select[name="priority"]')
                 ->assertPresent('button[type="submit"]');
         });

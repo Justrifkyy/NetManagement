@@ -51,6 +51,26 @@
                 </div>
             @endif
 
+            <div class="mb-8 px-4 sm:px-0">
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-800">Laporan Kerusakan Terbaru</h3>
+                            <p class="text-sm text-slate-500">Pantau laporan yang Anda kirim ke tim teknisi.</p>
+                        </div>
+                        <a href="{{ route('client.complaints.index') }}" class="text-sm font-bold text-amber-600">Lihat Semua</a>
+                    </div>
+                    @forelse($recentTickets as $ticket)
+                        <div class="flex items-center justify-between border-t border-slate-100 py-3">
+                            <span class="font-semibold text-slate-700">{{ $ticket->subject }}</span>
+                            <span class="text-xs font-bold uppercase text-slate-500">{{ $ticket->status }}</span>
+                        </div>
+                    @empty
+                        <p class="border-t border-slate-100 pt-3 text-sm text-slate-500">Belum ada laporan kerusakan.</p>
+                    @endforelse
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-4 sm:px-0 mb-8">
                 
                 <div class="bg-white rounded-2xl p-6 shadow-sm border {{ isset($subscription) && $subscription->status === 'active' ? 'border-green-200' : 'border-red-200' }} flex flex-col">

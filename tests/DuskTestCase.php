@@ -44,27 +44,45 @@ abstract class DuskTestCase extends BaseTestCase
         return $user;
     }
 
-    protected function loginThroughForm(Browser $browser, string $role): Browser
+    // Cari fungsi ini di dalam tests/DuskTestCase.php
+    public function loginThroughForm(Browser $browser, string $role)
     {
-        $user = $this->loginAsRole($role);
+        // Sesuaikan email berdasarkan role (pastikan email ini ada di Seeder Anda)
+        $email = match ($role) {
+            'super_admin' => 'owner@netmanager.local',
+            'admin'       => 'admin@netmanager.local',
+            'marketing'   => 'marketing@netmanager.local',
+            'technician'  => 'teknisi@netmanager.local',
+            'customer'    => 'budi@netmanager.local',
+            default       => 'admin@netmanager.local',
+        };
 
-        return $browser->logout()
-            ->visit('/login')
-            ->type('#email', $user->email)
-            ->type('#password', 'password')
-            ->press('button[type="submit"]');
+        return $browser->visit('/login')
+                       ->type('#email', $email)       // Menggunakan Selector ID #email
+                       ->type('#password', 'password') // Menggunakan Selector ID #password
+                       ->press('button[type="submit"]');
     }
 
-    protected function loginAsSeededRole(Browser $browser, string $role): Browser
+public function loginAsSeededRole(Browser $browser, string $role)
     {
-        if ($role === 'technician') {
-            return $this->loginThroughForm($browser, $role);
-        }
+        // 1. Hapus cookie/sesi dari tes sebelumnya agar robot tidak langsung ter-redirect ke dashboard
+        $browser->driver->manage()->deleteAllCookies();
 
-        $user = $this->loginAsRole($role);
+        // 2. Tentukan email berdasarkan role
+        $email = match ($role) {
+            'super_admin' => 'owner@netmanager.local',
+            'admin'       => 'admin@netmanager.local',
+            'marketing'   => 'marketing@netmanager.local',
+            'technician'  => 'teknisi@netmanager.local',
+            'customer'    => 'budi@netmanager.local',
+            default       => 'admin@netmanager.local',
+        };
 
-        return $browser->visit('/_dusk/logout')
-            ->visit('/_dusk/login/'.$user->getKey());
+        // 3. Eksekusi login
+        return $browser->visit('/login')
+                       ->type('#email', $email)
+                       ->type('#password', 'password')
+                       ->press('button[type="submit"]');
     }
 
     /**

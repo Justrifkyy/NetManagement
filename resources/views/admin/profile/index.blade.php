@@ -23,7 +23,7 @@
                             <h3 class="text-xl font-bold text-white tracking-wide">Informasi Profil</h3>
                         </div>
 
-                        <form action="{{ route('admin.profile.update') }}" method="POST" class="space-y-6">
+                        <form action="{{ route('admin.profile.updateProfile') }}" method="POST" class="space-y-6">
                             @csrf
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">

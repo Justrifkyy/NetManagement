@@ -9,7 +9,7 @@
                         <h1 class="text-4xl font-black text-white">Pusat Pengajuan</h1>
                         <p class="text-slate-400 mt-2">Laporkan masalah jaringan atau buat pengajuan baru</p>
                     </div>
-                    <a href="{{ route('client.complaints.create') }}" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 font-bold rounded-lg hover:from-amber-400 hover:to-amber-500 shadow-lg transform hover:-translate-y-0.5 transition">
+                    <a href="{{ route('client.complaints.create') }}" dusk="create-complaint" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 font-bold rounded-lg hover:from-amber-400 hover:to-amber-500 shadow-lg transform hover:-translate-y-0.5 transition">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                         Buat Pengajuan Baru
                     </a>
@@ -29,18 +29,18 @@
 
             <!-- Complaints List -->
             <div class="space-y-4">
-                <!-- Complaint Card 1 - Sample (if any exist) -->
+                @forelse($tickets as $ticket)
                 <div class="bg-slate-800 border border-slate-700 rounded-lg p-6 hover:border-amber-500 transition">
                     <div class="flex items-start justify-between mb-4">
                         <div class="flex-1">
                             <div class="flex items-center gap-3">
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-900/30 text-green-300 border border-green-700">
-                                    Selesai
+                                    {{ ucfirst($ticket->status) }}
                                 </span>
-                                <p class="text-slate-400 text-sm">#001 • 5 Maret 2026</p>
+                                <p class="text-slate-400 text-sm">#{{ $ticket->id }} • {{ $ticket->created_at->format('d M Y') }}</p>
                             </div>
-                            <h3 class="text-lg font-bold text-white mt-3">Jaringan Internet Lambat</h3>
-                            <p class="text-slate-400 mt-2 text-sm">Kecepatan internet terasa sangat lambat, hanya dapat 5 Mbps padahal paket 50 Mbps</p>
+                            <h3 class="text-lg font-bold text-white mt-3">{{ $ticket->subject }}</h3>
+                            <p class="text-slate-400 mt-2 text-sm">{{ $ticket->description }}</p>
                         </div>
                         <a href="#" class="text-amber-400 hover:text-amber-300 font-semibold text-sm">
                             Lihat Detail
@@ -49,15 +49,15 @@
                     <div class="flex items-center gap-4 text-xs text-slate-400 border-t border-slate-700 pt-4">
                         <div class="flex items-center gap-1">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zm-8 8a4 4 0 00-8 0v3h8v-3z" clip-rule="evenodd"></path></svg>
-                            Teknisi: Budi Santoso
+                            Teknisi: {{ $ticket->technician?->name ?? 'Belum ditugaskan' }}
                         </div>
                         <div class="flex items-center gap-1">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z" clip-rule="evenodd"></path></svg>
-                            3 hari untuk diselesaikan
+                            Status: {{ ucfirst($ticket->status) }}
                         </div>
                     </div>
                 </div>
-
+                @empty
                 <!-- Empty State -->
                 <div class="bg-slate-800 border border-slate-700 rounded-lg p-12 text-center">
                     <div class="w-24 h-24 bg-amber-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -66,6 +66,7 @@
                     <p class="text-slate-300 font-semibold text-lg">Belum ada pengajuan lainnya</p>
                     <p class="text-slate-400 text-sm mt-2">Jika ada masalah, silakan buat pengajuan baru melalui tombol di atas</p>
                 </div>
+                @endforelse
             </div>
 
             <!-- Quick Actions -->

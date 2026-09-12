@@ -28,6 +28,8 @@ class CustomerDashboardController extends Controller
             $unpaidInvoices = Invoice::where('subscription_id', $subscription->id)->where('status', 'unpaid')->latest()->get();
         }
 
-        return view('user.dashboard.index', compact('customer', 'subscription', 'unpaidInvoices'));
+        $recentTickets = $customer->tickets()->latest()->take(5)->get();
+
+        return view('user.dashboard.index', compact('customer', 'subscription', 'unpaidInvoices', 'recentTickets'));
     }
 }

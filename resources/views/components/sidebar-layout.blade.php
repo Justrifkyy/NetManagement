@@ -18,7 +18,9 @@
         </style>
     </head>
     <body class="font-sans antialiased bg-slate-950 text-slate-300" x-data="{ sidebarOpen: false }" x-cloak>
+        <x-global-banner />
         <x-banner />
+        <x-toast />
 
         <div class="flex h-screen bg-slate-950 overflow-hidden relative">
             
