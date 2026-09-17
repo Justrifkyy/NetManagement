@@ -71,10 +71,6 @@
                         {{ __('Kelola Pegawai') }}
                     </x-sidebar-link>
                     
-                    <x-sidebar-link href="{{ route('superadmin.settings.index') }}" :active="request()->routeIs('superadmin.settings.*')" icon="cog">
-                        {{ __('Pengaturan Sistem') }}
-                    </x-sidebar-link>
-                    
                     <x-sidebar-link href="{{ route('admin.dashboard') }}" :active="request()->routeIs('admin.dashboard')" icon="monitor">
                         {{ __('Admin Dashboard') }}
                     </x-sidebar-link>

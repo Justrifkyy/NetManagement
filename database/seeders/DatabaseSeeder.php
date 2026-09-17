@@ -11,7 +11,6 @@ use App\Models\Customer;
 use App\Models\Subscription;
 use App\Models\Invoice;
 use App\Models\Ticket;
-use App\Models\SystemSetting;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Carbon\Carbon;
@@ -21,28 +20,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // ==========================================
-        // 0. DATA PENGATURAN SISTEM (SYSTEM SETTINGS)
-        // ==========================================
-        $settings = [
-            ['key' => 'app_name', 'value' => 'NetManager ISP', 'description' => 'Nama Aplikasi'],
-            ['key' => 'company_name', 'value' => 'PT Jaringan Nusantara', 'description' => 'Nama Perusahaan'],
-            ['key' => 'company_phone', 'value' => '0411-123456', 'description' => 'Telepon Perusahaan'],
-            ['key' => 'company_email', 'value' => 'cs@netmanager.local', 'description' => 'Email Perusahaan'],
-            ['key' => 'company_address', 'value' => 'Jl. AP Pettarani, Makassar', 'description' => 'Alamat Perusahaan'],
-            ['key' => 'maintenance_mode', 'value' => '0', 'description' => 'Mode Perbaikan'],
-            ['key' => 'timezone', 'value' => 'Asia/Makassar', 'description' => 'Zona Waktu'],
-            ['key' => 'currency', 'value' => 'IDR', 'description' => 'Mata Uang'],
-            ['key' => 'enable_two_factor', 'value' => '0', 'description' => 'Wajib 2FA'],
-            ['key' => 'password_expiry_days', 'value' => '90', 'description' => 'Masa Berlaku Password (Hari)'],
-            ['key' => 'backup_frequency', 'value' => 'daily', 'description' => 'Frekuensi Backup Database'],
-        ];
-
-        foreach ($settings as $setting) {
-            SystemSetting::create($setting);
-        }
-
-        // ==========================================
-        // 1. DATA MASTER (AREA, PAKET, ASET JARINGAN)
+        // 0. DATA MASTER (AREA, PAKET, ASET JARINGAN)
         // ==========================================
         $areaMakassar = MasterArea::create([
             'code' => 'MKS-01',

@@ -29,7 +29,6 @@ use App\Http\Controllers\SuperAdmin\SuperAdminDashboardController;
 use App\Http\Controllers\SuperAdmin\UserManagementController;
 use App\Http\Controllers\SuperAdmin\RoleAccessController;
 use App\Http\Controllers\SuperAdmin\MasterDataController;
-use App\Http\Controllers\SuperAdmin\SystemSettingsController;
 use App\Http\Controllers\SuperAdmin\AuditController;
 use App\Http\Controllers\SuperAdmin\MaintenanceController;
 
@@ -99,12 +98,6 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::post('/master/areas', [MasterDataController::class, 'storeArea'])->name('master.storeArea');
         Route::put('/master/areas/{area}', [MasterDataController::class, 'updateArea'])->name('master.updateArea');
         Route::delete('/master/areas/{area}', [MasterDataController::class, 'destroyArea'])->name('master.destroyArea');
-        
-        // System Settings
-        Route::get('/settings', [SystemSettingsController::class, 'index'])->name('settings.index');
-        Route::post('/settings', [SystemSettingsController::class, 'update'])->name('settings.update');
-        Route::post('/settings/backup', [SystemSettingsController::class, 'backupDatabase'])->name('settings.backup');
-        Route::post('/settings/restore', [SystemSettingsController::class, 'restoreDatabase'])->name('settings.restore');
         
         // Audit & Security
         Route::get('/audits', [AuditController::class, 'index'])->name('audits.index');

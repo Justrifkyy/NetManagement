@@ -23,9 +23,6 @@
                         <x-nav-link href="{{ route('superadmin.users.index') }}" :active="request()->routeIs('superadmin.users.*')">
                             {{ __('Kelola Pegawai') }}
                         </x-nav-link>
-                        <x-nav-link href="{{ route('superadmin.settings.index') }}" :active="request()->routeIs('superadmin.settings.*')">
-                            {{ __('Pengaturan') }}
-                        </x-nav-link>
                         <x-nav-link href="{{ route('admin.dashboard') }}" :active="request()->routeIs('admin.dashboard')">
                             {{ __('Dashboard Admin') }}
                         </x-nav-link>
@@ -232,9 +229,6 @@
                 </x-responsive-nav-link>
                 <x-responsive-nav-link href="{{ route('superadmin.users.index') }}" :active="request()->routeIs('superadmin.users.*')">
                     {{ __('Kelola Pegawai & Role') }}
-                </x-responsive-nav-link>
-                <x-responsive-nav-link href="{{ route('superadmin.settings.index') }}" :active="request()->routeIs('superadmin.settings.*')">
-                    {{ __('Pengaturan Sistem') }}
                 </x-responsive-nav-link>
                 <div class="border-t border-slate-700 my-2"></div>
             @endif

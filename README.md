@@ -191,7 +191,6 @@ NetManagement/
 │   │   ├── UserManagementController
 │   │   ├── RoleAccessController
 │   │   ├── MasterDataController
-│   │   ├── SystemSettingsController
 │   │   ├── AuditController
 │   │   └── MaintenanceController
 │   ├── Marketing/                  # Marketing portal
@@ -209,7 +208,6 @@ NetManagement/
 │   ├── Subscription                # Active subscriptions
 │   ├── NetworkAsset                # Network devices
 │   ├── AuditLog       ✨ NEW       # Audit logging
-│   ├── SystemSetting  ✨ NEW       # Settings
 │   ├── RolePermission ✨ NEW       # Permissions
 │   ├── MasterArea     ✨ NEW       # Regional areas
 │   ├── MasterTechnician ✨ NEW     # Technician profiles
@@ -437,11 +435,6 @@ Customer self-service portal.
 - Data change history
 - Timestamp & user info
 - Security monitoring
-
-#### **SystemSetting** ✨ NEW
-- Application configuration
-- Feature flags
-- System parameters
 
 #### **RolePermission** ✨ NEW
 - Permission definitions
