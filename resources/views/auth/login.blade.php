@@ -17,7 +17,18 @@
             <p class="text-center text-gray-400 text-sm">Sign in to your NetManager account</p>
         </div>
 
-        <x-validation-errors class="mb-4" />
+        @if ($errors->any())
+            <div class="mb-4 p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-sm text-rose-300" role="alert">
+                <p class="font-semibold">Login gagal</p>
+                <p class="mt-1">
+                    @if ($errors->has('email') && str_contains($errors->first('email'), 'These credentials do not match our records.'))
+                        Email atau password yang Anda masukkan salah. Silakan periksa kembali.
+                    @else
+                        {{ $errors->first() }}
+                    @endif
+                </p>
+            </div>
+        @endif
 
         @session('status')
             <div class="mb-4 p-3 rounded-lg bg-green-500/10 border border-green-500/30 font-medium text-sm text-green-400 animate-fade-in">
@@ -41,7 +52,6 @@
                     autofocus 
                     autocomplete="username" 
                 />
-                <x-input-error for="email" class="mt-2 text-rose-400" />
             </div>
 
             <div class="space-y-2">
@@ -55,7 +65,6 @@
                     required 
                     autocomplete="current-password" 
                 />
-                <x-input-error for="password" class="mt-2 text-rose-400" />
             </div>
 
             <div class="flex items-center justify-between pt-2">

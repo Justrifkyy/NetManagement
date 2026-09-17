@@ -36,23 +36,35 @@
         <x-toast />
 
         <!-- Guest Navigation Bar -->
-        <nav class="bg-gray-900/95 backdrop-blur-md border-b border-yellow-500/10 shadow-lg sticky top-0 z-50">
+        <nav
+            class="fixed w-full z-50 transition-all duration-300 bg-slate-900/95 backdrop-blur-md shadow-lg border-b border-slate-800">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-16">
-                    <div class="flex items-center">
-                        <a href="/" class="flex items-center">
-                            <img src="{{ asset('storage/img/LOGOMGD.png') }}" alt="NetManager Logo" class="h-8 w-auto object-contain">
+                <div class="flex justify-between items-center h-20">
+                    <div class="flex items-center gap-3 cursor-pointer" onclick="window.location.href='{{ url('/') }}'">
+                        <a href="{{ url('/') }}" class="flex items-center">
+                            <img src="{{ asset('storage/img/LOGOMGD.png') }}" alt="Logo PT MGD"
+                                class="h-12 w-auto object-contain">
                         </a>
-                        <div class="hidden md:flex ms-10 space-x-8">
-                            <a href="/" class="text-gray-300 hover:text-yellow-400 text-sm font-medium transition duration-200">Home</a>
-                            <a href="#about" class="text-gray-300 hover:text-yellow-400 text-sm font-medium transition duration-200">About</a>
-                            <a href="#services" class="text-gray-300 hover:text-yellow-400 text-sm font-medium transition duration-200">Services</a>
-                            <a href="#contact" class="text-gray-300 hover:text-yellow-400 text-sm font-medium transition duration-200">Contact</a>
-                        </div>
+                        <span class="font-black text-xl tracking-tight text-white hidden sm:block">PT. MANDIRI GLOBAL
+                            DATA</span>
                     </div>
+
+                    <div class="hidden md:flex space-x-8">
+                        <a href="{{ url('/') }}#beranda"
+                            class="text-sm font-bold text-white hover:text-amber-500 transition">Beranda</a>
+                        <a href="{{ url('/') }}#tentang"
+                            class="text-sm font-bold text-slate-300 hover:text-amber-500 transition">Tentang</a>
+                        <a href="{{ url('/') }}#layanan"
+                            class="text-sm font-bold text-slate-300 hover:text-amber-500 transition">Layanan</a>
+                        <a href="{{ url('/') }}#mengapa-kami"
+                            class="text-sm font-bold text-slate-300 hover:text-amber-500 transition">Mengapa Kami</a>
+                    </div>
+
                     <div class="flex items-center space-x-4">
                         @if (Route::has('login'))
-                            <a href="{{ route('login') }}" class="px-4 py-2 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black font-semibold rounded-lg hover:from-yellow-500 hover:to-yellow-600 transition duration-200">Login</a>
+                            <a href="{{ route('login') }}"
+                                class="px-5 py-2.5 text-sm font-bold text-amber-400 border-2 border-amber-500/50 rounded-lg hover:bg-amber-500/10 transition">Log
+                                in Portal</a>
                         @endif
                     </div>
                 </div>
