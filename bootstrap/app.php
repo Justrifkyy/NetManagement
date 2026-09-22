@@ -11,6 +11,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Pengecualian proteksi CSRF untuk Webhook Payment Gateway (Midtrans)
+        $middleware->validateCsrfTokens(except: [
+            'midtrans/notification',
+        ]);
+
         // Tambahkan baris ini untuk mendaftarkan alias 'role'
         $middleware->alias([
             'role' => \App\Http\Middleware\EnsureUserHasRole::class,

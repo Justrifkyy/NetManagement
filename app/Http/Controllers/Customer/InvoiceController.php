@@ -42,8 +42,7 @@ class InvoiceController extends Controller
     }
 
     /**
-     * Handle customer self-service payment.
-     * Saat ini berfungsi sebagai placeholder untuk integrasi Payment Gateway (Midtrans/dll).
+     * Handle customer self-service payment via Midtrans Snap.
      */
     public function pay(Request $request, Invoice $invoice)
     {
@@ -59,12 +58,45 @@ class InvoiceController extends Controller
             return back()->with('info', 'Tagihan ini sudah berstatus lunas.');
         }
 
-        // TODO: Integrasi Midtrans / Payment Gateway di sini
-        // Untuk saat ini, arahkan ke halaman informasi pembayaran manual
-        return back()->with('payment_info', [
-            'invoice_number' => $invoice->invoice_number,
-            'amount'         => $invoice->amount,
-            'due_date'       => $invoice->due_date,
-        ]);
+        // Konfigurasi Midtrans SDK
+        \Midtrans\Config::$serverKey = config('services.midtrans.server_key');
+        \Midtrans\Config::$isProduction = (bool) config('services.midtrans.is_production', false);
+        \Midtrans\Config::$isSanitized = (bool) config('services.midtrans.is_sanitized', true);
+        \Midtrans\Config::$is3ds = (bool) config('services.midtrans.is_3ds', true);
+
+        // Jika snap_token belum pernah dibuat, minta token baru ke Midtrans Snap API
+        if (empty($invoice->snap_token)) {
+            $customerUser = $invoice->subscription->customer->user ?? Auth::user();
+            $customerProfile = $invoice->subscription->customer;
+
+            $params = [
+                'transaction_details' => [
+                    'order_id' => $invoice->invoice_number,
+                    'gross_amount' => (int) $invoice->amount,
+                ],
+                'customer_details' => [
+                    'first_name' => $customerProfile->name ?? $customerUser->name,
+                    'email' => $customerUser->email,
+                    'phone' => $customerProfile->phone_number ?? '',
+                ],
+                'item_details' => [
+                    [
+                        'id' => 'INV-' . $invoice->id,
+                        'price' => (int) $invoice->amount,
+                        'quantity' => 1,
+                        'name' => 'Langganan Internet: ' . ($invoice->subscription->package->name ?? 'Internet Service'),
+                    ]
+                ],
+            ];
+
+            try {
+                $snapToken = \Midtrans\Snap::getSnapToken($params);
+                $invoice->update(['snap_token' => $snapToken]);
+            } catch (\Exception $e) {
+                return back()->with('error', 'Gagal memproses pembayaran Midtrans: ' . $e->getMessage());
+            }
+        }
+
+        return back()->with('snap_token', $invoice->snap_token);
     }
 }

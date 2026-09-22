@@ -31,4 +31,25 @@ return [
         ],
     ],
 
+    'midtrans' => [
+        'server_key' => env('MIDTRANS_SERVER_KEY'),
+        'client_key' => env('MIDTRANS_CLIENT_KEY'),
+        'is_production' => (bool) env('MIDTRANS_IS_PRODUCTION', false),
+        'is_sanitized' => (bool) env('MIDTRANS_IS_SANITIZED', true),
+        'is_3ds' => (bool) env('MIDTRANS_IS_3DS', true),
+    ],
+
+    'mikrotik' => [
+        'host' => env('MIKROTIK_HOST', '192.168.88.1'),
+        'user' => env('MIKROTIK_USER', 'admin'),
+        'pass' => env('MIKROTIK_PASS', ''),
+        'port' => (int) env('MIKROTIK_PORT', 8728),
+        'timeout' => (int) env('MIKROTIK_TIMEOUT', 3),
+        'attempts' => (int) env('MIKROTIK_ATTEMPTS', 1),
+    ],
+
+    'whatsapp' => [
+        'api_url' => env('WA_API_URL', 'http://127.0.0.1:3000'),
+    ],
+
 ];

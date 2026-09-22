@@ -10,6 +10,7 @@ use App\Models\User;
 |--------------------------------------------------------------------------
 */
 // 1. Public
+use App\Http\Controllers\MidtransWebhookController;
 
 // 2. Admin
 use App\Http\Controllers\Admin\AdminDashboardController;
@@ -55,6 +56,9 @@ use App\Http\Controllers\Customer\ComplaintController;
 Route::get('/', function () {
     return view('welcome');
 });
+
+// Midtrans Payment Webhook Notification
+Route::post('/midtrans/notification', [MidtransWebhookController::class, 'handleNotification'])->name('midtrans.notification');
 
 /*
 |--------------------------------------------------------------------------

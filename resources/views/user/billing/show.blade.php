@@ -100,6 +100,13 @@
                             </div>
                         @endif
 
+                        {{-- Flash: Error --}}
+                        @if(session('error'))
+                            <div class="w-full max-w-md mb-4 px-4 py-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-400 font-semibold text-sm text-center">
+                                {{ session('error') }}
+                            </div>
+                        @endif
+
                         {{-- Flash: Payment Info (instruksi pembayaran manual) --}}
                         @if(session('payment_info'))
                             @php $pi = session('payment_info'); @endphp
@@ -119,13 +126,20 @@
                                 <p class="text-sm font-semibold text-rose-400">Silakan selesaikan pembayaran sebelum tanggal jatuh tempo agar layanan internet Anda tidak terputus.</p>
                             </div>
 
-                            <form action="{{ route('client.billing.pay', $invoice) }}" method="POST" class="w-full sm:w-auto">
-                                @csrf
-                                <button type="submit" class="w-full sm:w-auto px-12 py-4 bg-indigo-600 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(79,70,229,0.4)] hover:bg-indigo-500 hover:shadow-[0_0_30px_rgba(79,70,229,0.6)] transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center text-lg">
+                            @if($invoice->snap_token)
+                                <button type="button" id="pay-button" class="w-full sm:w-auto px-12 py-4 bg-indigo-600 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(79,70,229,0.4)] hover:bg-indigo-500 hover:shadow-[0_0_30px_rgba(79,70,229,0.6)] transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center text-lg cursor-pointer">
                                     <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
                                     Bayar Tagihan Sekarang
                                 </button>
-                            </form>
+                            @else
+                                <form action="{{ route('client.billing.pay', $invoice) }}" method="POST" class="w-full sm:w-auto">
+                                    @csrf
+                                    <button type="submit" id="pay-button" class="w-full sm:w-auto px-12 py-4 bg-indigo-600 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(79,70,229,0.4)] hover:bg-indigo-500 hover:shadow-[0_0_30px_rgba(79,70,229,0.6)] transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center text-lg cursor-pointer">
+                                        <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                                        Bayar Tagihan Sekarang
+                                    </button>
+                                </form>
+                            @endif
                         @else
                             <div class="w-full bg-emerald-500/10 border-2 border-dashed border-emerald-500/30 rounded-2xl p-8 flex flex-col items-center justify-center relative overflow-hidden group">
                                 <div class="absolute inset-0 bg-emerald-500/5 group-hover:bg-emerald-500/10 transition-colors"></div>
@@ -143,4 +157,55 @@
 
         </div>
     </div>
+
+    @if($invoice->status === 'unpaid')
+        <!-- Midtrans Snap JS SDK -->
+        <script 
+            src="{{ config('services.midtrans.is_production') ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js' }}" 
+            data-client-key="{{ config('services.midtrans.client_key') }}">
+        </script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const snapToken = "{{ $invoice->snap_token ?? session('snap_token') }}";
+
+                function openSnapPopup(token) {
+                    if (!window.snap) {
+                        alert('Midtrans Snap SDK gagal dimuat. Periksa koneksi internet Anda.');
+                        return;
+                    }
+
+                    window.snap.pay(token, {
+                        onSuccess: function (result) {
+                            console.log('Payment success:', result);
+                            window.location.reload();
+                        },
+                        onPending: function (result) {
+                            console.log('Payment pending:', result);
+                            window.location.reload();
+                        },
+                        onError: function (result) {
+                            console.error('Payment error:', result);
+                            alert('Pembayaran gagal atau dibatalkan.');
+                        },
+                        onClose: function () {
+                            console.log('Pelanggan menutup pop-up tanpa menyelesaikan pembayaran.');
+                        }
+                    });
+                }
+
+                // Otomatis buka pop-up Snap jika baru saja di-redirect dari metode pay()
+                @if(session('snap_token'))
+                    openSnapPopup("{{ session('snap_token') }}");
+                @endif
+
+                const payButton = document.getElementById('pay-button');
+                if (payButton && payButton.type === 'button' && snapToken) {
+                    payButton.addEventListener('click', function () {
+                        openSnapPopup(snapToken);
+                    });
+                }
+            });
+        </script>
+    @endif
 </x-app-layout>
