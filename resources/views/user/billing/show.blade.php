@@ -92,15 +92,40 @@
                     </div>
 
                     <div class="flex flex-col items-center">
+
+                        {{-- Flash: Info (sudah lunas / notifikasi) --}}
+                        @if(session('info'))
+                            <div class="w-full max-w-md mb-4 px-4 py-3 bg-blue-500/10 border border-blue-500/20 rounded-xl text-blue-400 font-semibold text-sm text-center">
+                                {{ session('info') }}
+                            </div>
+                        @endif
+
+                        {{-- Flash: Payment Info (instruksi pembayaran manual) --}}
+                        @if(session('payment_info'))
+                            @php $pi = session('payment_info'); @endphp
+                            <div class="w-full max-w-md mb-6 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl p-6 text-left">
+                                <h4 class="font-bold text-indigo-300 mb-3 text-center">Instruksi Pembayaran</h4>
+                                <div class="space-y-2 text-sm text-slate-300">
+                                    <p><span class="text-slate-500">No. Invoice:</span> <strong class="font-mono">{{ $pi['invoice_number'] }}</strong></p>
+                                    <p><span class="text-slate-500">Jumlah:</span> <strong>Rp {{ number_format($pi['amount'], 0, ',', '.') }}</strong></p>
+                                    <p><span class="text-slate-500">Jatuh Tempo:</span> <strong>{{ \Carbon\Carbon::parse($pi['due_date'])->format('d F Y') }}</strong></p>
+                                </div>
+                                <p class="mt-4 text-xs text-slate-400 border-t border-slate-700 pt-3">Silakan transfer ke rekening yang tertera dalam perjanjian langganan Anda, lalu hubungi tim kami untuk konfirmasi pembayaran.</p>
+                            </div>
+                        @endif
+
                         @if($invoice->status === 'unpaid')
                             <div class="bg-rose-500/10 border border-rose-500/20 rounded-xl p-4 mb-6 w-full max-w-md text-center">
                                 <p class="text-sm font-semibold text-rose-400">Silakan selesaikan pembayaran sebelum tanggal jatuh tempo agar layanan internet Anda tidak terputus.</p>
                             </div>
-                            
-                            <button class="w-full sm:w-auto px-12 py-4 bg-indigo-600 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(79,70,229,0.4)] hover:bg-indigo-500 hover:shadow-[0_0_30px_rgba(79,70,229,0.6)] transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center text-lg">
-                                <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
-                                Bayar Tagihan Sekarang
-                            </button>
+
+                            <form action="{{ route('client.billing.pay', $invoice) }}" method="POST" class="w-full sm:w-auto">
+                                @csrf
+                                <button type="submit" class="w-full sm:w-auto px-12 py-4 bg-indigo-600 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(79,70,229,0.4)] hover:bg-indigo-500 hover:shadow-[0_0_30px_rgba(79,70,229,0.6)] transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center text-lg">
+                                    <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                                    Bayar Tagihan Sekarang
+                                </button>
+                            </form>
                         @else
                             <div class="w-full bg-emerald-500/10 border-2 border-dashed border-emerald-500/30 rounded-2xl p-8 flex flex-col items-center justify-center relative overflow-hidden group">
                                 <div class="absolute inset-0 bg-emerald-500/5 group-hover:bg-emerald-500/10 transition-colors"></div>

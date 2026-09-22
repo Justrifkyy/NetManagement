@@ -40,4 +40,31 @@ class InvoiceController extends Controller
 
         return view('user.billing.show', compact('invoice'));
     }
+
+    /**
+     * Handle customer self-service payment.
+     * Saat ini berfungsi sebagai placeholder untuk integrasi Payment Gateway (Midtrans/dll).
+     */
+    public function pay(Request $request, Invoice $invoice)
+    {
+        // Validasi kepemilikan invoice
+        $invoice->load('subscription.customer.user');
+
+        if ($invoice->subscription->customer->user_id !== Auth::id()) {
+            abort(403, 'Akses Ditolak.');
+        }
+
+        // Jika sudah lunas, jangan proses lagi
+        if ($invoice->status === 'paid') {
+            return back()->with('info', 'Tagihan ini sudah berstatus lunas.');
+        }
+
+        // TODO: Integrasi Midtrans / Payment Gateway di sini
+        // Untuk saat ini, arahkan ke halaman informasi pembayaran manual
+        return back()->with('payment_info', [
+            'invoice_number' => $invoice->invoice_number,
+            'amount'         => $invoice->amount,
+            'due_date'       => $invoice->due_date,
+        ]);
+    }
 }

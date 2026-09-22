@@ -147,6 +147,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
         Route::get('/reports/customers', [ReportController::class, 'customerReport'])->name('reports.customers');
         Route::get('/reports/arrears', [ReportController::class, 'arrearsReport'])->name('reports.arrears');
+        Route::get('/reports/revenue', [ReportController::class, 'revenueReport'])->name('reports.revenue');
+        Route::get('/reports/activation-log', [ReportController::class, 'activationLog'])->name('reports.activationLog');
+        Route::get('/reports/isolation-log', [ReportController::class, 'isolationLog'])->name('reports.isolationLog');
         Route::get('/logs', [LogController::class, 'index'])->name('logs.index');
         Route::get('/logs/export', [LogController::class, 'export'])->name('logs.export');
         Route::get('/logs/{log}', [LogController::class, 'show'])->name('logs.show');
@@ -223,6 +226,7 @@ Route::get('/my-tasks/{ticket}', [App\Http\Controllers\Technician\TicketControll
         // Pembayaran & Tagihan
         Route::get('/billing', [InvoiceController::class, 'index'])->name('billing.index');
         Route::get('/billing/{invoice}', [InvoiceController::class, 'show'])->name('billing.show');
+        Route::post('/billing/{invoice}/pay', [InvoiceController::class, 'pay'])->name('billing.pay');
 
         // Pengajuan / Keluhan (Statis berdasarkan views)
         Route::get('/complaints', [ComplaintController::class, 'index'])->name('complaints.index');

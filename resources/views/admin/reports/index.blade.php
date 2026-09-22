@@ -40,7 +40,7 @@
                     </div>
                 </a>
 
-                <a href="{{ route('admin.reports.index') }}" class="bg-slate-900/80 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-6 hover:border-purple-500/50 hover:-translate-y-1 hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-300 group relative overflow-hidden flex flex-col h-full">
+                <a href="{{ route('admin.reports.revenue') }}" class="bg-slate-900/80 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-6 hover:border-purple-500/50 hover:-translate-y-1 hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-300 group relative overflow-hidden flex flex-col h-full">
                     <div class="absolute -right-6 -top-6 text-purple-500/5 group-hover:text-purple-500/10 transition-colors duration-500">
                         <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
                     </div>
@@ -56,7 +56,7 @@
                     </div>
                 </a>
 
-                <a href="{{ route('admin.logs.index') }}" class="bg-slate-900/80 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-6 hover:border-sky-500/50 hover:-translate-y-1 hover:shadow-2xl hover:shadow-sky-500/10 transition-all duration-300 group relative overflow-hidden flex flex-col h-full">
+                <a href="{{ route('admin.reports.activationLog') }}" class="bg-slate-900/80 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-6 hover:border-sky-500/50 hover:-translate-y-1 hover:shadow-2xl hover:shadow-sky-500/10 transition-all duration-300 group relative overflow-hidden flex flex-col h-full">
                     <div class="flex items-center gap-4 mb-4 relative z-10">
                         <div class="p-3 bg-sky-500/10 rounded-xl group-hover:bg-sky-500/20 transition-colors border border-sky-500/20">
                             <svg class="w-6 h-6 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
@@ -69,7 +69,7 @@
                     </div>
                 </a>
 
-                <a href="{{ route('admin.logs.index') }}" class="bg-slate-900/80 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-6 hover:border-amber-500/50 hover:-translate-y-1 hover:shadow-2xl hover:shadow-amber-500/10 transition-all duration-300 group relative overflow-hidden flex flex-col h-full">
+                <a href="{{ route('admin.reports.isolationLog') }}" class="bg-slate-900/80 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-6 hover:border-amber-500/50 hover:-translate-y-1 hover:shadow-2xl hover:shadow-amber-500/10 transition-all duration-300 group relative overflow-hidden flex flex-col h-full">
                     <div class="flex items-center gap-4 mb-4 relative z-10">
                         <div class="p-3 bg-amber-500/10 rounded-xl group-hover:bg-amber-500/20 transition-colors border border-amber-500/20">
                             <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>

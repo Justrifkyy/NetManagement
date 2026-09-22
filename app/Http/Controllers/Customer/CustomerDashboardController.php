@@ -15,8 +15,9 @@ class CustomerDashboardController extends Controller
         $customer = Customer::where('user_id', Auth::id())->first();
 
         // Jika profil pelanggan tidak ditemukan (Belum di-Approve Admin)
+        // Arahkan ke halaman "Menunggu Persetujuan" yang ramah — bukan error 403
         if (!$customer) {
-            abort(403, 'MAAF! Akun Anda belum terhubung dengan profil layanan aktif. Jika Anda baru saja mendaftar, silakan tunggu Admin melakukan persetujuan (Approve) terlebih dahulu.');
+            return view('user.dashboard.pending');
         }
 
         // 2. Ambil data langganan yang sedang berjalan
