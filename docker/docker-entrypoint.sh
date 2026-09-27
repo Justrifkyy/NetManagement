@@ -10,6 +10,12 @@ if [ ! -f /var/www/html/.env ]; then
     fi
 fi
 
+# Ensure composer dependencies exist (if vendor directory is not present)
+if [ ! -f /var/www/html/vendor/autoload.php ]; then
+    echo "Installing composer dependencies..."
+    composer install --optimize-autoloader --no-dev --no-interaction
+fi
+
 # Ensure all required storage subdirectories exist (crucial when mounted as fresh volume)
 mkdir -p /var/www/html/storage/framework/cache/data \
          /var/www/html/storage/framework/sessions \
@@ -32,7 +38,13 @@ fi
 
 # Generate APP_KEY if not already set
 if [ -z "$APP_KEY" ]; then
-    php artisan key:generate --force || true
+    if ! grep -q "^APP_KEY=base64:" /var/www/html/.env 2>/dev/null; then
+        echo "Generating application key..."
+        if ! grep -q "^APP_KEY=" /var/www/html/.env 2>/dev/null; then
+            echo "APP_KEY=" >> /var/www/html/.env
+        fi
+        php artisan key:generate --force || true
+    fi
 fi
 
 # Wait for database connection if DB_HOST is configured
@@ -51,10 +63,10 @@ if [ -n "$DB_HOST" ] && [ "$DB_CONNECTION" = "mysql" ]; then
     echo "Database reachable!"
 fi
 
-# Automated migration and initial seeder flag
-if [ "$RUN_MIGRATIONS" = "true" ]; then
+# Automated migration
+if [ "$RUN_MIGRATIONS" != "false" ]; then
     echo "Running database migrations..."
-    php artisan migrate --force || true
+    php artisan migrate --force
 
     if [ "$RUN_SEEDERS" = "true" ]; then
         echo "Seeding initial database data..."
@@ -62,13 +74,11 @@ if [ "$RUN_MIGRATIONS" = "true" ]; then
     fi
 fi
 
-# Clear or cache configuration
-if [ "$APP_ENV" = "production" ]; then
-    php artisan config:cache || true
-    php artisan route:cache || true
-    php artisan view:cache || true
-else
-    php artisan optimize:clear || true
-fi
+# Clear and re-cache optimization
+echo "Optimizing application cache..."
+php artisan optimize:clear
+php artisan config:cache
+php artisan route:cache || true
+php artisan view:cache || true
 
 exec "$@"
