@@ -304,7 +304,7 @@ php artisan migrate:fresh --force
 
 Pada local development, PHP host tidak selalu memiliki driver MySQL. PHPUnit tidak bergantung pada driver tersebut karena menggunakan SQLite in-memory.
 
-Docker application tetap menggunakan MySQL untuk runtime aplikasi:
+Aplikasi native runtime menggunakan MySQL:
 
 ```text
 DB_CONNECTION=mysql
@@ -313,7 +313,7 @@ DB_CONNECTION=mysql
 Dengan pemisahan ini:
 
 - PHPUnit aman dan cepat.
-- E2E tetap dapat dijalankan terhadap Docker application.
+- E2E tetap dapat dijalankan terhadap local application server (`php artisan serve`).
 - Database development tidak terhapus oleh PHPUnit.
 
 ## 14. Final Kesimpulan

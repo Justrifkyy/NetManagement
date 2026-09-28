@@ -17,7 +17,7 @@
   6. **Query Performance & Telemetry Hardening (RESOLVED):** SuperAdmin revenue calculation executed 12 SQL queries in a loop, `add_indexes.php` was unmigrated, and audit log exports suffered from null-pointer crashes on deleted users. **Resolved:** Optimized revenue to a single `GROUP BY YEAR, MONTH` query; codified indexes into migration `2026_09_25_132436_add_performance_indexes_to_core_tables.php`; applied null-safe operators and fallbacks across audit exports and Blade views.
   7. **Payment Gateway & WhatsApp Gateway Pre-Flight Hardening (RESOLVED):** Midtrans webhook lacked idempotency checks against duplicate webhooks, customer portal lacked real-time status reconciliation after checkout, customer dashboard leaked technical PPPoE parameters and clashed with the dark theme, WhatsApp gateway crashed when message models lacked `.id` or returned internal `@lid` accounts, and daily billing lacked H-0 (due today) reminders. **Resolved:** Implemented webhook idempotency early-return (`Already processed`), direct Midtrans status synchronization endpoint with Snap JS callback triggers, dark slate theme customer dashboard with customer support card, hardened Node.js gateway with `@c.us` target sanitization and safe exception handling, full H-3/H-1/H-0/overdue billing cycle, and triple-path payment success WA dispatching (Webhook, Customer Portal, Admin Manual). Live dispatch verified 100% successful.
   8. **Customer Portal Routing, Reverse Proxy & Auth UI Refresh (RESOLVED):** Authenticated customers visiting root URL `/` were blocked by portal restrictions; reverse proxies dropped SSL forwarding headers; landing page relied on slow external Tailwind CDN; login password lacked show/hide toggle. **Resolved:** Added `home` route allowance in `RestrictCustomerPortal` middleware; added `trustProxies` in `bootstrap/app.php`; bundled landing page CSS via `@vite('resources/css/app.css')`; implemented accessible password reveal toggle in `resources/views/auth/login.blade.php`; added automated feature test `CustomerPortalAccessTest.php`.
-  9. **Containerization & DevContainer Hardening (RESOLVED):** Docker configuration lacked non-root database credentials and robust health checks; devcontainer missed PHP `sockets` and `zip` extensions. **Resolved:** Updated `compose.yaml` with non-root MySQL user, `CMD-SHELL` ping healthcheck, and devcontainer build scripts installing all required extensions.
+  9. **Native Architecture & Deployment Migration (RESOLVED):** Docker configurations (`compose.yaml`, `Dockerfile`, `docker/`, `.devcontainer/`) were removed in favor of 100% native runtime. **Resolved:** Standardized environment defaults (`.env.example`) and authored comprehensive native LEMP + PM2 production guide in [docs/deployment-guide.md](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/docs/deployment-guide.md).
   10. **Customer Activation, Fortify Guard & Complaint Detail View (RESOLVED):** Inactive user rejection was inconsistent between Fortify login and subsequent requests, customer complaints list had dead '#' links with no detail view, and database seeding lacked full realistic operations data. **Resolved:** Enforced `$user->is_active` validation in `FortifyServiceProvider` throwing an informative validation error message ("Akun Anda belum aktif. Silakan hubungi administrator untuk aktivasi."), verified by `tests/Feature/AuthenticationTest.php`; added `client.complaints.show` route (`/client/complaints/{ticket}`) and dark-themed `resources/views/client/complaints/show.blade.php` displaying assigned technician, status badge, issue description, and technician notes; overhauled `DatabaseSeeder.php` with complete realistic ISP workflow entities (roles, customer, active subscription, unpaid invoice, open repair ticket, prospect lead).
   11. **Codespaces 1-Click Environment & Repository Decluttering (RESOLVED):** Repository contained orphaned dead controllers (`Admin\UserController`, `TicketQCController`), unmigrated dummy photos in public storage, and complex local setup steps. **Resolved:** Purged dead controllers and orphaned routes; protected storage directories with `.gitignore`; automated 1-Click cloud developer environment in `.devcontainer` and `codespace.md` running on containerized MySQL 8 and Node 20 WhatsApp service.
   12. **Continuous Integration (CI) Workflow Hardening & Route Validation (RESOLVED):** GitHub Actions runner failed due to missing local MySQL service, uncommitted lockfile assertions, and route reflection errors. **Resolved:** Re-architected `.github/workflows/ci.yml` using isolated in-memory SQLite and file-backed session/cache/maintenance drivers; audited and committed explicit npm lockfiles; fully restored and verified Admin `CustomerController.php` with complete RouterOS PPPoE isolation & activation methods.
@@ -620,22 +620,23 @@ AuditLog (id, user_id, action, description, details, ip_address, user_agent)
 
 ## 30. CI/CD
 
-- **Development Containers:** Full `.devcontainer` configuration (`devcontainer.json`, `Dockerfile`, `setup.sh`) supporting VS Code, GitHub Codespaces, and Docker Outside of Docker.
-- **Production Build:** Multi-stage production [Dockerfile](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/Dockerfile) and [compose.yaml](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/compose.yaml).
+- **Continuous Integration:** GitHub Actions workflow (`.github/workflows/ci.yml`) runs on `ubuntu-latest` with PHP 8.2 and Node.js 20, executing test validation on an isolated in-memory SQLite database.
+- **Production Build:** Native asset compilation via Vite (`npm run build`) and optimized PHP autoloader (`composer install --no-dev --optimize-autoloader`).
 
 ---
 
 ## 31. Deployment
 
 - **Deployment Requirements:**
-  - Web Server: Nginx with reverse proxy and PHP-FPM socket.
+  - Web Server: Nginx (configured with PHP-FPM fastcgi socket).
   - PHP: PHP 8.2 or 8.3 CLI and FPM with extensions: `pdo_mysql`, `curl`, `mbstring`, `openssl`, `sockets`, `gd`, `zip`, `intl`, `bcmath`, `opcache`.
   - Database: MySQL 8.0+ or MariaDB 10.5+.
-  - Process Manager: PM2, Supervisor, or Docker to maintain `whatsapp-service` and `php artisan queue:work`.
+  - Process Manager: PM2 or Systemd / Supervisor to maintain `whatsapp-service` (`node server.js`) and `php artisan queue:work`.
+  - Scheduler: System crontab running `php artisan schedule:run` every minute.
   - Network: Server must have direct IP or VPN routing to MikroTik RouterOS API port 8728.
 - **Platform Incompatibility:**
   - Serverless platforms (Vercel, Cloudflare Pages) are incompatible due to long-lived Puppeteer Chromium processes and raw TCP socket connections.
-- **Recommended Platform:** VPS (Ubuntu 22.04 / 24.04 LTS) or Docker Compose.
+- **Recommended Platform:** Native Linux VPS (Ubuntu 22.04 / 24.04 LTS). See full guide at [docs/deployment-guide.md](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/docs/deployment-guide.md).
 
 ---
 
@@ -760,10 +761,11 @@ AuditLog (id, user_id, action, description, details, ip_address, user_agent)
   3. *Aug 2026:* Pivot to flat architecture; denormalized fields into `tickets` and `leads`.
   4. *Sep 2026:* Removal of `system_settings`, Midtrans Snap and RouterOS API integration, Node.js WhatsApp gateway.
   5. *Sep 2026 (f40564d):* Pre-flight hardening, webhook idempotency, daily billing cron.
-  6. *Sep 2026 (cfec5bb):* Docker non-root user and MySQL health check.
+  6. *Sep 2026 (cfec5bb):* Initial Docker config and container hardening.
   7. *Sep 2026 (6ab089d):* Customer portal root redirection fix, reverse proxy header trusting, auth UI password toggle, Vite bundling on landing page.
   8. *Sep 2026 (43da18a):* Total removal of public self-registration; transition to strict closed-registration system (leads/customers created solely by Admin/Marketing).
   9. *Sep 2026 (8dd3c8d):* Customer activation Fortify authentication guard, customer complaint detail view (`/client/complaints/{ticket}`), and realistic end-to-end database seeder.
+  10. *Sep 2026:* Docker configuration purged; full transition to native deployment with LEMP stack, Nginx, PM2, and systemd scheduler.
 
 ---
 
@@ -816,16 +818,15 @@ AuditLog (id, user_id, action, description, details, ip_address, user_agent)
 
 ```
 NetManagement/
-├── .devcontainer/                     # DevContainer & Codespaces environment
-├── .github/                           # Repository configurations & templates
+├── .github/                           # Repository configurations & CI workflow
 ├── AGENTS.md                          # Pair-programming instructions & rules
 ├── README.md                          # Project documentation & overview
 ├── artisan                            # Laravel CLI entrypoint
 ├── composer.json                      # PHP dependencies
-├── compose.yaml                       # Docker Compose specification
-├── Dockerfile                         # Production multi-stage Docker build
-├── package.json                       # Frontend Vite & Tailwind dependencies
+├── package.json                       # Frontend Vite, Tailwind & Playwright dependencies
 ├── phpunit.xml                        # PHPUnit test configuration
+├── playwright.config.ts               # Playwright E2E configuration
+├── docs/                              # Deployment guide & testing matrix
 ├── app/
 │   ├── Console/Commands/
 │   │   └── ProcessDailyBilling.php    # Automated H-3, H-1, H-0 reminders & auto-isolation
@@ -845,10 +846,9 @@ NetManagement/
 │   └── Services/                              # NetworkService, WhatsappService, NotificationService
 ├── bootstrap/app.php                  # Middleware, proxy trust, & CSRF exceptions
 ├── database/migrations/               # 13 formal migrations
-├── docker/                            # Nginx config, Supervisord, entrypoint script
 ├── resources/views/                   # Blade templates & layouts
 ├── routes/                            # web.php, console.php, api.php
-├── tests/                             # Browser (Dusk), Feature, and Unit tests
+├── tests/                             # Playwright E2E (tests/e2e), Feature, and Unit tests
 └── whatsapp-service/                  # Express + whatsapp-web.js + Puppeteer microservice
 ```
 
@@ -874,11 +874,11 @@ NetManagement is a comprehensive, production-hardened ISP management and billing
 - **External Services:** Midtrans Payment Gateway, MikroTik RouterOS API (port 8728), WhatsApp Web Gateway (port 3000).
 - **Security:** Fully hardened. Strict SHA-512 signature validation enforced on Midtrans webhooks; customer KTP stored on private disk and streamed via authenticated controller; safe 2-second `fsockopen()` socket probe for router reachability; reverse proxy trusting configured.
 - **Status:** **Refactored, Hardened, Production-Ready System.**
-- **Deployment:** Requires Linux VPS or Docker Compose stack (`compose.yaml`) with PHP 8.2-FPM, MySQL, Nginx, and PM2/Supervisor for the Node.js daemon.
+- **Deployment:** Native Linux VPS (Ubuntu 22.04 / 24.04 LTS) with Nginx (PHP 8.2-FPM), MySQL 8.0+, and PM2 / systemd for WhatsApp Node.js microservice and Laravel queue workers.
 - **Immediate Next Steps:**
   1. Verify physical MikroTik router credentials on port 8728.
-  2. Pair WhatsApp Gateway via `http://localhost:3000/qr`.
-  3. Ensure container or server cron executes `php artisan schedule:run` every minute.
+  2. Pair WhatsApp Gateway via `http://localhost:3000/qr` or `pm2 logs netmanager-wa`.
+  3. Ensure server crontab executes `php artisan schedule:run` every minute.
 
 ---
 
@@ -939,7 +939,7 @@ NetManagement is a comprehensive, production-hardened ISP management and billing
 
 ### 2. Reverse Proxy & HTTPS Header Forwarding
 - **File:** `bootstrap/app.php`
-- **Problem:** When hosted behind an Nginx reverse proxy, Cloudflare, or Docker bridge, forwarded headers (`X-Forwarded-Host`, `X-Forwarded-Proto`) were ignored by default, causing generated URLs or redirects to revert to `http://` or internal port numbers.
+- **Problem:** When hosted behind an Nginx reverse proxy or Cloudflare, forwarded headers (`X-Forwarded-Host`, `X-Forwarded-Proto`) were ignored by default, causing generated URLs or redirects to revert to `http://` or internal port numbers.
 - **Resolution:** Configured `$middleware->trustProxies(at: '*', headers: Request::HEADER_X_FORWARDED_HOST | Request::HEADER_X_FORWARDED_PROTO)` to safely trust upstream reverse proxy headers.
 
 ### 3. Frontend Landing Page Asset Compilation
@@ -1003,13 +1003,12 @@ NetManagement is a comprehensive, production-hardened ISP management and billing
 
 ## 55. Codespaces 1-Click Environment & Repository Decluttering (Commit 86181bb)
 
-### 1. 1-Click GitHub Codespaces & Docker Devcontainer Setup
-- **Files:** `.devcontainer/devcontainer.json`, `.devcontainer/setup.sh`, `compose.yaml`, `codespace.md`.
+### 1. Native Environment & Deployment Architecture
+- **Files:** `docs/deployment-guide.md`, `.env.example`, `.editorconfig`.
 - **Enhancement:**
-  - Automated developer bootstrapping inside GitHub Codespaces. Developers can launch a cloud workspace in a single click without manual software installations.
-  - Configured port forwarding for port `8000` (Laravel Web Application), `3000` (Node.js WhatsApp microservice), and `3306` (MySQL Database).
-  - Built `.devcontainer/setup.sh` to automatically install Composer dependencies, NPM packages, generate application keys, create `.env`, run database migrations, and execute `DatabaseSeeder`.
-  - Added [codespace.md](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/codespace.md) as a complete step-by-step developer reference.
+  - Standardized local and VPS deployment configuration to run 100% natively without Docker overhead.
+  - Configured native background management using PM2 for the Node.js WhatsApp microservice and Laravel queue worker.
+  - Documented complete LEMP stack installation, Nginx virtual host, SSL certbot, and systemd/crontab scheduler in [docs/deployment-guide.md](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/docs/deployment-guide.md).
 
 ### 2. Codebase Decluttering & Elimination of Dead Controllers
 - **Files Deleted / Pruned:** `app/Http/Controllers/Admin/UserController.php`, `app/Http/Controllers/Admin/TicketQCController.php`, `resources/views/marketing/schedules/index.blade.php`.
@@ -1017,11 +1016,11 @@ NetManagement is a comprehensive, production-hardened ISP management and billing
 - **Resolution:** Deleted redundant controllers and views, pruned orphaned routes in `routes/web.php`, and cleaned navigation menus (`sidebar.blade.php`, `navigation-menu.blade.php`) to avoid broken links and maintain YAGNI (Ponytail principle).
 
 ### 3. File Storage Clean-up & Directory Protection
-- **Files:** `storage/app/public/uploads/.gitignore`, `storage/app/private/documents/ktp/.gitignore`, `docs/docker-deployment-guide.md`.
+- **Files:** `storage/app/public/uploads/.gitignore`, `storage/app/private/documents/ktp/.gitignore`, `docs/deployment-guide.md`.
 - **Enhancement:**
   - Removed dummy/test camera uploads (`bmuW2kHz...jpg`, `rHVLqfJz...jpg`, `pxKYaEIY...jpg`) from `storage/app/public/uploads/teknisi/`.
   - Added strict `.gitignore` rules (`*\n!.gitignore`) inside upload directories to prevent developer test uploads from polluting version control.
-  - Relocated unorganized root notes (`docker appyx.md`) into structured project documentation at [docs/docker-deployment-guide.md](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/docs/docker-deployment-guide.md).
+  - Structured all deployment and operational documentation into [docs/deployment-guide.md](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/docs/deployment-guide.md).
 
 ---
 

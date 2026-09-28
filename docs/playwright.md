@@ -1,19 +1,17 @@
 # Playwright E2E Testing
 
-The Playwright suite covers the highest-value customer path: public navigation,
-authentication, inactive-account rejection, customer billing, complaint
-creation/detail, customer authorization boundaries, and a mobile complaint
-form check. Existing Laravel Dusk tests remain the broader role-navigation
-suite.
+The Playwright suite covers public navigation, authentication,
+inactive-account rejection, customer billing/complaints, and full internal
+staff workflows across Super Admin, Admin, Marketing, and Technician roles.
 
 ## Prerequisites
 
 Use a dedicated local or CI database. Do not point E2E tests at production.
-Start the Docker application stack first when testing locally:
+Start the local application server first when testing locally:
 
 ```bash
-docker compose up -d --build
-docker compose exec app php artisan db:seed --force
+php artisan migrate --seed --force
+php artisan serve
 ```
 
 Install dependencies and browsers:
@@ -33,9 +31,7 @@ export E2E_INACTIVE_EMAIL=customer@gmail.com
 export E2E_TEST_PASSWORD=password
 ```
 
-The app's Docker endpoint is reused when it is already available. In CI,
-Playwright starts `php artisan serve` automatically after the workflow creates
-and seeds its isolated SQLite database.
+Playwright can also start `php artisan serve` automatically if the server is not already running.
 
 ## Commands
 
