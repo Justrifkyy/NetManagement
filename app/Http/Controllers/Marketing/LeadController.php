@@ -59,47 +59,77 @@ class LeadController extends Controller
             'customer_image' => 'nullable|image|max:5120',
         ]);
 
-        $ktpPath = $request->file('ktp_image') ? $request->file('ktp_image')->store('uploads/ktp', 'local') : null;
-        $housePath = $request->file('house_image') ? $request->file('house_image')->store('uploads/house', 'public') : null;
-        $custPath = $request->file('customer_image') ? $request->file('customer_image')->store('uploads/customer', 'public') : null;
+        $ktpPath = null;
+        $housePath = null;
+        $custPath = null;
 
-        Lead::create([
-            'marketing_id' => Auth::id(),
-            'name' => $request->name,
-            'phone' => $request->phone,
-            'email' => $request->email,
-            'customer_type' => $request->customer_type,
-            'business_name' => $request->business_name,
-            'address_ktp' => $request->address_ktp,
-            'address_installation' => $request->address_installation,
-            'emergency_name' => $request->emergency_name,
-            'emergency_phone' => $request->emergency_phone,
-            'emergency_relation' => $request->emergency_relation,
-            'address' => $request->address,
-            'rt_rw' => $request->rt_rw,
-            'village' => $request->village,
-            'district' => $request->district,
-            'city' => $request->city,
-            'province' => $request->province,
-            'postal_code' => $request->postal_code,
-            'landmark' => $request->landmark,
-            'coordinates' => $request->coordinates,
-            'package_id' => $request->package_id,
-            'promo_code' => $request->promo_code,
-            'status' => 'prospek',
-            'source' => $request->source,
-            'survey_date' => $request->survey_date,
-            'installation_date' => $request->installation_date,
-            'preferred_time' => $request->preferred_time,
-            'notes_summary' => $request->notes_summary,
-            'notes_obstacle' => $request->notes_obstacle,
-            'notes_special' => $request->notes_special,
-            'ktp_image_path' => $ktpPath,
-            'house_image_path' => $housePath,
-            'customer_image_path' => $custPath,
-        ]);
+        try {
+            $ktpPath = $request->file('ktp_image') ? $request->file('ktp_image')->store('uploads/ktp', 'local') : null;
+            $housePath = $request->file('house_image') ? $request->file('house_image')->store('uploads/house', 'public') : null;
+            $custPath = $request->file('customer_image') ? $request->file('customer_image')->store('uploads/customer', 'local') : null;
 
-        return redirect()->route('marketing.leads.index')->with('success', 'Prospek berhasil disimpan!');
+            $lead = DB::transaction(function () use ($request, $ktpPath, $housePath, $custPath) {
+                return Lead::create([
+                    'marketing_id' => Auth::id(),
+                    'name' => $request->name,
+                    'phone' => $request->phone,
+                    'email' => $request->email,
+                    'customer_type' => $request->customer_type,
+                    'business_name' => $request->business_name,
+                    'address_ktp' => $request->address_ktp,
+                    'address_installation' => $request->address_installation,
+                    'emergency_name' => $request->emergency_name,
+                    'emergency_phone' => $request->emergency_phone,
+                    'emergency_relation' => $request->emergency_relation,
+                    'address' => $request->address,
+                    'rt_rw' => $request->rt_rw,
+                    'village' => $request->village,
+                    'district' => $request->district,
+                    'city' => $request->city,
+                    'province' => $request->province,
+                    'postal_code' => $request->postal_code,
+                    'landmark' => $request->landmark,
+                    'coordinates' => $request->coordinates,
+                    'package_id' => $request->package_id,
+                    'promo_code' => $request->promo_code,
+                    'status' => 'prospek',
+                    'source' => $request->source,
+                    'survey_date' => $request->survey_date,
+                    'installation_date' => $request->installation_date,
+                    'preferred_time' => $request->preferred_time,
+                    'notes_summary' => $request->notes_summary,
+                    'notes_obstacle' => $request->notes_obstacle,
+                    'notes_special' => $request->notes_special,
+                    'ktp_image_path' => $ktpPath,
+                    'house_image_path' => $housePath,
+                    'customer_image_path' => $custPath,
+                ]);
+            });
+
+            if ($request->ajax() || $request->wantsJson()) {
+                session()->flash('success', 'Prospek berhasil disimpan!');
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Prospek berhasil disimpan!',
+                    'redirect' => route('marketing.leads.index')
+                ]);
+            }
+
+            return redirect()->route('marketing.leads.index')->with('success', 'Prospek berhasil disimpan!');
+        } catch (\Throwable $e) {
+            if ($ktpPath && Storage::disk('local')->exists($ktpPath)) Storage::disk('local')->delete($ktpPath);
+            if ($housePath && Storage::disk('public')->exists($housePath)) Storage::disk('public')->delete($housePath);
+            if ($custPath && Storage::disk('local')->exists($custPath)) Storage::disk('local')->delete($custPath);
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal menyimpan data prospek: ' . $e->getMessage()
+                ], 500);
+            }
+
+            return back()->withInput()->with('error', 'Gagal menyimpan prospek: ' . $e->getMessage());
+        }
     }
 
     // 4. SHOW: Lihat Detail
@@ -146,70 +176,100 @@ class LeadController extends Controller
             'customer_image' => 'nullable|image|max:5120',
         ]);
 
-        $ktpPath = $lead->ktp_image_path;
-        if ($request->hasFile('ktp_image')) {
-            if ($ktpPath) {
-                if (Storage::disk('local')->exists($ktpPath)) {
-                    Storage::disk('local')->delete($ktpPath);
-                } elseif (Storage::disk('public')->exists($ktpPath)) {
-                    Storage::disk('public')->delete($ktpPath);
+        $oldKtp = $lead->ktp_image_path;
+        $oldHouse = $lead->house_image_path;
+        $oldCust = $lead->customer_image_path;
+
+        $newKtp = null;
+        $newHouse = null;
+        $newCust = null;
+
+        try {
+            if ($request->hasFile('ktp_image')) {
+                $newKtp = $request->file('ktp_image')->store('uploads/ktp', 'local');
+            }
+            if ($request->hasFile('house_image')) {
+                $newHouse = $request->file('house_image')->store('uploads/house', 'public');
+            }
+            if ($request->hasFile('customer_image')) {
+                $newCust = $request->file('customer_image')->store('uploads/customer', 'local');
+            }
+
+            DB::transaction(function () use ($request, $lead, $newKtp, $newHouse, $newCust, $oldKtp, $oldHouse, $oldCust) {
+                $lead->update([
+                    'name' => $request->name,
+                    'phone' => $request->phone,
+                    'email' => $request->email,
+                    'customer_type' => $request->customer_type,
+                    'business_name' => $request->business_name,
+                    'emergency_name' => $request->emergency_name,
+                    'emergency_phone' => $request->emergency_phone,
+                    'emergency_relation' => $request->emergency_relation,
+                    'address' => $request->address,
+                    'address_ktp' => $request->address_ktp,
+                    'address_installation' => $request->address_installation,
+                    'rt_rw' => $request->rt_rw,
+                    'village' => $request->village,
+                    'district' => $request->district,
+                    'city' => $request->city,
+                    'province' => $request->province,
+                    'postal_code' => $request->postal_code,
+                    'landmark' => $request->landmark,
+                    'coordinates' => $request->coordinates,
+                    'package_id' => $request->package_id,
+                    'promo_code' => $request->promo_code,
+                    'status' => $request->status ?? $lead->status, // Mengizinkan update status
+                    'source' => $request->source,
+                    'survey_date' => $request->survey_date,
+                    'installation_date' => $request->installation_date,
+                    'preferred_time' => $request->preferred_time,
+                    'notes_summary' => $request->notes_summary,
+                    'notes_obstacle' => $request->notes_obstacle,
+                    'notes_special' => $request->notes_special,
+                    'ktp_image_path' => $newKtp ?? $oldKtp,
+                    'house_image_path' => $newHouse ?? $oldHouse,
+                    'customer_image_path' => $newCust ?? $oldCust,
+                ]);
+
+                // Hapus file lama jika ada upload baru
+                if ($newKtp && $oldKtp) {
+                    if (Storage::disk('local')->exists($oldKtp)) Storage::disk('local')->delete($oldKtp);
+                    elseif (Storage::disk('public')->exists($oldKtp)) Storage::disk('public')->delete($oldKtp);
                 }
+                if ($newHouse && $oldHouse && Storage::disk('public')->exists($oldHouse)) {
+                    Storage::disk('public')->delete($oldHouse);
+                }
+                if ($newCust && $oldCust) {
+                    if (Storage::disk('local')->exists($oldCust)) Storage::disk('local')->delete($oldCust);
+                    elseif (Storage::disk('public')->exists($oldCust)) Storage::disk('public')->delete($oldCust);
+                }
+            });
+
+            if ($request->ajax() || $request->wantsJson()) {
+                session()->flash('success', 'Data berhasil diperbarui.');
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Data berhasil diperbarui.',
+                    'redirect' => route('marketing.leads.index')
+                ]);
             }
-            $ktpPath = $request->file('ktp_image')->store('uploads/ktp', 'local');
-        }
 
-        $housePath = $lead->house_image_path;
-        if ($request->hasFile('house_image')) {
-            if ($housePath && Storage::disk('public')->exists($housePath)) {
-                Storage::disk('public')->delete($housePath);
+            return redirect()->route('marketing.leads.index')->with('success', 'Data berhasil diperbarui.');
+        } catch (\Throwable $e) {
+            // Hapus file baru yang gagal disimpan
+            if ($newKtp && Storage::disk('local')->exists($newKtp)) Storage::disk('local')->delete($newKtp);
+            if ($newHouse && Storage::disk('public')->exists($newHouse)) Storage::disk('public')->delete($newHouse);
+            if ($newCust && Storage::disk('local')->exists($newCust)) Storage::disk('local')->delete($newCust);
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal memperbarui data: ' . $e->getMessage()
+                ], 500);
             }
-            $housePath = $request->file('house_image')->store('uploads/house', 'public');
+
+            return back()->withInput()->with('error', 'Gagal memperbarui data: ' . $e->getMessage());
         }
-
-        $custPath = $lead->customer_image_path;
-        if ($request->hasFile('customer_image')) {
-            if ($custPath && Storage::disk('public')->exists($custPath)) {
-                Storage::disk('public')->delete($custPath);
-            }
-            $custPath = $request->file('customer_image')->store('uploads/customer', 'public');
-        }
-
-        $lead->update([
-            'name' => $request->name,
-            'phone' => $request->phone,
-            'email' => $request->email,
-            'customer_type' => $request->customer_type,
-            'business_name' => $request->business_name,
-            'emergency_name' => $request->emergency_name,
-            'emergency_phone' => $request->emergency_phone,
-            'emergency_relation' => $request->emergency_relation,
-            'address' => $request->address,
-            'address_ktp' => $request->address_ktp,
-            'address_installation' => $request->address_installation,
-            'rt_rw' => $request->rt_rw,
-            'village' => $request->village,
-            'district' => $request->district,
-            'city' => $request->city,
-            'province' => $request->province,
-            'postal_code' => $request->postal_code,
-            'landmark' => $request->landmark,
-            'coordinates' => $request->coordinates,
-            'package_id' => $request->package_id,
-            'promo_code' => $request->promo_code,
-            'status' => $request->status ?? $lead->status, // Mengizinkan update status
-            'source' => $request->source,
-            'survey_date' => $request->survey_date,
-            'installation_date' => $request->installation_date,
-            'preferred_time' => $request->preferred_time,
-            'notes_summary' => $request->notes_summary,
-            'notes_obstacle' => $request->notes_obstacle,
-            'notes_special' => $request->notes_special,
-            'ktp_image_path' => $ktpPath,
-            'house_image_path' => $housePath,
-            'customer_image_path' => $custPath,
-        ]);
-
-        return redirect()->route('marketing.leads.index')->with('success', 'Data berhasil diperbarui.');
     }
 
     // 7. DESTROY: Hapus Data
@@ -229,8 +289,12 @@ class LeadController extends Controller
         if ($lead->house_image_path && Storage::disk('public')->exists($lead->house_image_path)) {
             Storage::disk('public')->delete($lead->house_image_path);
         }
-        if ($lead->customer_image_path && Storage::disk('public')->exists($lead->customer_image_path)) {
-            Storage::disk('public')->delete($lead->customer_image_path);
+        if ($lead->customer_image_path) {
+            if (Storage::disk('local')->exists($lead->customer_image_path)) {
+                Storage::disk('local')->delete($lead->customer_image_path);
+            } elseif (Storage::disk('public')->exists($lead->customer_image_path)) {
+                Storage::disk('public')->delete($lead->customer_image_path);
+            }
         }
 
         $lead->delete();

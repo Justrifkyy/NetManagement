@@ -29,8 +29,22 @@
                 </div>
             @endif
 
-            <form action="{{ route('marketing.leads.store') }}" method="POST" enctype="multipart/form-data" class="space-y-10">
+            <form action="{{ route('marketing.leads.store') }}" method="POST" enctype="multipart/form-data" class="space-y-10"
+                x-data="leadFormHandler()" @submit.prevent="submitForm($event)">
                 @csrf
+
+                <!-- Container Notifikasi Error Dinamis / AJAX -->
+                <template x-if="errorMessage">
+                    <div class="mb-8 p-5 bg-rose-500/10 border border-rose-500/20 rounded-[2rem] flex items-start gap-4">
+                        <div class="p-2 bg-rose-500 rounded-xl text-white shadow-[0_0_15px_rgba(225,29,72,0.4)] shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        </div>
+                        <div>
+                            <p class="text-rose-400 font-black text-xs uppercase tracking-widest mb-1">Gagal Menyimpan Prospek:</p>
+                            <div class="text-sm text-rose-300/90 font-medium" x-html="errorMessage"></div>
+                        </div>
+                    </div>
+                </template>
 
                 <div class="bg-slate-900/80 backdrop-blur-md rounded-[2.5rem] shadow-2xl border border-slate-800 overflow-hidden relative">
                     <div class="absolute -right-20 -top-20 w-72 h-72 bg-sky-500/5 rounded-full blur-3xl pointer-events-none"></div>
@@ -100,33 +114,131 @@
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-slate-800/60">
-                            <div class="space-y-2">
-                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Berkas Identitas (KTP)</label>
+                            <!-- KTP Upload Card -->
+                            <div x-data="fileUploader()" class="space-y-2">
+                                <div class="flex items-center justify-between ml-1">
+                                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest">Berkas Identitas (KTP)</label>
+                                    <span x-show="fileName" x-cloak class="text-[9px] font-bold px-2 py-0.5 rounded-full"
+                                        :class="isOverLimit ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'">
+                                        <span x-text="isOverLimit ? '⚠️ Lewati 5MB' : '✓ Siap Upload'"></span>
+                                    </span>
+                                </div>
                                 <div class="relative group">
-                                    <input type="file" name="ktp_image" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-                                    <div class="p-4 bg-slate-800/50 border-2 border-dashed border-slate-700 rounded-2xl flex flex-col items-center justify-center group-hover:border-sky-500/50 transition-colors">
-                                        <svg class="w-6 h-6 text-slate-500 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
-                                        <span class="text-[10px] font-bold text-slate-500 uppercase">Upload KTP</span>
+                                    <input type="file" name="ktp_image" accept="image/*" x-ref="fileInput" @change="handleFile($event)"
+                                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" :class="fileName ? 'pointer-events-none' : ''">
+                                    
+                                    <!-- State Kosong -->
+                                    <div x-show="!fileName"
+                                        class="p-4 bg-slate-800/50 border-2 border-dashed border-slate-700 rounded-2xl flex flex-col items-center justify-center group-hover:border-sky-500/50 transition-colors">
+                                        <svg class="w-6 h-6 text-slate-500 mb-1 group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+                                        <span class="text-[10px] font-bold text-slate-500 uppercase group-hover:text-sky-300">Upload KTP</span>
+                                        <span class="text-[8px] text-slate-600 mt-0.5">PNG, JPG (Maks 5MB)</span>
+                                    </div>
+
+                                    <!-- State Terpilih -->
+                                    <div x-show="fileName" x-cloak
+                                        class="p-3 bg-slate-800/80 border-2 rounded-2xl flex items-center gap-3 relative z-20"
+                                        :class="isOverLimit ? 'border-rose-500/50 bg-rose-500/5' : 'border-sky-500/50 bg-sky-500/5'">
+                                        <template x-if="previewUrl">
+                                            <img :src="previewUrl" class="w-12 h-12 rounded-xl object-cover border border-slate-700 shadow-sm shrink-0">
+                                        </template>
+                                        <div class="min-w-0 flex-1">
+                                            <p class="text-xs font-bold text-white truncate" x-text="fileName"></p>
+                                            <div class="flex items-center gap-2 mt-0.5">
+                                                <span class="text-[10px] font-mono text-slate-400" x-text="fileSize"></span>
+                                                <span x-show="isOverLimit" class="text-[9px] font-black text-rose-400 uppercase">Maks 5MB!</span>
+                                            </div>
+                                        </div>
+                                        <button type="button" @click="clearFile($refs.fileInput)" title="Ganti Berkas"
+                                            class="p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-700/50 rounded-xl transition-colors shrink-0">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
-                            <div class="space-y-2">
-                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Dokumentasi Lokasi</label>
+
+                            <!-- Dokumentasi Lokasi Upload Card -->
+                            <div x-data="fileUploader()" class="space-y-2">
+                                <div class="flex items-center justify-between ml-1">
+                                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest">Dokumentasi Lokasi</label>
+                                    <span x-show="fileName" x-cloak class="text-[9px] font-bold px-2 py-0.5 rounded-full"
+                                        :class="isOverLimit ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'">
+                                        <span x-text="isOverLimit ? '⚠️ Lewati 5MB' : '✓ Siap Upload'"></span>
+                                    </span>
+                                </div>
                                 <div class="relative group">
-                                    <input type="file" name="house_image" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-                                    <div class="p-4 bg-slate-800/50 border-2 border-dashed border-slate-700 rounded-2xl flex flex-col items-center justify-center group-hover:border-sky-500/50 transition-colors">
-                                        <svg class="w-6 h-6 text-slate-500 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                                        <span class="text-[10px] font-bold text-slate-500 uppercase">Foto Lokasi</span>
+                                    <input type="file" name="house_image" accept="image/*" x-ref="fileInput" @change="handleFile($event)"
+                                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" :class="fileName ? 'pointer-events-none' : ''">
+                                    
+                                    <!-- State Kosong -->
+                                    <div x-show="!fileName"
+                                        class="p-4 bg-slate-800/50 border-2 border-dashed border-slate-700 rounded-2xl flex flex-col items-center justify-center group-hover:border-sky-500/50 transition-colors">
+                                        <svg class="w-6 h-6 text-slate-500 mb-1 group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                                        <span class="text-[10px] font-bold text-slate-500 uppercase group-hover:text-sky-300">Foto Lokasi</span>
+                                        <span class="text-[8px] text-slate-600 mt-0.5">PNG, JPG (Maks 5MB)</span>
+                                    </div>
+
+                                    <!-- State Terpilih -->
+                                    <div x-show="fileName" x-cloak
+                                        class="p-3 bg-slate-800/80 border-2 rounded-2xl flex items-center gap-3 relative z-20"
+                                        :class="isOverLimit ? 'border-rose-500/50 bg-rose-500/5' : 'border-sky-500/50 bg-sky-500/5'">
+                                        <template x-if="previewUrl">
+                                            <img :src="previewUrl" class="w-12 h-12 rounded-xl object-cover border border-slate-700 shadow-sm shrink-0">
+                                        </template>
+                                        <div class="min-w-0 flex-1">
+                                            <p class="text-xs font-bold text-white truncate" x-text="fileName"></p>
+                                            <div class="flex items-center gap-2 mt-0.5">
+                                                <span class="text-[10px] font-mono text-slate-400" x-text="fileSize"></span>
+                                                <span x-show="isOverLimit" class="text-[9px] font-black text-rose-400 uppercase">Maks 5MB!</span>
+                                            </div>
+                                        </div>
+                                        <button type="button" @click="clearFile($refs.fileInput)" title="Ganti Berkas"
+                                            class="p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-700/50 rounded-xl transition-colors shrink-0">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
-                            <div class="space-y-2">
-                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Foto Calon Pelanggan</label>
+
+                            <!-- Foto Calon Pelanggan Upload Card -->
+                            <div x-data="fileUploader()" class="space-y-2">
+                                <div class="flex items-center justify-between ml-1">
+                                    <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest">Foto Calon Pelanggan</label>
+                                    <span x-show="fileName" x-cloak class="text-[9px] font-bold px-2 py-0.5 rounded-full"
+                                        :class="isOverLimit ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'">
+                                        <span x-text="isOverLimit ? '⚠️ Lewati 5MB' : '✓ Siap Upload'"></span>
+                                    </span>
+                                </div>
                                 <div class="relative group">
-                                    <input type="file" name="customer_image" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
-                                    <div class="p-4 bg-slate-800/50 border-2 border-dashed border-slate-700 rounded-2xl flex flex-col items-center justify-center group-hover:border-sky-500/50 transition-colors">
-                                        <svg class="w-6 h-6 text-slate-500 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                                        <span class="text-[10px] font-bold text-slate-500 uppercase">Upload Wajah</span>
+                                    <input type="file" name="customer_image" accept="image/*" x-ref="fileInput" @change="handleFile($event)"
+                                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" :class="fileName ? 'pointer-events-none' : ''">
+                                    
+                                    <!-- State Kosong -->
+                                    <div x-show="!fileName"
+                                        class="p-4 bg-slate-800/50 border-2 border-dashed border-slate-700 rounded-2xl flex flex-col items-center justify-center group-hover:border-sky-500/50 transition-colors">
+                                        <svg class="w-6 h-6 text-slate-500 mb-1 group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                        <span class="text-[10px] font-bold text-slate-500 uppercase group-hover:text-sky-300">Upload Wajah</span>
+                                        <span class="text-[8px] text-slate-600 mt-0.5">PNG, JPG (Maks 5MB)</span>
+                                    </div>
+
+                                    <!-- State Terpilih -->
+                                    <div x-show="fileName" x-cloak
+                                        class="p-3 bg-slate-800/80 border-2 rounded-2xl flex items-center gap-3 relative z-20"
+                                        :class="isOverLimit ? 'border-rose-500/50 bg-rose-500/5' : 'border-sky-500/50 bg-sky-500/5'">
+                                        <template x-if="previewUrl">
+                                            <img :src="previewUrl" class="w-12 h-12 rounded-xl object-cover border border-slate-700 shadow-sm shrink-0">
+                                        </template>
+                                        <div class="min-w-0 flex-1">
+                                            <p class="text-xs font-bold text-white truncate" x-text="fileName"></p>
+                                            <div class="flex items-center gap-2 mt-0.5">
+                                                <span class="text-[10px] font-mono text-slate-400" x-text="fileSize"></span>
+                                                <span x-show="isOverLimit" class="text-[9px] font-black text-rose-400 uppercase">Maks 5MB!</span>
+                                            </div>
+                                        </div>
+                                        <button type="button" @click="clearFile($refs.fileInput)" title="Ganti Berkas"
+                                            class="p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-700/50 rounded-xl transition-colors shrink-0">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -231,13 +343,56 @@
                 </div>
 
                 <div class="flex flex-col md:flex-row gap-4">
-                    <button type="submit" class="flex-[2] px-8 py-5 bg-sky-600 text-white font-black rounded-3xl shadow-[0_0_25px_rgba(14,165,233,0.3)] hover:bg-sky-500 hover:shadow-[0_0_35px_rgba(14,165,233,0.5)] transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-3 text-lg tracking-tight uppercase">
-                        Selesaikan & Simpan Prospek
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    <button type="submit" :disabled="isSubmitting"
+                        class="flex-[2] px-8 py-5 bg-sky-600 text-white font-black rounded-3xl shadow-[0_0_25px_rgba(14,165,233,0.3)] hover:bg-sky-500 hover:shadow-[0_0_35px_rgba(14,165,233,0.5)] disabled:opacity-50 disabled:cursor-not-allowed transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-3 text-lg tracking-tight uppercase">
+                        <template x-if="!isSubmitting">
+                            <span class="flex items-center gap-3">
+                                Selesaikan & Simpan Prospek
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </span>
+                        </template>
+                        <template x-if="isSubmitting">
+                            <span class="flex items-center gap-3">
+                                <svg class="w-6 h-6 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                Mengunggah & Memproses...
+                            </span>
+                        </template>
                     </button>
                     <a href="{{ route('marketing.leads.index') }}" class="flex-1 px-8 py-5 bg-slate-900 text-slate-400 font-bold rounded-3xl border border-slate-800 hover:bg-slate-800 hover:text-white transition-all duration-300 flex items-center justify-center text-lg text-center leading-none">
                         Batal
                     </a>
+                </div>
+
+                <!-- Modal Overlay Upload Progress -->
+                <div x-show="isSubmitting" x-cloak
+                    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+                    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 max-w-md w-full shadow-2xl space-y-6 text-center">
+                        <div class="relative w-20 h-20 mx-auto flex items-center justify-center">
+                            <div class="absolute inset-0 rounded-full border-4 border-sky-500/20 animate-ping"></div>
+                            <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-sky-500/30">
+                                <svg class="w-8 h-8 text-white animate-spin" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <h3 class="text-xl font-black text-white">Memproses Data Prospek</h3>
+                            <p class="text-xs text-sky-400 font-mono font-bold" x-text="statusText"></p>
+                        </div>
+                        <!-- Progress Bar -->
+                        <div class="w-full bg-slate-800 rounded-full h-3 overflow-hidden p-0.5 border border-slate-700">
+                            <div class="bg-gradient-to-r from-sky-500 to-indigo-500 h-full rounded-full transition-all duration-300 shadow-[0_0_12px_rgba(14,165,233,0.5)]"
+                                :style="`width: ${uploadProgress}%`"></div>
+                        </div>
+                        <div class="flex items-center justify-between text-[10px] font-mono text-slate-500 px-1">
+                            <span>Status Pengiriman</span>
+                            <span class="text-white font-bold" x-text="`${uploadProgress}%`"></span>
+                        </div>
+                        <p class="text-[11px] text-slate-400 leading-relaxed">
+                            Mohon tidak menutup atau menyegarkan halaman browser selama proses pengunggahan berlangsung.
+                        </p>
+                    </div>
                 </div>
 
             </form>
@@ -249,4 +404,115 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function fileUploader() {
+            return {
+                fileName: '',
+                fileSize: '',
+                previewUrl: null,
+                isOverLimit: false,
+                handleFile(e) {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    this.fileName = file.name;
+                    const sizeInMB = file.size / (1024 * 1024);
+                    this.fileSize = sizeInMB >= 1 ? sizeInMB.toFixed(2) + ' MB' : (file.size / 1024).toFixed(0) + ' KB';
+                    this.isOverLimit = file.size > 5 * 1024 * 1024;
+                    if (this.previewUrl) URL.revokeObjectURL(this.previewUrl);
+                    this.previewUrl = URL.createObjectURL(file);
+                },
+                clearFile(inputRef) {
+                    this.fileName = '';
+                    this.fileSize = '';
+                    this.isOverLimit = false;
+                    if (this.previewUrl) {
+                        URL.revokeObjectURL(this.previewUrl);
+                        this.previewUrl = null;
+                    }
+                    if (inputRef) inputRef.value = '';
+                }
+            };
+        }
+
+        function leadFormHandler() {
+            return {
+                isSubmitting: false,
+                uploadProgress: 0,
+                statusText: 'Mempersiapkan pengunggahan...',
+                errorMessage: null,
+                submitForm(e) {
+                    const form = e.target;
+                    if (!form.checkValidity()) {
+                        form.reportValidity();
+                        return;
+                    }
+
+                    this.isSubmitting = true;
+                    this.uploadProgress = 0;
+                    this.statusText = 'Mengunggah berkas lampiran...';
+                    this.errorMessage = null;
+
+                    const formData = new FormData(form);
+                    const xhr = new XMLHttpRequest();
+
+                    xhr.open('POST', form.action, true);
+                    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                    xhr.setRequestHeader('Accept', 'application/json');
+
+                    xhr.upload.onprogress = (evt) => {
+                        if (evt.lengthComputable) {
+                            const pct = Math.round((evt.loaded / evt.total) * 95);
+                            this.uploadProgress = pct;
+                            const loadedMB = (evt.loaded / (1024 * 1024)).toFixed(1);
+                            const totalMB = (evt.total / (1024 * 1024)).toFixed(1);
+                            this.statusText = `Mengunggah berkas: ${loadedMB}MB / ${totalMB}MB (${pct}%)`;
+                        }
+                    };
+
+                    xhr.onload = () => {
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            this.uploadProgress = 100;
+                            this.statusText = 'Pengunggahan selesai! Menyimpan data prospek...';
+                            try {
+                                const res = JSON.parse(xhr.responseText);
+                                if (res.redirect) {
+                                    window.location.href = res.redirect;
+                                    return;
+                                }
+                            } catch (err) {}
+                            window.location.href = '{{ route("marketing.leads.index") }}';
+                        } else if (xhr.status === 422) {
+                            this.isSubmitting = false;
+                            try {
+                                const res = JSON.parse(xhr.responseText);
+                                const errors = Object.values(res.errors || {}).flat().join('<br>');
+                                this.errorMessage = errors || 'Periksa kembali kelengkapan formulir Anda.';
+                            } catch (err) {
+                                this.errorMessage = 'Terdapat kesalahan input data.';
+                            }
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        } else {
+                            this.isSubmitting = false;
+                            try {
+                                const res = JSON.parse(xhr.responseText);
+                                this.errorMessage = res.message || 'Terjadi kesalahan sistem di server.';
+                            } catch (err) {
+                                this.errorMessage = 'Terjadi kesalahan sistem saat menyimpan data.';
+                            }
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }
+                    };
+
+                    xhr.onerror = () => {
+                        this.isSubmitting = false;
+                        this.errorMessage = 'Koneksi jaringan terputus saat mengunggah berkas. Silakan coba kembali.';
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    };
+
+                    xhr.send(formData);
+                }
+            };
+        }
+    </script>
 </x-app-layout>

@@ -88,8 +88,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         };
     })->name('dashboard');
 
-    // Dokumen Pelanggan Terlindungi (KTP, Dokumen Identitas)
+    // Dokumen Pelanggan Terlindungi (KTP, Dokumen Identitas & Foto Wajah)
     Route::get('/documents/ktp/{lead}', [\App\Http\Controllers\CustomerDocumentController::class, 'showKtp'])->name('documents.ktp');
+    Route::get('/documents/customer-photo/{lead}', [\App\Http\Controllers\CustomerDocumentController::class, 'showCustomerPhoto'])->name('documents.customer_photo');
     // ====================================================================
     // ZONE 0: SUPER ADMIN AREA (HANYA Super Admin)
     // ====================================================================

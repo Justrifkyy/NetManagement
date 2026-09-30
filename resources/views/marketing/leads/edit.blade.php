@@ -106,12 +106,19 @@
                                 <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">{{ $label }}</label>
                                 @php $pathKey = $key . '_path'; @endphp
                                 @if ($lead->$pathKey)
+                                    @php
+                                        $previewUrl = match($key) {
+                                            'ktp_image' => route('documents.ktp', $lead),
+                                            'customer_image' => route('documents.customer_photo', $lead),
+                                            default => \Illuminate\Support\Facades\Storage::url($lead->$pathKey),
+                                        };
+                                    @endphp
                                     <div class="flex items-center gap-3 mb-2 px-3 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
                                         <div class="p-1 bg-emerald-500 rounded-lg text-white">
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
                                         </div>
                                         <span class="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Tersedia</span>
-                                        <a href="{{ asset('storage/' . $lead->$pathKey) }}" target="_blank" class="ml-auto text-[9px] font-black text-white hover:text-emerald-300 uppercase underline">Preview</a>
+                                        <a href="{{ $previewUrl }}" target="_blank" class="ml-auto text-[9px] font-black text-white hover:text-emerald-300 uppercase underline">Preview</a>
                                     </div>
                                 @endif
                                 <input type="file" name="{{ $key }}" accept="image/*"

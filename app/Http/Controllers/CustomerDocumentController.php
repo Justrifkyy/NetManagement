@@ -41,4 +41,37 @@ class CustomerDocumentController extends Controller
 
         abort(404, 'File fisik KTP tidak ditemukan pada server.');
     }
+
+    /**
+     * Tampilkan foto calon pelanggan secara aman bagi user yang terotentikasi dan memiliki izin.
+     */
+    public function showCustomerPhoto(Lead $lead)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        // Hanya staf operasional atau customer pemilik lead bersangkutan
+        $isStaff = in_array($user->role, ['super_admin', 'admin', 'marketing', 'technician']);
+        $isOwner = ($user->role === 'customer' && $user->customer?->lead_id === $lead->id);
+
+        if (!$isStaff && !$isOwner) {
+            abort(403, 'Akses Ditolak. Anda tidak memiliki izin untuk melihat dokumen ini.');
+        }
+
+        if (empty($lead->customer_image_path)) {
+            abort(404, 'Foto calon pelanggan tidak ditemukan pada lead ini.');
+        }
+
+        // Cek disk local (penyimpanan privat)
+        if (Storage::disk('local')->exists($lead->customer_image_path)) {
+            return response()->file(Storage::disk('local')->path($lead->customer_image_path));
+        }
+
+        // Fallback backward-compatibility jika file lama berada di disk public
+        if (Storage::disk('public')->exists($lead->customer_image_path)) {
+            return response()->file(Storage::disk('public')->path($lead->customer_image_path));
+        }
+
+        abort(404, 'File fisik foto calon pelanggan tidak ditemukan pada server.');
+    }
 }
