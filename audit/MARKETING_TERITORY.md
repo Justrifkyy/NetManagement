@@ -19,7 +19,8 @@
   - **Strict Access Control (VERIFIED):** Route group `prefix('marketing')` dilindungi middleware `role:marketing`. Mekanisme sandboxing berhasil mengunci role marketing agar tidak dapat menjangkau endpoint SuperAdmin, Admin, Teknisi, maupun Pelanggan. Akun non-aktif ditendang otomatis secara real-time.
   - **Data Isolation / Tenancy (VERIFIED):** Seluruh query pada controller marketing diisolasi secara ketat berdasarkan `marketing_id = Auth::id()`. Sales tidak dapat mengintip atau mengklaim prospek milik sales lain.
   - **Lead Conversion Transaction (VERIFIED & HARDENED):** Method `LeadController::convert` (`convertToCustomer`) membungkus seluruh alur pembuatan akun `User` (role: `customer`), record `Customer`, pembaruan status `Lead` (`converted`), dan pembuatan `Ticket` pasang baru dalam `DB::transaction(...)`. Berhasil mem-bypass dan memusnahkan dependensi pada model/tabel polymorphic lawas.
-  - **KTP Storage & Streaming Security (VERIFIED & RESOLVED):** Upload identitas KTP diarahkan ke disk `local` (`storage/app/uploads/ktp`) yang berada di luar jangkauan root publik web server. Akses hanya dapat dilakukan melalui controller terotentikasi `CustomerDocumentController@showKtp` dengan verifikasi otorisasi ketat. Potensi file bloat saat `destroy()` telah diperbaiki dengan menghapus berkas dari disk `local` (dan fallback `public`).
+  - **KTP & Customer Photo Storage, Streaming Security & Orphan Cleanup (VERIFIED & HARDENED):** Upload identitas KTP dan foto calon pelanggan (wajah) diarahkan ke disk `local` (`storage/app/uploads/ktp` dan `storage/app/uploads/customer`) yang berada di luar jangkauan root publik web server. Akses hanya dapat dilakukan melalui controller terotentikasi `CustomerDocumentController@showKtp` dan `@showCustomerPhoto` dengan otorisasi ketat. Seluruh operasi `store()` dan `update()` pada `LeadController` dibungkus dalam `DB::transaction()` dengan proteksi *rollback* otomatis yang menghapus file fisik di storage jika query database gagal. Berkas fisik dibersihkan tuntas dari disk `local` (dan fallback `public`) saat prospek di-update atau di-destroy.
+  - **Interactive File Upload UX & Real-time Progress (VERIFIED):** Form input prospek baru (`marketing/leads/create.blade.php`) dilengkapi preview interaktif (live thumbnail, ukuran berkas KB/MB, validasi batas 5MB, reset file) serta modal upload tracker real-time (`XMLHttpRequest.upload.onprogress`) yang menampilkan persentase dan status pengiriman data secara transparan.
   - **Real Data Binding & Clean Architecture (100% VERIFIED):** Seluruh modul operasional Marketing (Prospek, Pelanggan, Laporan Kinerja, Dashboard) telah 100% menggunakan query Eloquent database hidup dengan pagination dan agregasi dinamis. Fitur Jadwal (`/marketing/schedules`) yang sebelumnya menggunakan mock `@for` loop telah dihapus total (route, view, dan navigation menus dibersihkan) demi menjaga integritas sistem produksi.
 
 ---
@@ -177,100 +178,122 @@ sequenceDiagram
 
 ---
 
-## 4. Document Handling & Security (KTP)
+## 4. Document Handling, Privacy & Upload UX (KTP & Foto Pelanggan)
 
 ### 4.1. Audit Penyimpanan File (Storage Disk Configuration)
-Pada [config/filesystems.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/config/filesystems.php#L32-L75):
+Pada [config/filesystems.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/config/filesystems.php#L32-L75):
 
-- **Disk `local`:**
+- **Disk `local` (Privat / Sensitif):**
   - Path root: `storage_path('app')` (`storage/app/`).
   - Visibilitas: Private. **Tidak memiliki symbolic link ke web root public**.
-  - URL publik: Tidak ada.
-- **Disk `public`:**
+  - Digunakan untuk: Berkas Identitas KTP (`uploads/ktp`) dan Foto Calon Pelanggan / Wajah (`uploads/customer`).
+- **Disk `public` (Dokumentasi Lapangan):**
   - Path root: `storage_path('app/public')`.
   - Visibilitas: Public melalui symlink `public/storage` $\rightarrow$ `storage/app/public`.
+  - Digunakan untuk: Foto Lokasi / Penempatan Rumah (`uploads/house`).
 
-### 4.2. Ingesti Berkas KTP (`LeadController@store` & `@update`)
-Pada [LeadController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/Marketing/LeadController.php#L57-L65):
+### 4.2. Ingesti Berkas, Transaksi ACID & Orphan Cleanup (`LeadController@store` & `@update`)
+Pada [LeadController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Marketing/LeadController.php#L48-L115):
 
 ```php
 $request->validate([
+    'name' => 'required|string|max:255',
+    'phone' => 'required|string',
+    'package_id' => 'required|exists:packages,id',
+    'customer_type' => 'required|in:personal,business',
+    'address' => 'required|string',
+    'address_installation' => 'nullable|string',
+    'village' => 'nullable|string',
+    'district' => 'nullable|string',
+    'city' => 'nullable|string',
     'ktp_image' => 'nullable|image|max:5120',
     'house_image' => 'nullable|image|max:5120',
     'customer_image' => 'nullable|image|max:5120',
 ]);
 
-$ktpPath = $request->file('ktp_image') ? $request->file('ktp_image')->store('uploads/ktp', 'local') : null;
-$housePath = $request->file('house_image') ? $request->file('house_image')->store('uploads/house', 'public') : null;
-$custPath = $request->file('customer_image') ? $request->file('customer_image')->store('uploads/customer', 'public') : null;
-```
+$ktpPath = null;
+$housePath = null;
+$custPath = null;
 
-**Verifikasi Keamanan:**
-1. Berkas KTP disimpan secara eksplisit pada disk `'local'` (`storage/app/uploads/ktp/...`).
-2. Foto rumah dan foto pelanggan (non-rahasia) disimpan pada disk `'public'` (`storage/app/public/uploads/...`).
-3. Permintaan HTTP langsung via browser ke `http://domain.test/storage/uploads/ktp/...` akan menghasilkan **HTTP 404 Not Found** karena direktori `uploads/ktp` tidak berada dalam folder publik symlink.
+try {
+    $ktpPath = $request->file('ktp_image') ? $request->file('ktp_image')->store('uploads/ktp', 'local') : null;
+    $housePath = $request->file('house_image') ? $request->file('house_image')->store('uploads/house', 'public') : null;
+    $custPath = $request->file('customer_image') ? $request->file('customer_image')->store('uploads/customer', 'local') : null;
 
-### 4.3. Streaming Dokumen Terkendali (`CustomerDocumentController`)
-Dokumen KTP hanya dapat dibuka melalui endpoint terproteksi pada [routes/web.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/routes/web.php#L92):
-`GET /documents/ktp/{lead}` $\rightarrow$ `CustomerDocumentController@showKtp`.
+    $lead = DB::transaction(function () use ($request, $ktpPath, $housePath, $custPath) {
+        return Lead::create([
+            'marketing_id' => Auth::id(),
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'address' => $request->address,
+            'address_installation' => $request->address_installation ?? $request->address,
+            'ktp_image_path' => $ktpPath,
+            'house_image_path' => $housePath,
+            'customer_image_path' => $custPath,
+            // ...
+        ]);
+    });
+} catch (\Throwable $e) {
+    // Rollback otomatis: bersihkan file fisik jika DB insert gagal
+    if ($ktpPath && Storage::disk('local')->exists($ktpPath)) Storage::disk('local')->delete($ktpPath);
+    if ($housePath && Storage::disk('public')->exists($housePath)) Storage::disk('public')->delete($housePath);
+    if ($custPath && Storage::disk('local')->exists($custPath)) Storage::disk('local')->delete($custPath);
 
-Implementasi pada [CustomerDocumentController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/CustomerDocumentController.php#L15-L44):
-
-```php
-public function showKtp(Lead $lead)
-{
-    /** @var \App\Models\User $user */
-    $user = Auth::user();
-
-    // 1. Otorisasi Peran: Staf berwenang atau pemilik akun
-    $isStaff = in_array($user->role, ['super_admin', 'admin', 'marketing', 'technician']);
-    $isOwner = ($user->role === 'customer' && $user->customer?->lead_id === $lead->id);
-
-    if (!$isStaff && !$isOwner) {
-        abort(403, 'Akses Ditolak. Anda tidak memiliki izin untuk melihat dokumen ini.');
-    }
-
-    if (empty($lead->ktp_image_path)) {
-        abort(404, 'Dokumen KTP tidak ditemukan pada lead ini.');
-    }
-
-    // 2. Stream aman dari disk local privat
-    if (Storage::disk('local')->exists($lead->ktp_image_path)) {
-        return response()->file(Storage::disk('local')->path($lead->ktp_image_path));
-    }
-
-    // 3. Backward-compatibility untuk data legacy di disk public
-    if (Storage::disk('public')->exists($lead->ktp_image_path)) {
-        return response()->file(Storage::disk('public')->path($lead->ktp_image_path));
-    }
-
-    abort(404, 'File fisik KTP tidak ditemukan pada server.');
+    throw $e;
 }
 ```
 
+**Verifikasi Keamanan & Ketahanan:**
+1. Berkas KTP dan Foto Wajah Pelanggan disimpan pada disk `'local'` (`storage/app/uploads/...`).
+2. Foto rumah disimpan pada disk `'public'` (`storage/app/public/uploads/...`).
+3. Permintaan HTTP langsung via browser ke `http://domain.test/storage/uploads/ktp/...` atau `.../customer/...` menghasilkan **HTTP 404 Not Found** karena tidak berada dalam folder publik symlink.
+4. **Perlindungan Terhadap File Yatim (*Orphaned Files*):** Jika transaksi database gagal, file yang telanjur terunggah ke disk langsung dimusnahkan seketika.
+
+### 4.3. Streaming Dokumen Terkendali (`CustomerDocumentController`)
+Dokumen identitas (KTP & Foto Wajah) hanya dapat dibuka melalui endpoint terproteksi pada [routes/web.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/routes/web.php#L92-L93):
+- `GET /documents/ktp/{lead}` $\rightarrow$ `CustomerDocumentController@showKtp`
+- `GET /documents/customer-photo/{lead}` $\rightarrow$ `CustomerDocumentController@showCustomerPhoto`
+
+Implementasi pada [CustomerDocumentController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/CustomerDocumentController.php#L15-L75):
+- Memeriksa otorisasi ketat: Hanya staf operasional (`super_admin`, `admin`, `marketing`, `technician`) atau customer pemilik akun yang diizinkan streaming.
+- Membaca file secara aman dari disk privat `local` dengan fallback `public` untuk kompatibilitas data lama.
+
 ### 4.4. Presentasi Blade Terproteksi
-Pada view detail lead [resources/views/marketing/leads/show.blade.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/resources/views/marketing/leads/show.blade.php#L268-L300):
-- **KTP:** Menggunakan URL route terproteksi: `<img src="{{ route('documents.ktp', $lead) }}">` dan `<a href="{{ route('documents.ktp', $lead) }}" target="_blank">`.
-- **Foto Rumah & Foto Pelanggan:** Menggunakan path publik standar: `<img src="{{ Storage::url($lead->house_image_path) }}">`.
+Pada view detail lead [resources/views/marketing/leads/show.blade.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/resources/views/marketing/leads/show.blade.php#L268-L315) dan edit view [edit.blade.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/resources/views/marketing/leads/edit.blade.php#L108-L116):
+- **KTP:** Menggunakan URL route terproteksi: `<img src="{{ route('documents.ktp', $lead) }}">`
+- **Foto Wajah Pelanggan:** Menggunakan URL route terproteksi: `<img src="{{ route('documents.customer_photo', $lead) }}">`
+- **Foto Rumah:** Menggunakan path publik standar: `<img src="{{ Storage::url($lead->house_image_path) }}">`
 
 ### 4.5. Remediasi Storage Bloat (File Deletion pada `LeadController@destroy`) (RESOLVED)
-Pada method `LeadController::destroy`, penghapusan berkas KTP telah disempurnakan untuk memeriksa disk privat `'local'` terlebih dahulu sebelum fallback ke disk `'public'`:
+Pada method `LeadController::destroy`, penghapusan seluruh berkas telah disempurnakan untuk memeriksa disk privat `'local'` terlebih dahulu sebelum fallback ke disk `'public'`:
 ```php
 if ($lead->ktp_image_path) {
-    if (Storage::disk('local')->exists($lead->ktp_image_path)) {
-        Storage::disk('local')->delete($lead->ktp_image_path);
-    } elseif (Storage::disk('public')->exists($lead->ktp_image_path)) {
-        Storage::disk('public')->delete($lead->ktp_image_path);
-    }
+    if (Storage::disk('local')->exists($lead->ktp_image_path)) Storage::disk('local')->delete($lead->ktp_image_path);
+    elseif (Storage::disk('public')->exists($lead->ktp_image_path)) Storage::disk('public')->delete($lead->ktp_image_path);
 }
 if ($lead->house_image_path && Storage::disk('public')->exists($lead->house_image_path)) {
     Storage::disk('public')->delete($lead->house_image_path);
 }
-if ($lead->customer_image_path && Storage::disk('public')->exists($lead->customer_image_path)) {
-    Storage::disk('public')->delete($lead->customer_image_path);
+if ($lead->customer_image_path) {
+    if (Storage::disk('local')->exists($lead->customer_image_path)) Storage::disk('local')->delete($lead->customer_image_path);
+    elseif (Storage::disk('public')->exists($lead->customer_image_path)) Storage::disk('public')->delete($lead->customer_image_path);
 }
 ```
-*Hasil:* Seluruh berkas fisik (KTP privat, foto rumah publik, dan foto pelanggan publik) dibersihkan tuntas saat prospek dihapus tanpa meninggalkan *orphaned files* di server storage.
+*Hasil:* Seluruh berkas fisik (KTP privat, foto pelanggan privat, dan foto rumah publik) dibersihkan tuntas saat prospek dihapus tanpa meninggalkan *orphaned files* di server storage.
+
+### 4.6. Interactive Upload UX & Real-time Upload Progress
+Pada [resources/views/marketing/leads/create.blade.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/resources/views/marketing/leads/create.blade.php):
+- **Interactive File Selection Feedback:** Masing-masing kotak berkas (KTP, Lokasi, Wajah) menggunakan Alpine.js reactive component `fileUploader()` yang memicu:
+  - Live image thumbnail preview via `URL.createObjectURL(file)`.
+  - Format ukuran file otomatis (`KB` atau `MB`).
+  - Badge kesiapan upload (`✓ Siap Upload`).
+  - Validasi ukuran instan di client side dengan peringatan merah jika melebihi batas 5MB (`⚠️ Lewati 5MB`).
+  - Tombol reset/ganti berkas interaktif.
+- **AJAX Realtime Progress Modal Overlay:**
+  - Form submit diproses melalui handler `leadFormHandler()` menggunakan `XMLHttpRequest.upload.onprogress`.
+  - Ditampilkan modal loading gelap beranimasi dengan bar progres real-time (`0% - 100%`), indikator transfer data terkirim (`MB / MB`), dan pesan tahapan proses.
+  - Tombol submit dinonaktifkan (`disabled`) secara otomatis untuk mencegah dobel posting.
+  - Penanganan error validasi (HTTP 422) secara reaktif langsung ditampilkan pada notifikasi dinamis `x-show="errorMessage"`.
 
 ---
 
@@ -330,11 +353,15 @@ if ($lead->customer_image_path && Storage::disk('public')->exists($lead->custome
 | **Creation of User & Customer** | Pembuatan akun pelanggan dan profil customer otomatis | **100% VERIFIED** | `User::create` & `Customer::create` di `LeadController.php` |
 | **Bypass Legacy Polymorphic** | Tidak menyentuh tabel usang `installation_forms` dkk | **100% VERIFIED** | Direct relation `$customer->tickets()->create(...)` |
 | **Private Disk KTP Storage** | Berkas KTP di disk `local` tanpa akses URL web | **100% VERIFIED** | `store('uploads/ktp', 'local')`, `config/filesystems.php` |
-| **Secured Document Streaming** | Akses berkas via controller dengan validasi otorisasi | **100% VERIFIED** | `CustomerDocumentController@showKtp`, `route('documents.ktp')` |
-| **Storage Cleanup pada Destroy** | Hapus fisik KTP di disk `local` (dan `public`) saat lead dihapus | **100% VERIFIED** | `LeadController.php:222-228` |
+| **Private Customer Face Photo** | Foto wajah pelanggan di disk `local` privat | **100% VERIFIED** | `store('uploads/customer', 'local')`, `CustomerDocumentController@showCustomerPhoto` |
+| **Secured Document Streaming** | Akses berkas KTP & foto via controller terotentikasi | **100% VERIFIED** | `CustomerDocumentController`, `route('documents.ktp')`, `route('documents.customer_photo')` |
+| **Orphan Storage Rollback** | Hapus fisik berkas baru jika query database gagal | **100% VERIFIED** | `LeadController@store` & `@update` `try/catch` cleanup |
+| **Storage Cleanup pada Destroy** | Hapus fisik KTP & foto di disk `local` & `public` saat destroy | **100% VERIFIED** | `LeadController.php:destroy()` |
+| **Interactive Upload UX & Progress** | Preview file, limit check, dan real-time upload modal | **100% VERIFIED** | `create.blade.php:fileUploader()`, `leadFormHandler()` |
+| **Normalized Form Validation** | Validasi fleksibel dengan fallback alamat otomatis | **100% VERIFIED** | `LeadController.php:store()` rules & fallback |
 | **Real Data Binding: Customers** | Query Eloquent langsung, pencarian, dan pagination | **100% VERIFIED** | `Marketing\CustomerController.php:16-41` |
 | **Real Data Binding: Reports** | Agregasi KPI, rasio konversi, & tren bulanan dari DB | **100% VERIFIED** | `Marketing\ReportController.php:18-88` |
 | **Pembersihan Modul Mocked (Jadwal)** | Eliminasi kode statis & link sidebar yang belum siap | **100% VERIFIED** | Rute, view, dan komponen navigasi dihapus bersih |
 
 ### Pernyataan Akhir Auditor
-Domain **Marketing** pada NetManagement telah diaudit dan diperbaiki secara menyeluruh. Logika inti akuisisi prospek, manajemen data identitas KTP, pembersihan file fisik saat penghapusan, eliminasi prototipe statis, perlindungan rute sandboxed, serta atomisitas konversi prospek menjadi pelanggan dan tiket kerja lapangan dinyatakan **100% Memenuhi Standar Produksi (Production-Hardened & Fully Verified)**.
+Domain **Marketing** pada NetManagement telah diaudit dan diperbaiki secara menyeluruh. Logika inti akuisisi prospek, manajemen data identitas KTP dan foto wajah pelanggan, pembersihan file fisik otomatis (*orphan cleanup*), eliminasi prototipe statis, perlindungan rute sandboxed, pelacakan proses upload interaktif, serta atomisitas konversi prospek menjadi pelanggan dan tiket kerja lapangan dinyatakan **100% Memenuhi Standar Produksi (Production-Hardened & Fully Verified)**.

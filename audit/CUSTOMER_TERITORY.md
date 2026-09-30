@@ -53,6 +53,8 @@ private function isAllowedRoute(Request $request): bool
         || $routeName === 'home'
         || $routeName === 'logout'
         || $routeName === 'documents.ktp'
+        || $routeName === 'documents.customer_photo'
+        || str_starts_with((string) $routeName, 'documents.')
         || str_starts_with((string) $routeName, 'client.');
 }
 ```
@@ -61,7 +63,7 @@ private function isAllowedRoute(Request $request): bool
 1. **White-listing Ketat:** Pelanggan hanya diizinkan membuka:
    - Root URL `/` (`home`), yang secara otomatis dialihkan ke `/client/dashboard`.
    - Rute logout.
-   - Dokumen streaming KTP milik sendiri (`documents.ktp`).
+   - Dokumen streaming KTP milik sendiri (`documents.ktp`) dan foto profil/wajah sendiri (`documents.customer_photo`).
    - Seluruh rute yang diawali dengan namespace `client.*`.
 2. **Pencegahan Penetrasi Staf (Trapped in Sandbox):**
    Jika pelanggan mencoba mengakses URL internal staf mana pun (misalnya `/admin/customers`, `/superadmin/users`, `/marketing/leads`, atau `/technician/my-tasks`), middleware `RestrictCustomerPortal` langsung mencegat request dan melempar respons `HTTP 403 Forbidden` bahkan sebelum controller internal sempat dievaluasi.

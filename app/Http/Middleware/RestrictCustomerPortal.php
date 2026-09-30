@@ -27,6 +27,8 @@ class RestrictCustomerPortal
             || $routeName === 'home'
             || $routeName === 'logout'
             || $routeName === 'documents.ktp'
+            || $routeName === 'documents.customer_photo'
+            || str_starts_with((string) $routeName, 'documents.')
             || str_starts_with((string) $routeName, 'client.');
     }
 }

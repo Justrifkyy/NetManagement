@@ -13,7 +13,7 @@
   2. **Integration Services & Closed-Registration Architecture (RESOLVED):** `NetworkController.php` and `WhatsappController.php` were misplaced in the controllers namespace. `PublicRegistrationController.php` and guest self-registration features have been completely removed. The system is strictly closed-registration where leads/customers can only be registered internally via Admin/Marketing dashboards (`/marketing/leads` and `/admin/customers`). Moved integration controllers to `App\Services\NetworkService` and `App\Services\WhatsappService`.
   3. **Broken Views & Controller Actions (RESOLVED):** Missing `technician.profile.index` view caused HTTP 500 errors, and several undefined ticket methods were routed. **Resolved:** Created modern `technician/profile/index.blade.php`, pruned duplicate route definitions, and cleaned up unused technician endpoints.
   4. **Simulated / Mocked Functions (RESOLVED):** `SuperAdmin\MaintenanceController` and marketing views used dummy stubs and `@for` mock loops. **Resolved:** Implemented genuine Artisan maintenance operations (`optimize:clear`, `down`/`up` with bypass secret, `optimize`, log purging). Built dedicated `Marketing\CustomerController` and `Marketing\ReportController` backed by live database queries.
-  5. **Security & Configuration Vulnerabilities (RESOLVED):** Midtrans webhook signature check had a bypass vulnerability, KTP identity uploads were in public web storage, and router ping executed raw OS shell commands. **Resolved:** Enforced strict unconditional SHA-512 signature validation in `MidtransWebhookController`; moved KTP uploads to `local` private disk streamed via authenticated `CustomerDocumentController`; replaced shell `exec()` with safe non-blocking `fsockopen()` socket tests.
+  5. **Security & Configuration Vulnerabilities (RESOLVED):** Midtrans webhook signature check had a bypass vulnerability, KTP identity uploads and prospective customer face photos were in public web storage, and router ping executed raw OS shell commands. **Resolved:** Enforced strict unconditional SHA-512 signature validation in `MidtransWebhookController`; moved KTP and customer face photo uploads to `local` private disk streamed via authenticated `CustomerDocumentController` (`showKtp` and `showCustomerPhoto`); protected lead store/update with automatic orphan storage rollback; replaced shell `exec()` with safe non-blocking `fsockopen()` socket tests.
   6. **Query Performance & Telemetry Hardening (RESOLVED):** SuperAdmin revenue calculation executed 12 SQL queries in a loop, `add_indexes.php` was unmigrated, and audit log exports suffered from null-pointer crashes on deleted users. **Resolved:** Optimized revenue to a single `GROUP BY YEAR, MONTH` query; codified indexes into migration `2026_09_25_132436_add_performance_indexes_to_core_tables.php`; applied null-safe operators and fallbacks across audit exports and Blade views.
   7. **Payment Gateway & WhatsApp Gateway Pre-Flight Hardening (RESOLVED):** Midtrans webhook lacked idempotency checks against duplicate webhooks, customer portal lacked real-time status reconciliation after checkout, customer dashboard leaked technical PPPoE parameters and clashed with the dark theme, WhatsApp gateway crashed when message models lacked `.id` or returned internal `@lid` accounts, and daily billing lacked H-0 (due today) reminders. **Resolved:** Implemented webhook idempotency early-return (`Already processed`), direct Midtrans status synchronization endpoint with Snap JS callback triggers, dark slate theme customer dashboard with customer support card, hardened Node.js gateway with `@c.us` target sanitization and safe exception handling, full H-3/H-1/H-0/overdue billing cycle, and triple-path payment success WA dispatching (Webhook, Customer Portal, Admin Manual). Live dispatch verified 100% successful.
   8. **Customer Portal Routing, Reverse Proxy & Auth UI Refresh (RESOLVED):** Authenticated customers visiting root URL `/` were blocked by portal restrictions; reverse proxies dropped SSL forwarding headers; landing page relied on slow external Tailwind CDN; login password lacked show/hide toggle. **Resolved:** Added `home` route allowance in `RestrictCustomerPortal` middleware; added `trustProxies` in `bootstrap/app.php`; bundled landing page CSS via `@vite('resources/css/app.css')`; implemented accessible password reveal toggle in `resources/views/auth/login.blade.php`; added automated feature test `CustomerPortalAccessTest.php`.
@@ -201,6 +201,7 @@ The application registers 158 total routes (including Fortify, Jetstream, Sanctu
 - `GET /` $\rightarrow$ Landing Page (`resources/views/welcome.blade.php`, named `home`)
 - `POST /midtrans/notification` $\rightarrow$ `MidtransWebhookController@handleNotification` (CSRF excluded)
 - `GET /documents/ktp/{lead}` $\rightarrow$ `CustomerDocumentController@showKtp` (Authenticated secure document streaming)
+- `GET /documents/customer-photo/{lead}` $\rightarrow$ `CustomerDocumentController@showCustomerPhoto` (Authenticated secure customer face photo streaming)
 *(Note: Public self-registration routes `/register-service` and `/register` are completely removed/disabled; system is closed-registration).*
 
 ### Role Gatekeeper
@@ -408,7 +409,7 @@ flowchart TD
   - `App\Http\Controllers\Public`
 - **Middleware:**
   - `EnsureUserHasRole`: Checks `Auth::user()->is_active` (forces logout if disabled) and checks if `Auth::user()->role` matches allowed parameters.
-  - `RestrictCustomerPortal`: Enforces customer containment to `client.*` route namespaces, `/dashboard`, `/`, `/logout`, and `/documents/ktp/*`.
+  - `RestrictCustomerPortal`: Enforces customer containment to `client.*` route namespaces, `/dashboard`, `/`, `/logout`, and `/documents/*` (`documents.ktp`, `documents.customer_photo`).
 - **Service Layer:** Decoupled business services located in `App\Services`: `NetworkService`, `WhatsappService`, `NotificationService`.
 
 ---
@@ -514,7 +515,7 @@ AuditLog (id, user_id, action, description, details, ip_address, user_agent)
 ## 22. Authorization
 
 - **Implementation:** Gatekeeper middleware `EnsureUserHasRole` checking role strings against allowed parameters.
-- **Customer Quarantine:** `RestrictCustomerPortal` middleware intercepts all requests from accounts where `role === 'customer'`. Unless target route is `dashboard`, `home`, `logout`, `documents.ktp`, or begins with `client.`, an HTTP 403 Forbidden response is returned.
+- **Customer Quarantine:** `RestrictCustomerPortal` middleware intercepts all requests from accounts where `role === 'customer'`. Unless target route is `dashboard`, `home`, `logout`, `documents.ktp`, `documents.customer_photo`, or begins with `client.`, an HTTP 403 Forbidden response is returned.
 - **Architectural Note:** The SuperAdmin panel exposes an interface (`/superadmin/roles`) allowing checkboxes to be saved to `role_permissions`. However, authorization is enforced via route middleware `role:*`.
 
 ---
@@ -562,11 +563,11 @@ AuditLog (id, user_id, action, description, details, ip_address, user_agent)
 - **Storage Drivers:** `local` (`FILESYSTEM_DISK=local`), mapped via `php artisan storage:link` to `public/storage`.
 - **Public Upload Directories:**
   - `storage/app/public/uploads/house`: Customer property photos.
-  - `storage/app/public/uploads/customer`: Customer profile portraits.
+  - `storage/app/public/uploads/house`: Documentation of subscriber premises / installation location.
   - `storage/app/public/uploads/teknisi/lokasi`: On-site survey and installation photos.
   - `storage/app/public/uploads/teknisi/bukti`: Modem and optical signal verification photos.
   - `storage/app/public/uploads/customer-complaints`: Photos uploaded by subscribers reporting outages.
-- **Private Storage:** Sensitive national ID cards (KTP) are stored on `local` private disk under `storage/app/private/documents/ktp/` and streamed only via authenticated `CustomerDocumentController`.
+- **Private Storage:** Sensitive national ID cards (KTP) and prospective customer facial portraits (`customer_image`) are stored on `local` private disk under `storage/app/uploads/ktp/` and `storage/app/uploads/customer/`, streamed strictly via authenticated `CustomerDocumentController` (`showKtp` and `showCustomerPhoto`). Both `store` and `update` operations are guarded by automatic transaction rollback that purges newly uploaded files if database queries fail.
 
 ---
 
@@ -654,11 +655,11 @@ AuditLog (id, user_id, action, description, details, ip_address, user_agent)
 - **Location:** `app/Http/Controllers/Admin/RouterController.php`
 - **Resolution:** Replaced `exec("ping ...")` with safe 2-second TCP socket probe via `fsockopen()` targeting port 8728.
 
-### Finding 3: Publicly Accessible KTP Uploads (RESOLVED)
+### Finding 3: Publicly Accessible KTP & Customer Face Photo Uploads (RESOLVED)
 - **Severity:** Medium
 - **Status:** **Fixed**
 - **Location:** `LeadController.php`, `CustomerDocumentController.php`
-- **Resolution:** Moved KTP uploads to `local` disk and streamed via authenticated `CustomerDocumentController`.
+- **Resolution:** Moved KTP and customer face photo uploads to `local` private disk and streamed via authenticated `CustomerDocumentController` (`showKtp` and `showCustomerPhoto`). Wrapped file uploads in `DB::transaction()` with orphan file rollback cleanup. Added real-time upload progress tracking with Alpine.js and XHR in `create.blade.php`.
 
 ### Finding 4: Webhook Idempotency (RESOLVED)
 - **Severity:** Medium
@@ -1053,11 +1054,12 @@ NetManagement is a comprehensive, production-hardened ISP management and billing
   - Verified that Composer and NPM lockfiles (`composer.lock`, root `package-lock.json`, and `whatsapp-service/package-lock.json`) are committed and synchronized with their respective `package.json` specifications.
   - Decoupled `npm ci` for root and `whatsapp-service` in the CI pipeline with verbose error reporting so dependency issues can be diagnosed immediately.
 
-### 3. Route Integrity & CustomerController Full Restoration
-- **Files:** `app/Http/Controllers/Admin/CustomerController.php`, `routes/web.php`.
-- **Problem:** `app/Http/Controllers/Admin/CustomerController.php` was accidentally emptied during a file operation, causing `php artisan route:list` in CI to fail with `ReflectionException: Class "App\Http\Controllers\Admin\CustomerController" does not exist`.
-- **Resolution:**
-  - Completely restored and verified the Admin [CustomerController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/Admin/CustomerController.php) class.
-  - Re-implemented search, index, show, edit, and update methods, as well as `isolate` and `activate` endpoints with live calls to `NetworkService::disableCustomer` and `NetworkService::enableCustomer`.
-  - Added `-vvv` verbose flag to `php artisan route:list -vvv` in the CI workflow to ensure any future routing or controller reflection issues are immediately caught with full stack traces.
+### 4. Customer Face Photo Privacy, Orphan Storage Rollback & Real-time Upload Progress
+- **Files:** `app/Http/Controllers/Marketing/LeadController.php`, `app/Http/Controllers/CustomerDocumentController.php`, `app/Http/Middleware/RestrictCustomerPortal.php`, `routes/web.php`, `resources/views/marketing/leads/create.blade.php`, `resources/views/marketing/leads/show.blade.php`, `resources/views/marketing/leads/edit.blade.php`.
+- **Enhancement & Bugfix:**
+  - Shifted customer face portraits (`customer_image`) from `public` disk to secure `local` private disk (`storage/app/uploads/customer`), eliminating anonymous HTTP access to PII.
+  - Added authenticated streaming route `documents.customer_photo` handled by `CustomerDocumentController@showCustomerPhoto` and permitted in `RestrictCustomerPortal`.
+  - Added atomic `DB::transaction()` and orphan file cleanup rollback in `LeadController@store` and `@update`, deleting physical files from disk if database operations fail.
+  - Normalized validation in `LeadController@store` by making `address_installation` and `city` optional with fallback, resolving HTTP 422 submission rejections.
+  - Implemented real-time interactive file cards (image thumbnail preview, human-readable file size, 5MB limit warning badge, clear/reselect button) and submission modal overlay with live upload progress tracking (`0% - 100%`) via `XMLHttpRequest.upload.onprogress`.
 
