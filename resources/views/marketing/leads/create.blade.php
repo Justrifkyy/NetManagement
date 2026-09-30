@@ -34,17 +34,15 @@
                 @csrf
 
                 <!-- Container Notifikasi Error Dinamis / AJAX -->
-                <template x-if="errorMessage">
-                    <div class="mb-8 p-5 bg-rose-500/10 border border-rose-500/20 rounded-[2rem] flex items-start gap-4">
-                        <div class="p-2 bg-rose-500 rounded-xl text-white shadow-[0_0_15px_rgba(225,29,72,0.4)] shrink-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                        </div>
-                        <div>
-                            <p class="text-rose-400 font-black text-xs uppercase tracking-widest mb-1">Gagal Menyimpan Prospek:</p>
-                            <div class="text-sm text-rose-300/90 font-medium" x-html="errorMessage"></div>
-                        </div>
+                <div x-show="errorMessage" x-cloak class="mb-8 p-5 bg-rose-500/10 border border-rose-500/20 rounded-[2rem] flex items-start gap-4">
+                    <div class="p-2 bg-rose-500 rounded-xl text-white shadow-[0_0_15px_rgba(225,29,72,0.4)] shrink-0">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                     </div>
-                </template>
+                    <div>
+                        <p class="text-rose-400 font-black text-xs uppercase tracking-widest mb-1">Gagal Menyimpan Prospek:</p>
+                        <div class="text-sm text-rose-300/90 font-medium" x-html="errorMessage"></div>
+                    </div>
+                </div>
 
                 <div class="bg-slate-900/80 backdrop-blur-md rounded-[2.5rem] shadow-2xl border border-slate-800 overflow-hidden relative">
                     <div class="absolute -right-20 -top-20 w-72 h-72 bg-sky-500/5 rounded-full blur-3xl pointer-events-none"></div>
@@ -260,7 +258,7 @@
                                 class="w-full px-5 py-4 bg-slate-800/50 border border-slate-700 text-white rounded-2xl focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all">{{ old('address') }}</textarea>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                             <div class="space-y-2">
                                 <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">RT/RW</label>
                                 <input type="text" name="rt_rw" value="{{ old('rt_rw') }}" placeholder="00/00"
@@ -274,6 +272,11 @@
                             <div class="space-y-2">
                                 <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Kecamatan <span class="text-rose-500">*</span></label>
                                 <input type="text" name="district" value="{{ old('district') }}" required
+                                    class="w-full px-5 py-4 bg-slate-800/50 border border-slate-700 text-white rounded-2xl focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Kota / Kabupaten</label>
+                                <input type="text" name="city" value="{{ old('city') }}" placeholder="Kota/Kabupaten"
                                     class="w-full px-5 py-4 bg-slate-800/50 border border-slate-700 text-white rounded-2xl focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all">
                             </div>
                         </div>
