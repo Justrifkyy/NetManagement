@@ -91,8 +91,9 @@ graph TD
     B --> C[Technician Dispatched on Ticket]
     C --> D[Installation Completed: Signal/ODP/MAC Logged]
     D --> E[Subscription & Invoice Created]
-    E --> F[Customer Pays via Midtrans]
-    F --> G[MikroTik PPPoE Activated & WhatsApp Sent]
+    E --> F[MikroTik PPPoE Secret Provisioned]
+    F --> G[Customer Pays via Midtrans]
+    G --> H[MikroTik PPPoE Un-Isolated & WhatsApp Sent]
 ```
 
 ### Core MVP Features
@@ -183,7 +184,10 @@ The system recognizes five distinct user roles stored as enum/string in `users.r
 3. **State Change:** `Ticket` status updates from `open` to `assigned`, setting `technician_id = Auth::id()`.
 4. **Execution:** Technician visits `/technician/my-tasks/{ticket}`, transitioning status to `in_progress`.
 5. **Data Submission:** Depending on `ticket.type` (`survey`, `installation`, or `repair`), the technician submits cable length, ODP port, signal dBm, modem MAC/SN, and uploads photos of site equipment.
-6. **Completion:** `TicketController@processUpdate` stores files in `storage/app/public/uploads/teknisi/`, sets status to `resolved`, and stamps `completed_at = now()`.
+6. **Completion & Automated Provisioning:** `TicketController@processUpdate` stores files in `storage/app/public/uploads/teknisi/`, sets status to `resolved`, stamps `completed_at = now()`, and invokes `finalizeInstallation($ticket)`:
+   - Atomically generates `Subscription` (`status = 'active'`) and initial `Invoice` (`status = 'unpaid'`).
+   - Executes `NetworkService::addCustomer($subscription, $ticket)` via RouterOS socket port 8728 (`/ppp/secret/add`) binding `$ticket->device_mac` to `caller-id`.
+   - Protects the database transaction with isolated `try/catch` and error logging so hardware or connectivity issues never block work order completion.
 
 ### Journey 3: Marketing Lead Conversion
 1. **Entry Point:** Marketing user navigates to `/marketing/leads`.
@@ -1062,4 +1066,32 @@ NetManagement is a comprehensive, production-hardened ISP management and billing
   - Added atomic `DB::transaction()` and orphan file cleanup rollback in `LeadController@store` and `@update`, deleting physical files from disk if database operations fail.
   - Normalized validation in `LeadController@store` by making `address_installation` and `city` optional with fallback, resolving HTTP 422 submission rejections.
   - Implemented real-time interactive file cards (image thumbnail preview, human-readable file size, 5MB limit warning badge, clear/reselect button) and submission modal overlay with live upload progress tracking (`0% - 100%`) via `XMLHttpRequest.upload.onprogress`.
+
+---
+
+## 56. Automated PPPoE Provisioning & Post-Installation Lifecycle
+
+### 1. MikroTik RouterOS Secret Provisioning (`NetworkService::addCustomer`)
+- **File:** `app/Services/NetworkService.php`
+- **Capability:** Added `addCustomer(Subscription $subscription, Ticket $ticket): bool` executing `/ppp/secret/add` and `/ppp/secret/set` using `evilfreelancer/routeros-api-php`.
+- **Parameter Binding:**
+  - Resolves target router via `$ticket->router_id` or customer installation ticket, falling back to `.env` config.
+  - Inspects existing secrets via `/ppp/secret/print` to prevent duplicate secret collisions.
+  - Sets `name` (PPPoE username), `password`, `service=pppoe`, `disabled=no`, and structured ISP audit comment.
+  - Dynamically binds customer ONT physical MAC address (`device_mac`) to RouterOS parameter `caller-id`.
+  - Assigns package profile (`profile`) and remote IP (`remote-address`).
+- **Resilience:** Wrapped in isolated `try/catch (\Throwable $e)` block with `Log::error(...)` recording detailed context (ticket ID, subscription ID, username, MAC). Network timeouts or router hardware reboots never crash the application.
+
+### 2. Technician Workflow Integration (`TicketController::finalizeInstallation`)
+- **File:** `app/Http/Controllers/Technician/TicketController.php`
+- **Trigger:** Hooked into `processUpdate()` immediately after a ticket is marked `resolved`. When `ticket.type === 'installation'`, triggers `finalizeInstallation($ticket)`.
+- **Atomic Database Operations:**
+  - Enclosed in `DB::transaction(...)`.
+  - Resolves customer package and PPPoE credentials.
+  - Calls `Subscription::firstOrCreate(...)` generating active subscription with 7-day billing cycle.
+  - Calls `Invoice::firstOrCreate(...)` generating initial invoice (`status = 'unpaid'`) with formatted `INV-XXXXXXXX` numbering.
+  - Updates customer lead status to `aktif`.
+- **Decoupled Hardware Execution:**
+  - RouterOS API call executed *outside* the database transaction.
+  - Router socket failures cannot trigger database rollback, keeping technician work orders and billing records fully intact.
 

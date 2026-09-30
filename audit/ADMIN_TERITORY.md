@@ -266,6 +266,18 @@ public function activate(Customer $customer)
 3. **Resilience & Fault Tolerance:**
    - Seluruh loop eksekusi router dibungkus blok `try-catch` dengan logging error khusus, sehingga kegagalan koneksi fisik (misal router mati) tidak menyebabkan UI crash / 500 error bagi Admin.
 
+### 5.3. Pendaftaran Akun PPPoE Otomatis Baru (`addCustomer`)
+Modul `NetworkService` kini dilengkapi method `addCustomer(Subscription $subscription, Ticket $ticket)`:
+1. **Eksekusi `/ppp/secret/add` & `/ppp/secret/set`:**
+   - Mengecek keberadaan akun secret via `/ppp/secret/print`.
+   - Mengisi `name` (username PPPoE), `password`, `service=pppoe`, `profile`, dan `comment`.
+   - Mengikat MAC Address perangkat pelanggan (`caller-id`) dari input form instalasi teknisi (`$ticket->device_mac`).
+   - Mengatur remote address sesuai alokasi IP pelanggan (`$subscription->ip_address`).
+2. **Multi-Router Dispatcher:**
+   - Membaca `router_id` dari tiket instalasi jika tersedia, mengarahkan koneksi API RouterOS ke IP router spesifik yang menangani area tersebut.
+3. **Resilience:**
+   - Dibungkus blok `try-catch (\Throwable $e)` mandiri dengan `Log::error(...)`, menjamin transaksi database sistem tetap konsisten meskipun router mengalami kegagalan socket.
+
 ---
 
 ## 6. Conclusion & Recommendations
@@ -279,6 +291,7 @@ public function activate(Customer $customer)
 | **Keamanan Ping Router** | **PASSED** (100%) | Bersih dari Command Injection; menggunakan socket connection (`fsockopen`) non-blocking. |
 | **Sinkronisasi Billing (Manual Paid)** | **PASSED** (100%) | Terbungkus `DB::transaction()` atomik, sinkronisasi MikroTik & WhatsApp resi di luar transaksi. |
 | **Isolasi Manual Pelanggan** | **PASSED** (100%) | Terhubung penuh ke `NetworkService::disableCustomer` & `enableCustomer` dengan fault tolerance. |
+| **Otomasi PPPoE Pelanggan Baru** | **PASSED** (100%) | Terintegrasi via `NetworkService::addCustomer` dengan binding `caller-id` MAC ONT. |
 | **Restorasi CustomerController & CI** | **PASSED** (100%) | Implementasi lengkap `CustomerController` tersinkron dengan route list dan pipeline CI GitHub Actions. |
 | **Sanitasi Codebase (Ponytail)** | **PASSED** (100%) | File orphaned dead code (`Admin\UserController` & `TicketQCController`) telah dihapus. |
 

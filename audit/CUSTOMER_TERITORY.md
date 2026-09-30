@@ -136,6 +136,17 @@ Pemeriksaan proteksi baris kode pada `InvoiceController`:
    ```
    ID pelanggan tidak diambil dari payload request/form, melainkan diikat otomatis ke instance customer yang sedang login (`$this->customer()`). Hal ini mencegah manipulasi pengiriman komplain atas nama pelanggan lain.
 
+### 3.3. Siklus Otomasi Onboarding Langganan & Tagihan Perdana
+Saat teknisi di lapangan menyelesaikan instalasi fisik:
+1. **Penerbitan Langganan Otomatis (`Subscription`):**
+   - Profil langganan dibuat secara atomik dengan status `'active'` dan mengikat paket yang dipilih saat intake marketing (`lead.package_id`).
+   - Kredensial PPPoE (`pppoe_username` dan `pppoe_password`) ditetapkan dan disinkronkan ke profil router.
+2. **Penerbitan Tagihan Perdana (`Invoice`):**
+   - Faktur perdana (`unpaid`) otomatis terbit dengan format nomor `INV-XXXXXXXX` dan jatuh tempo 7 hari sejak instalasi.
+   - Tagihan langsung dapat diakses pelanggan melalui portal self-service (`/client/billing`).
+3. **Pendaftaran Akun Router (`MikroTik Secret`):**
+   - Sistem mendaftarkan secret PPPoE baru dengan binding MAC Address perangkat ONT (`caller-id`) sehingga pelanggan dapat langsung menikmati koneksi internet tanpa intervensi manual tim NOC.
+
 ---
 
 ## 4. Payment Gateway Flow (Midtrans Snap)

@@ -4,12 +4,19 @@ namespace App\Http\Controllers\Technician;
 
 use App\Http\Controllers\Controller;
 use App\Models\Ticket;
+use App\Models\Subscription;
+use App\Models\Invoice;
+use App\Models\Package;
+use App\Services\NetworkService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Str;
 use Exception;
+use Throwable;
 
 class TicketController extends Controller
 {
@@ -149,8 +156,107 @@ class TicketController extends Controller
             'completed_at' => now(),
         ]));
 
+        if ($ticket->type === 'installation') {
+            $this->finalizeInstallation($ticket);
+        }
+
         return redirect()->route('technician.process.index')
             ->with('success', 'Laporan pekerjaan berhasil disimpan.');
+    }
+
+    /**
+     * Otomasi pasca-instalasi: pembuatan profil Subscription, Invoice perdana,
+     * dan pendaftaran PPPoE Secret ke MikroTik dengan fault tolerance.
+     */
+    private function finalizeInstallation(Ticket $ticket): void
+    {
+        $subscription = null;
+
+        // 1. Transaksi Database: Buat/Sinkronkan Subscription dan Invoice
+        try {
+            DB::transaction(function () use ($ticket, &$subscription) {
+                $customer = $ticket->customer()->with('lead.package')->first();
+                if (!$customer) {
+                    return;
+                }
+
+                $packageId = $customer->lead?->package_id ?? Package::first()?->id;
+                $username = $ticket->pppoe_username 
+                    ?: ($customer->pppoe_username ?: strtolower($customer->customer_code));
+                $password = $ticket->pppoe_password 
+                    ?: ($customer->pppoe_password ?: 'net' . mt_rand(1000, 9999));
+
+                // Pastikan kredensial tersimpan di tiket jika sebelumnya kosong
+                if (empty($ticket->pppoe_username) || empty($ticket->pppoe_password)) {
+                    $ticket->update([
+                        'pppoe_username' => $username,
+                        'pppoe_password' => $password,
+                    ]);
+                }
+
+                // Buat atau dapatkan Subscription untuk customer ini
+                $subscription = Subscription::firstOrCreate(
+                    ['customer_id' => $customer->id],
+                    [
+                        'package_id'        => $packageId,
+                        'pppoe_username'    => $username,
+                        'pppoe_password'    => $password,
+                        'installation_date' => now()->toDateString(),
+                        'billing_due_date'  => now()->addDays(7)->toDateString(),
+                        'status'            => 'active',
+                    ]
+                );
+
+                // Sinkronkan username & password jika subscription sudah ada sebelumnya
+                if ($subscription->pppoe_username !== $username || $subscription->pppoe_password !== $password) {
+                    $subscription->update([
+                        'pppoe_username' => $username,
+                        'pppoe_password' => $password,
+                    ]);
+                }
+
+                // Buat Invoice Perdana jika belum ada tagihan unpaid
+                $existingUnpaidInvoice = Invoice::where('subscription_id', $subscription->id)
+                    ->where('status', 'unpaid')
+                    ->first();
+
+                if (!$existingUnpaidInvoice) {
+                    $package = $subscription->package ?? Package::find($subscription->package_id);
+                    $amount = $package ? $package->price : 0;
+
+                    Invoice::create([
+                        'subscription_id' => $subscription->id,
+                        'invoice_number'  => 'INV-' . strtoupper(Str::random(8)),
+                        'amount'          => $amount,
+                        'status'          => 'unpaid',
+                        'due_date'        => now()->addDays(7)->toDateString(),
+                    ]);
+                }
+
+                // Update status lead ke aktif jika ada
+                if ($customer->lead && $customer->lead->status !== 'aktif') {
+                    $customer->lead->update(['status' => 'aktif']);
+                }
+            });
+        } catch (Throwable $e) {
+            Log::error("Gagal memproses transaksi DB pasca-instalasi Tiket #{$ticket->id}: " . $e->getMessage(), [
+                'ticket_id' => $ticket->id,
+                'trace'     => $e->getTraceAsString(),
+            ]);
+        }
+
+        // 2. Operasi MikroTik API di luar transaksi DB dengan try-catch terisolasi (Fault Tolerance)
+        if ($subscription) {
+            try {
+                $networkService = app(NetworkService::class);
+                $networkService->addCustomer($subscription, $ticket);
+            } catch (Throwable $e) {
+                Log::error("MikroTik Provisioning Exception pada Tiket #{$ticket->id}: " . $e->getMessage(), [
+                    'ticket_id'       => $ticket->id,
+                    'subscription_id' => $subscription->id,
+                ]);
+            }
+        }
     }
 
     public function historyIndex()

@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\Subscription;
+use App\Models\Ticket;
+use App\Models\NetworkAsset;
 use Illuminate\Support\Facades\Log;
 use RouterOS\Client;
 use RouterOS\Config;
@@ -41,11 +43,20 @@ class NetworkService
     /**
      * Mendapatkan opsi router berdasarkan langganan/customer jika ada data router fisik
      */
-    private function resolveRouterConfig(Subscription $subscription): array
+    private function resolveRouterConfig(Subscription $subscription, ?Ticket $ticket = null): array
     {
         $config = [];
 
-        // Cek jika ada relasi router via ticket instalasi customer
+        // 1. Prioritaskan router langsung dari tiket jika tersedia
+        if ($ticket && $ticket->router_id) {
+            $router = $ticket->router ?? NetworkAsset::find($ticket->router_id);
+            if ($router && !empty($router->ip_address)) {
+                $config['host'] = $router->ip_address;
+                return $config;
+            }
+        }
+
+        // 2. Cek jika ada relasi router via ticket instalasi customer
         $customer = $subscription->customer;
         if ($customer) {
             $installationTicket = $customer->tickets()
@@ -60,6 +71,105 @@ class NetworkService
         }
 
         return $config;
+    }
+
+    /**
+     * Mendaftarkan akun PPPoE baru ke MikroTik (/ppp/secret/add)
+     * Mengikat username, password, profile paket, dan MAC Address pelanggan (caller-id)
+     *
+     * @param Subscription $subscription
+     * @param Ticket $ticket
+     * @return bool
+     */
+    public function addCustomer(Subscription $subscription, Ticket $ticket): bool
+    {
+        $username = $subscription->pppoe_username;
+        $password = $subscription->pppoe_password;
+        $macAddress = $ticket->device_mac ?? null;
+        $profile = $subscription->package?->name ?? 'default';
+        $ip = $subscription->ip_address;
+        $routerConfig = $this->resolveRouterConfig($subscription, $ticket);
+
+        Log::info("MikroTik: Memulai pendaftaran PPPoE Secret untuk Subscription #{$subscription->id} ({$username})");
+
+        if (empty($username) || empty($password)) {
+            Log::warning("MikroTik [addCustomer]: Gagal mendaftarkan secret, username atau password kosong.", [
+                'subscription_id' => $subscription->id,
+            ]);
+            return false;
+        }
+
+        try {
+            $client = $this->getClient($routerConfig);
+
+            // 1. Cek apakah secret sudah terdaftar sebelumnya di MikroTik
+            $printQuery = (new Query('/ppp/secret/print'))
+                ->where('name', $username);
+            $existing = $client->query($printQuery)->read();
+
+            $customerName = $subscription->customer?->user?->name 
+                ?? $subscription->customer?->customer_code 
+                ?? 'Customer #' . $subscription->customer_id;
+            $comment = "NetManager - {$customerName} (Ticket #{$ticket->id})";
+
+            if (!empty($existing) && isset($existing[0]['.id'])) {
+                // Secret sudah ada: update password, caller-id, profile, dan pastikan aktif
+                $setQuery = (new Query('/ppp/secret/set'))
+                    ->equal('.id', $existing[0]['.id'])
+                    ->equal('password', $password)
+                    ->equal('service', 'pppoe')
+                    ->equal('disabled', 'no')
+                    ->equal('comment', $comment);
+
+                if (!empty($macAddress)) {
+                    // Ikat MAC Address perangkat pelanggan ke caller-id
+                    $setQuery->equal('caller-id', $macAddress);
+                }
+                if (!empty($profile)) {
+                    $setQuery->equal('profile', $profile);
+                }
+                if (!empty($ip)) {
+                    $setQuery->equal('remote-address', $ip);
+                }
+
+                $client->query($setQuery)->read();
+                Log::info("MikroTik: PPPoE Secret {$username} sudah ada, berhasil diperbarui dan diaktifkan.");
+            } else {
+                // Secret belum ada: eksekusi /ppp/secret/add
+                $addQuery = (new Query('/ppp/secret/add'))
+                    ->equal('name', $username)
+                    ->equal('password', $password)
+                    ->equal('service', 'pppoe')
+                    ->equal('disabled', 'no')
+                    ->equal('comment', $comment);
+
+                if (!empty($macAddress)) {
+                    // Ikat MAC Address perangkat pelanggan ke caller-id
+                    $addQuery->equal('caller-id', $macAddress);
+                }
+                if (!empty($profile)) {
+                    $addQuery->equal('profile', $profile);
+                }
+                if (!empty($ip)) {
+                    $addQuery->equal('remote-address', $ip);
+                }
+
+                $client->query($addQuery)->read();
+                Log::info("MikroTik: PPPoE Secret {$username} berhasil ditambahkan ke router (caller-id: " . ($macAddress ?? 'none') . ").");
+            }
+
+            return true;
+
+        } catch (Throwable $e) {
+            // Fault tolerance: catat ke log, router offline / timeout tidak menggagalkan proses sistem
+            Log::error("MikroTik Exception [addCustomer]: Gagal mendaftarkan PPPoE secret ke router: " . $e->getMessage(), [
+                'subscription_id' => $subscription->id,
+                'ticket_id'       => $ticket->id,
+                'username'        => $username,
+                'device_mac'      => $macAddress,
+            ]);
+            return false;
+        }
     }
 
     /**
