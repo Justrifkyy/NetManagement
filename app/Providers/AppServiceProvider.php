@@ -23,5 +23,9 @@ class AppServiceProvider extends ServiceProvider
     {
         // Use Bootstrap pagination for better performance
         Paginator::useBootstrapFive();
+
+        if (request()->server('HTTP_X_FORWARDED_PROTO') === 'https' || request()->header('X-Forwarded-Proto') === 'https' || request()->isSecure()) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
     }
 }

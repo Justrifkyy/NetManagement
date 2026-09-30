@@ -12,10 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->trustProxies(
-            at: '*',
-            headers: Request::HEADER_X_FORWARDED_HOST | Request::HEADER_X_FORWARDED_PROTO,
-        );
+        $middleware->trustProxies(at: '*');
 
         // Pengecualian proteksi CSRF untuk Webhook Payment Gateway (Midtrans)
         $middleware->validateCsrfTokens(except: [

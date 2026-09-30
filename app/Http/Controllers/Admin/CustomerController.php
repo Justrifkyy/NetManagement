@@ -59,6 +59,10 @@ class CustomerController extends Controller
 
     public function isolate(Request $request, Customer $customer)
     {
+        if ($request->isMethod('get')) {
+            return redirect()->route('admin.customers.show', $customer);
+        }
+
         $reason = $request->validate(['reason' => 'required|string'])['reason'];
 
         Subscription::where('customer_id', $customer->id)
@@ -84,11 +88,15 @@ class CustomerController extends Controller
             'details' => ['reason' => $reason],
         ]);
 
-        return redirect()->back()->with('success', 'Pelanggan berhasil diisolir');
+        return redirect()->route('admin.customers.show', $customer)->with('success', 'Pelanggan berhasil diisolir');
     }
 
-    public function activate(Customer $customer)
+    public function activate(Request $request, Customer $customer)
     {
+        if ($request->isMethod('get')) {
+            return redirect()->route('admin.customers.show', $customer);
+        }
+
         Subscription::where('customer_id', $customer->id)
             ->update(['status' => 'active']);
 
@@ -110,7 +118,7 @@ class CustomerController extends Controller
             'description' => "Pelanggan {$customer->id} diaktifkan kembali",
         ]);
 
-        return redirect()->back()->with('success', 'Pelanggan berhasil diaktifkan');
+        return redirect()->route('admin.customers.show', $customer)->with('success', 'Pelanggan berhasil diaktifkan');
     }
 
     public function search(Request $request)

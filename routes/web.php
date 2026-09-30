@@ -136,8 +136,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         // Customers
         Route::get('/customers/search', [CustomerController::class, 'search'])->name('customers.search'); // Search harus di atas resource
         Route::resource('customers', CustomerController::class)->except(['create', 'store', 'destroy']);
-        Route::post('/customers/{customer}/isolate', [CustomerController::class, 'isolate'])->name('customers.isolate');
-        Route::post('/customers/{customer}/activate', [CustomerController::class, 'activate'])->name('customers.activate');
+        Route::match(['get', 'post'], '/customers/{customer}/isolate', [CustomerController::class, 'isolate'])->name('customers.isolate');
+        Route::match(['get', 'post'], '/customers/{customer}/activate', [CustomerController::class, 'activate'])->name('customers.activate');
 
         // Resources Utama
         Route::resource('packages', PackageController::class);
