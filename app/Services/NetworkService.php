@@ -86,7 +86,8 @@ class NetworkService
         $username = $subscription->pppoe_username;
         $password = $subscription->pppoe_password;
         $macAddress = $ticket->device_mac ?? null;
-        $profile = $subscription->package?->name ?? 'default';
+        $package = $subscription->package ?? ($subscription->package_id ? \App\Models\Package::find($subscription->package_id) : null);
+        $profile = $package?->name ?? 'default';
         $ip = $subscription->ip_address;
         $routerConfig = $this->resolveRouterConfig($subscription, $ticket);
 
@@ -101,6 +102,26 @@ class NetworkService
 
         try {
             $client = $this->getClient($routerConfig);
+
+            // 0. Auto-provisioning Profil PPP jika belum terdaftar di MikroTik
+            if (!empty($profile)) {
+                $profilePrintQuery = (new Query('/ppp/profile/print'))
+                    ->where('name', $profile);
+                $existingProfile = $client->query($profilePrintQuery)->read();
+
+                if (empty($existingProfile)) {
+                    $addProfileQuery = (new Query('/ppp/profile/add'))
+                        ->equal('name', $profile);
+
+                    $speed = $package?->speed_mbps;
+                    if (!empty($speed)) {
+                        $addProfileQuery->equal('rate-limit', "{$speed}M/{$speed}M");
+                    }
+
+                    $client->query($addProfileQuery)->read();
+                    Log::info("MikroTik [addCustomer]: Profil PPP '{$profile}' berhasil dibuat otomatis" . (!empty($speed) ? " (rate-limit: {$speed}M/{$speed}M)" : "") . ".");
+                }
+            }
 
             // 1. Cek apakah secret sudah terdaftar sebelumnya di MikroTik
             $printQuery = (new Query('/ppp/secret/print'))

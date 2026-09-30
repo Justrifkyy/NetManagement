@@ -1077,6 +1077,7 @@ NetManagement is a comprehensive, production-hardened ISP management and billing
 - **Parameter Binding:**
   - Resolves target router via `$ticket->router_id` or customer installation ticket, falling back to `.env` config.
   - Inspects existing secrets via `/ppp/secret/print` to prevent duplicate secret collisions.
+  - Auto-provisions PPP Profile via `/ppp/profile/print` and `/ppp/profile/add` if not yet registered in MikroTik, dynamically setting `rate-limit` from `$subscription->package->speed_mbps` (e.g. `20M/20M`).
   - Sets `name` (PPPoE username), `password`, `service=pppoe`, `disabled=no`, and structured ISP audit comment.
   - Dynamically binds customer ONT physical MAC address (`device_mac`) to RouterOS parameter `caller-id`.
   - Assigns package profile (`profile`) and remote IP (`remote-address`).
