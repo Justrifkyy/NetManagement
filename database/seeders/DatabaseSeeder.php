@@ -320,5 +320,33 @@ class DatabaseSeeder extends Seeder
                 }
             }
         }
+
+        // ==========================================
+        // 8. HAK AKSES PERAN (ROLE PERMISSIONS)
+        // ==========================================
+        $defaultPermissions = [
+            'admin' => [
+                'dashboard.view', 'customers.view', 'customers.edit', 'customers.isolate',
+                'packages.manage', 'billing.view', 'billing.create', 'integrations.manage', 'reports.view'
+            ],
+            'marketing' => [
+                'leads.view', 'leads.manage'
+            ],
+            'technician' => [
+                'tasks.view', 'tasks.execute'
+            ],
+            'customer' => [
+                'portal.view', 'billing.pay', 'complaints.create'
+            ]
+        ];
+
+        foreach ($defaultPermissions as $role => $permissions) {
+            foreach ($permissions as $permission) {
+                \App\Models\RolePermission::firstOrCreate([
+                    'role' => $role,
+                    'permission' => $permission,
+                ]);
+            }
+        }
     }
 }

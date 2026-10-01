@@ -151,7 +151,7 @@ class LeadController extends Controller
             abort(403);
         }
 
-        if (in_array($lead->status, ['converted', 'aktif'])) {
+        if ($lead->status === 'aktif') {
             return back()->with('error', 'Data yang sudah menjadi pelanggan tidak bisa diedit.');
         }
 
@@ -164,7 +164,7 @@ class LeadController extends Controller
     // 6. UPDATE: Simpan Perubahan
     public function update(Request $request, Lead $lead)
     {
-        if (in_array($lead->status, ['converted', 'aktif'])) {
+        if ($lead->status === 'aktif') {
             return back()->with('error', 'Data terkunci (sudah convert).');
         }
 
@@ -310,7 +310,7 @@ class LeadController extends Controller
 
     public function convertToCustomer(Request $request, Lead $lead)
     {
-        if ($lead->status === 'converted' || $lead->status === 'aktif') {
+        if ($lead->status === 'aktif') {
             return back()->with('error', 'Sudah menjadi pelanggan.');
         }
 

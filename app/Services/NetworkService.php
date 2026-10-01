@@ -238,20 +238,21 @@ class NetworkService
                 }
             }
 
-            // B. Hapus IP dari Address List ISOLIR jika ada
+            // B. Hapus IP dari Address List ISOLIR jika ada (Kompatibel ROS v6 & v7)
             if (!empty($ip)) {
+                $cleanIp = trim(explode('/', $ip)[0]);
                 $printList = (new Query('/ip/firewall/address-list/print'))
-                    ->where('list', 'ISOLIR')
-                    ->where('address', $ip);
+                    ->where('list', 'ISOLIR');
                 $addressList = $client->query($printList)->read();
 
                 if (!empty($addressList)) {
                     foreach ($addressList as $entry) {
-                        if (isset($entry['.id'])) {
+                        $entryAddress = isset($entry['address']) ? trim(explode('/', $entry['address'])[0]) : '';
+                        if ($entryAddress === $cleanIp && isset($entry['.id'])) {
                             $removeQuery = (new Query('/ip/firewall/address-list/remove'))
                                 ->equal('.id', $entry['.id']);
                             $client->query($removeQuery)->read();
-                            Log::info("MikroTik: IP {$ip} dihapus dari Address List ISOLIR.");
+                            Log::info("MikroTik: IP {$cleanIp} dihapus dari Address List ISOLIR.");
                         }
                     }
                 }
@@ -330,20 +331,31 @@ class NetworkService
                 }
             }
 
-            // B. Masukkan IP ke Address List ISOLIR jika ada
+            // B. Masukkan IP ke Address List ISOLIR jika ada (Kompatibel ROS v6 & v7)
             if (!empty($ip)) {
+                $cleanIp = trim(explode('/', $ip)[0]);
                 $checkList = (new Query('/ip/firewall/address-list/print'))
-                    ->where('list', 'ISOLIR')
-                    ->where('address', $ip);
+                    ->where('list', 'ISOLIR');
                 $existing = $client->query($checkList)->read();
 
-                if (empty($existing)) {
+                $alreadyInList = false;
+                if (!empty($existing)) {
+                    foreach ($existing as $entry) {
+                        $entryAddress = isset($entry['address']) ? trim(explode('/', $entry['address'])[0]) : '';
+                        if ($entryAddress === $cleanIp) {
+                            $alreadyInList = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!$alreadyInList) {
                     $addList = (new Query('/ip/firewall/address-list/add'))
                         ->equal('list', 'ISOLIR')
-                        ->equal('address', $ip)
+                        ->equal('address', $cleanIp)
                         ->equal('comment', 'Isolir Tagihan: ' . ($username ?? 'Customer #' . $subscription->customer_id));
                     $client->query($addList)->read();
-                    Log::info("MikroTik: IP {$ip} ditambahkan ke Address List ISOLIR.");
+                    Log::info("MikroTik: IP {$cleanIp} ditambahkan ke Address List ISOLIR.");
                 }
             }
 

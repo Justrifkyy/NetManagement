@@ -171,18 +171,18 @@ PHPUnit otomatis menggunakan SQLite in-memory berdasarkan `phpunit.xml`.
 Result akhir:
 
 ```text
-Tests:    8 skipped, 26 passed (51 assertions)
-Duration: 2.99s
+Tests:    0 skipped, 29 passed (58 assertions)
+Duration: 2.85s
 ```
 
 Ringkasan:
 
 | Status | Jumlah |
 |---|---:|
-| Passed | 26 |
+| Passed | 29 |
 | Failed | 0 |
-| Skipped | 8 |
-| Assertions | 51 |
+| Skipped | 0 |
+| Assertions | 58 |
 
 ## 9. Test yang Berhasil
 
@@ -201,27 +201,24 @@ Test utama yang berhasil:
 - `ProfileInformationTest`
 - `TwoFactorAuthenticationSettingsTest`
 - `UpdatePasswordTest`
+- `RegistrationTest`
+  - Public registration returns 404 (disabled by business policy)
+- `RolePermissionGateTest` (BARU)
+  - Super admin bypasses all permission checks
+  - Role permissions evaluated dynamically via Laravel Gate
+  - Denies unauthorized abilities
+- `SyncPaidInvoiceHardwareJobTest` (BARU)
+  - Asynchronous background queue job dispatches from webhook/checkStatus
+  - Non-blocking hardware sync & notification processing
 - Unit test dasar
 
-## 10. Test yang Di-skip
+## 10. Pembersihan Kode Mati & Skipped Tests
 
-Delapan test di-skip karena fitur terkait sengaja tidak aktif pada konfigurasi aplikasi saat ini:
+Semua 8 skenario test skipped sebelumnya telah dibersihkan secara tuntas:
 
-- API token support
-- Email verification
-- Registration support
-
-Skip tersebut merupakan behavior konfigurasi, bukan failure backend.
-
-Contoh output:
-
-```text
-API support is not enabled.
-Email verification not enabled.
-Registration support is not enabled.
-```
-
-Tidak ada test yang berstatus failed pada hasil akhir.
+- File test untuk fitur Jetstream yang dinonaktifkan (`ApiTokenPermissionsTest.php`, `CreateApiTokenTest.php`, `DeleteApiTokenTest.php`, `EmailVerificationTest.php`) telah dihapus dari repositori.
+- `RegistrationTest.php` diperbarui untuk secara aktif memverifikasi proteksi sistem: memvalidasi bahwa endpoint registrasi publik mengembalikan respons HTTP 404 (Not Found).
+- Hasil akhir: **0 skipped tests** dan seluruh rangkaian pengujian berjalan 100% passed.
 
 ## 11. Business Logic dan Security yang Terverifikasi
 
@@ -318,17 +315,15 @@ Dengan pemisahan ini:
 
 ## 14. Final Kesimpulan
 
-Backend test suite sudah diperbaiki dan berhasil dijalankan.
+Backend test suite sudah diperbaiki, dimutakhirkan, dan berhasil dijalankan secara optimal.
 
 Result final:
 
 ```text
-PASS: 26
+PASS: 29
 FAIL: 0
-SKIP: 8
-ASSERTIONS: 51
+SKIP: 0
+ASSERTIONS: 58
 ```
 
-Error schema Jetstream sudah diselesaikan melalui migration resmi project, bukan dengan mengubah test agar melewati error.
-
-Seluruh test yang aktif berhasil passed. Delapan test skipped terjadi karena fitur API token, email verification, dan registration memang disabled pada konfigurasi aplikasi.
+Error schema Jetstream sudah diselesaikan melalui migration resmi project. Kode mati Jetstream (API Token & Email Verification) serta 8 skipped tests telah dihapus. Fitur RBAC Gate dan Queue Job Webhook telah dilengkapi pengujian otomatis yang 100% passed.

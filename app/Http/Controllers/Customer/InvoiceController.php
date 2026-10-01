@@ -132,28 +132,8 @@ class InvoiceController extends Controller
                     'payment_method' => $paymentType,
                 ]);
 
-                // Aktifkan Router MikroTik
-                if ($invoice->subscription) {
-                    try {
-                        app(\App\Services\NetworkService::class)->enableCustomer($invoice->subscription);
-                    } catch (\Throwable $e) {
-                        \Illuminate\Support\Facades\Log::error("Router activation error: " . $e->getMessage());
-                    }
-                }
-
-                // Kirim notifikasi WA
-                if ($invoice->subscription && $invoice->subscription->customer) {
-                    try {
-                        $customer = $invoice->subscription->customer;
-                        $customerName = $customer->user?->name ?? 'Pelanggan';
-                        $customerPhone = $customer->phone_number ?? null;
-                        if ($customerPhone) {
-                            \App\Services\WhatsappService::sendPaymentSuccess($customerName, $customerPhone, $invoice->invoice_number, $invoice->amount);
-                        }
-                    } catch (\Throwable $e) {
-                        \Illuminate\Support\Facades\Log::error("WA notification error: " . $e->getMessage());
-                    }
-                }
+                // Dispatch Background Queue Job: Sinkronisasi MikroTik & WhatsApp secara asinkron
+                \App\Jobs\SyncPaidInvoiceHardwareJob::dispatch($invoice);
 
                 return back()->with('info', 'Pembayaran berhasil dikonfirmasi! Tagihan telah lunas.');
             } elseif (in_array($transactionStatus, ['deny', 'cancel', 'expire'])) {

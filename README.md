@@ -42,10 +42,10 @@ NetManagement is a specialized ISP (Internet Service Provider) management platfo
 
 ### **Admin Panel Features** 
 - 📊 Operational dashboard with key metrics
-- 👥 Customer management (CRUD, activation, isolation)
+- 👥 Customer lifecycle management (activation, isolation)
 - 📦 Internet package management
-- 🌐 Network device (router) management
-- 💰 Billing and invoice tracking
+- 🌐 Network device (router) management & socket connectivity tests
+- 💰 Billing and invoice tracking (manual payment confirmation)
 - 📝 **Ticket management** (Technician data governance)
 - 🎯 **Lead management** (Marketing data governance)
 - 📊 Reports and analytics
@@ -53,35 +53,35 @@ NetManagement is a specialized ISP (Internet Service Provider) management platfo
 - 📋 Activity logging
 
 ### **SuperAdmin Panel Features**
-- 🔐 User & staff management
-- 👮 Role and permission configuration
-- 📌 Master data management (areas, technicians, marketers)
-- ⚙️ System settings and configuration
-- 📊 System health monitoring
-- 🔍 Complete audit log tracking
-- 🛠️ Database maintenance and backup
-- 🔄 Cache optimization
-- 📈 Advanced reporting
+- 🔐 User & staff lifecycle management (Bcrypt encryption, temporary password reset, active toggle kill-switch)
+- 👮 Role and permission configuration (RBAC Gate integration)
+- 📌 Master data management (areas, service regions)
+- 🛠️ System maintenance, logs & backups (`/superadmin/maintenance`)
+- 📊 System health monitoring & revenue analytics
+- 🔍 Complete audit log tracking (Forensic CSV export)
+- 🔄 Cache optimization (`optimize:clear`, `optimize`)
+- 🔒 Maintenance mode with secret bypass token
 
 ### **Technician Portal**
-- 📋 Ticket/task management
-- 🔍 Survey form creation
-- 🔧 Installation documentation
-- 🚨 Troubleshooting support
+- 📋 Open ticket claiming with pessimistic row locking (`lockForUpdate`)
+- 🔧 Workspace task execution (`/technician/my-tasks`)
+- 📐 Physical parameters logging (cable length, ODP port, signal dBm, ONT MAC address)
+- 📸 Photographic evidence upload and automated storage cleanup
+- ⚡ Automated PPPoE provisioning & profile rate-limit sync upon installation completion
 - 📱 Mobile-responsive interface
 
 ### **Marketing Portal**
-- 🎯 Lead management pipeline
-- 📞 Contact tracking
-- 📅 Follow-up scheduling
-- 📊 Conversion metrics
-- 🎁 Promo code management
+- 🎯 Lead management pipeline & intake form with dynamic validation
+- 📷 Secure private KTP & prospective customer face photo upload
+- 🔄 Atomic lead conversion to active customer & dispatch ticket
+- 📊 Conversion rate metrics & revenue analytics
+- 👥 Dedicated customer portfolio view
 
 ### **Customer Portal**
-- 💵 Billing and payment tracking
-- 📊 Service status monitoring
-- 🎫 Complaint/ticket submission
-- 📝 Service plan information
+- 💵 Self-service billing and automated invoice history
+- 💳 Online payments via Midtrans Snap with active polling status reconciliation
+- 🎫 Repair complaint submission with photo upload
+- 🔒 Sandboxed client environment protecting network credentials & staff endpoints
 
 ---
 
@@ -252,11 +252,11 @@ NetManagement/
 
 | Role | Level | Access Scope |
 |------|-------|--------------|
-| **Super Admin** 👑 | 5 | Full system access, user management, settings |
-| **Admin** 🏢 | 4 | Operations, data management, reporting |
-| **Marketing** 📞 | 3 | Leads, customer info, sales pipeline |
-| **Technician** 🔧 | 2 | Tickets, surveys, installations |
-| **Customer** 👤 | 1 | Own billing, profile, service status |
+| **Super Admin** 👑 | 5 | Full system governance, staff management, maintenance |
+| **Admin** 🏢 | 4 | Operations, NOC, billing, customer lifecycle |
+| **Marketing** 📞 | 3 | Leads, customer conversion, sales performance |
+| **Technician** 🔧 | 2 | Dispatch tickets, physical parameters, photo evidence |
+| **Customer** 👤 | 1 | Self-service billing, Midtrans payments, repair tickets |
 
 ### **Permission Matrix**
 
@@ -265,13 +265,13 @@ NetManagement/
 │ Feature         │ Admin  │ Super│Marketing  │Technician  │Customer  │
 ├─────────────────┼────────┼──────┼───────────┼────────────┼──────────┤
 │ Dashboard       │ ✓      │ ✓    │ ✓         │ ✓          │ ✓        │
-│ Customers       │ ✓      │ ✓    │ R         │ R (own)    │ R (own)  │
-│ Tickets  ✨ NEW │ CRUD   │ CRUD │ R         │ CRUD       │ R        │
-│ Leads ✨ NEW    │ CRUD   │ CRUD │ CRUD      │ R          │ -        │
-│ Billing         │ R      │ R    │ -         │ -          │ ✓        │
+│ Customers       │ R/U    │ ✓    │ R (own)   │ -          │ -        │
+│ Tickets         │ CRUD   │ CRUD │ R         │ Claim/Exec │ R (own)  │
+│ Leads           │ CRUD   │ CRUD │ CRUD (own)│ -          │ -        │
+│ Billing         │ CRUD   │ CRUD │ R         │ -          │ R/Pay    │
 │ Reports         │ ✓      │ ✓    │ ✓         │ -          │ -        │
-│ Users           │ -      │ ✓    │ -         │ -          │ -        │
-│ Settings        │ -      │ ✓    │ -         │ -          │ -        │
+│ Staff Users     │ -      │ CRUD │ -         │ -          │ -        │
+│ Maintenance     │ -      │ ✓    │ -         │ -          │ -        │
 └─────────────────┴────────┴──────┴───────────┴────────────┴──────────┘
 
 ✓ = Full Access  |  CRUD = Create/Read/Update/Delete  |  R = Read Only  |  - = No Access
@@ -307,17 +307,17 @@ Operational management and data governance.
 System administration and governance.
 
 **Key Features:**
-- Staff user management (Add, Edit, Delete)
-- Role and permission configuration
-- Master data management:
-  - Service areas/regions
-  - Technician staff profiles
-  - Marketing staff profiles
-- System settings and configuration
-- Database backup/restore
-- Cache optimization
-- Activity audit logs
-- System health monitoring
+- Staff user lifecycle management (Create, Edit, Toggle Active, Reset Password)
+- Role and permission configuration (`RolePermission` with Gate integration)
+- Master data management (Service areas)
+- Maintenance tools (`/superadmin/maintenance`):
+  - Toggle maintenance mode (Bypass token: `netmanager`)
+  - Clear application cache (`optimize:clear`)
+  - Run database optimization (`optimize`)
+  - Database backup execution
+  - View and clear system log files
+- Forensic activity audit logs with CSV export
+- System telemetry and revenue analytics
 
 ---
 
@@ -528,15 +528,19 @@ POST   /superadmin/roles/permissions  - Update permissions
 
 GET    /superadmin/master             - Master data
 POST   /superadmin/master/areas       - Add area
-POST   /superadmin/master/technicians - Add technician
-POST   /superadmin/master/marketings  - Add marketer
-
-GET    /superadmin/settings           - Settings
-POST   /superadmin/settings           - Update settings
-POST   /superadmin/settings/backup    - Database backup
+PUT    /superadmin/master/areas/{id}  - Update area
+DELETE /superadmin/master/areas/{id}  - Delete area
 
 GET    /superadmin/audits             - Audit logs
-GET    /superadmin/maintenance        - Maintenance tools
+GET    /superadmin/audits/export      - Forensic CSV export
+
+GET    /superadmin/maintenance        - Maintenance dashboard
+POST   /superadmin/maintenance/mode   - Toggle maintenance mode
+POST   /superadmin/maintenance/clear-cache - Clear cache
+POST   /superadmin/maintenance/optimize    - Optimize system
+POST   /superadmin/maintenance/backup      - Backup database
+GET    /superadmin/maintenance/logs        - View system logs
+POST   /superadmin/maintenance/clear-logs  - Clear log files
 ```
 
 ---

@@ -219,7 +219,22 @@ public function destroy(User $user)
 }
 ```
 - **Kekebalan Akun ID 1:** Akun super admin utama yang di-seed pertama kali dilindungi secara permanen dari penghapusan.
-- **Pencegahan Bunuh Diri Sesi:** Super Admin tidak dapat menghapus akun dirinya sendiri yang sedang login aktif, mencegah situasi di mana sistem kehilangan seluruh administrator.
+### 5.5. Tata Kelola Hak Akses Terpadu (Active RBAC via Laravel Gate)
+Antarmuka manajemen peran pada `/superadmin/roles` (`RoleAccessController`) terhubung langsung ke tabel `role_permissions`:
+1. **Dynamic Gate Authorization:**
+   Melalui `Gate::before()` pada `AppServiceProvider`, sistem mengevaluasi permission secara dinamis terhadap record `RolePermission`:
+   ```php
+   Gate::before(function ($user, string $ability) {
+       if ($user->role === 'super_admin') {
+           return true; // Root master bypass
+       }
+       return $user->hasPermission($ability) ? true : null;
+   });
+   ```
+2. **Kedaulatan Root Super Admin:**
+   Akun `super_admin` secara eksplisit memiliki kekebalan mutlak (*master bypass*) atas seluruh pemeriksaan `can()` / `authorize()`, sementara peran `admin`, `marketing`, `technician`, dan `customer` terikat pada daftar izin yang dicentang oleh Super Admin.
+3. **Penyimpanan Matriks Izin:**
+   Setiap perubahan checkbox hak akses di panel Super Admin langsung memperbarui tabel `role_permissions` dan berefek seketika tanpa memerlukan migrasi atau deployment ulang kode.
 
 ---
 

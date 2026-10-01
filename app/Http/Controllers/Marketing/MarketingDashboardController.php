@@ -19,7 +19,7 @@ class MarketingDashboardController extends Controller
             'total' => (clone $baseQuery)->count(),
             'prospek' => (clone $baseQuery)->where('status', 'prospek')->count(),
             'proses' => (clone $baseQuery)->whereIn('status', ['survey', 'instalasi'])->count(),
-            'converted' => (clone $baseQuery)->whereIn('status', ['aktif', 'converted'])->count(),
+            'converted' => (clone $baseQuery)->where('status', 'aktif')->count(),
         ];
 
         // 5 Prospek terakhir milik sales yang sedang login dengan eager loading

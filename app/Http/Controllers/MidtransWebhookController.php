@@ -68,41 +68,9 @@ class MidtransWebhookController extends Controller
 
             Log::info("Midtrans Webhook: Invoice #{$invoice->invoice_number} successfully marked as PAID.");
 
-            // Otomatisasi Router MikroTik: Aktifkan kembali layanan / un-isolate PPPoE pelanggan
-            if ($invoice->subscription) {
-                try {
-                    $networkService = app(NetworkService::class);
-                    $networkService->enableCustomer($invoice->subscription);
-                    Log::info("Midtrans Webhook: Perintah aktivasi router MikroTik dieksekusi untuk Subscription #{$invoice->subscription->id}.");
-                } catch (Throwable $e) {
-                    // Fail-safe jika router fisik offline/timeout agar sistem tidak crash & tagihan tetap lunas
-                    Log::error("Midtrans Webhook: Router MikroTik offline / gagal dihubungi saat aktivasi Subscription #{$invoice->subscription->id}: " . $e->getMessage());
-                }
-            }
-
-            // Otomatisasi WhatsApp Gateway: Kirim notifikasi pembayaran lunas ke nomor HP pelanggan
-            if ($invoice->subscription && $invoice->subscription->customer) {
-                try {
-                    $customer = $invoice->subscription->customer;
-                    $customerName = $customer->user?->name ?? $customer->lead?->name ?? 'Pelanggan';
-                    $customerPhone = $customer->phone_number ?? $customer->user?->phone_number ?? $customer->lead?->phone ?? null;
-
-                    if ($customerPhone) {
-                        WhatsappService::sendPaymentSuccess(
-                            $customerName,
-                            $customerPhone,
-                            $invoice->invoice_number,
-                            $invoice->amount
-                        );
-                        Log::info("Midtrans Webhook: Notifikasi WhatsApp lunas dipicu ke {$customerPhone} ({$customerName})");
-                    } else {
-                        Log::warning("Midtrans Webhook: Nomor WhatsApp tidak ditemukan untuk Invoice #{$invoice->invoice_number}");
-                    }
-                } catch (Throwable $e) {
-                    // Fail-safe jika bot Node.js / PM2 offline
-                    Log::error("Midtrans Webhook: Gagal mengirim WhatsApp notifikasi: " . $e->getMessage());
-                }
-            }
+            // Dispatch Background Queue Job: Sinkronisasi MikroTik & WhatsApp tanpa memblokir respon HTTP
+            \App\Jobs\SyncPaidInvoiceHardwareJob::dispatch($invoice);
+            Log::info("Midtrans Webhook: SyncPaidInvoiceHardwareJob berhasil di-dispatch ke queue untuk Invoice #{$invoice->invoice_number}.");
         } elseif ($transactionStatus === 'pending') {
             // Transaksi sedang menunggu pembayaran (misal: VA / Indomaret dibuat)
             Log::info("Midtrans Webhook: Invoice #{$invoice->invoice_number} is PENDING.");

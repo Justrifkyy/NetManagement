@@ -179,11 +179,11 @@ public function markAsPaid(Request $request, Invoice $invoice)
 }
 ```
 
-### 4.2. Verifikasi Eksekusi MikroTik (`NetworkService::enableCustomer`)
+### 4.2. Verifikasi Eksekusi MikroTik (`NetworkService::enableCustomer` & `disableCustomer`)
 Saat pemulihan layanan dipicu:
 1. **Enable PPPoE Secret:** Menjalankan query MikroTik API `/ppp/secret/set` dengan parameter `disabled=no` untuk akun pelanggan bersangkutan.
-2. **Bypass Firewall ISOLIR:** Menjalankan `/ip/firewall/address-list/remove` untuk menghapus IP pelanggan dari daftar blokir/isolasi `ISOLIR`.
-3. **Resilience:** Seluruh pemanggilan dibungkus blok `try-catch` independen sehingga kendala koneksi ke router tidak menggagalkan penyimpanan status pelunasan invoice di database.
+2. **Bypass Firewall ISOLIR (Kompatibel ROS v6 & v7):** Menjalankan pencarian pada `/ip/firewall/address-list/print` dengan filter `list=ISOLIR`, membandingkan alamat IP murni tanpa akhiran subnet mask (`/32`), lalu mengeksekusi `/ip/firewall/address-list/remove` terhadap `.id` terkait. Ini menghilangkan bug ketidakcocokan sintaks/format address-list antara RouterOS v6 dan v7.
+3. **Resilience & Asynchronous Execution:** Pada pelunasan otomatis via Midtrans Webhook atau Customer Portal, operasi ini dieksekusi secara asinkron melalui antrean background `SyncPaidInvoiceHardwareJob`. Pada pelunasan manual admin, pemanggilan dibungkus blok `try-catch` independen sehingga kegagalan koneksi socket tidak menggagalkan mutasi invoice di database.
 
 ### 4.3. Verifikasi Gateway WhatsApp (`WhatsappService::sendPaymentSuccess`)
 1. **Normalisasi Nomor:** Mengonversi nomor awalan lokal `08xx` menjadi standar internasional `628xx` menggunakan ekspresi reguler.

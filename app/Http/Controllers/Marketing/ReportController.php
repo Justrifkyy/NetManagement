@@ -17,7 +17,7 @@ class ReportController extends Controller
         // Leads acquired total
         $totalLeads = Lead::where('marketing_id', $marketingId)->count();
         $convertedCount = Lead::where('marketing_id', $marketingId)
-            ->whereIn('status', ['aktif', 'converted'])
+            ->where('status', 'aktif')
             ->count();
 
         $conversionRate = $totalLeads > 0 ? round(($convertedCount / $totalLeads) * 100, 1) : 0;
@@ -62,7 +62,7 @@ class ReportController extends Controller
                 ->whereDate('created_at', $date)
                 ->count();
             $convCount = Lead::where('marketing_id', $marketingId)
-                ->whereIn('status', ['aktif', 'converted'])
+                ->where('status', 'aktif')
                 ->whereDate('updated_at', $date)
                 ->count();
             $rate = $leadsCount > 0 ? round(($convCount / $leadsCount) * 100, 1) : 0;

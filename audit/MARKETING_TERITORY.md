@@ -18,7 +18,7 @@
 - **Core Findings Summary:**
   - **Strict Access Control (VERIFIED):** Route group `prefix('marketing')` dilindungi middleware `role:marketing`. Mekanisme sandboxing berhasil mengunci role marketing agar tidak dapat menjangkau endpoint SuperAdmin, Admin, Teknisi, maupun Pelanggan. Akun non-aktif ditendang otomatis secara real-time.
   - **Data Isolation / Tenancy (VERIFIED):** Seluruh query pada controller marketing diisolasi secara ketat berdasarkan `marketing_id = Auth::id()`. Sales tidak dapat mengintip atau mengklaim prospek milik sales lain.
-  - **Lead Conversion Transaction (VERIFIED & HARDENED):** Method `LeadController::convert` (`convertToCustomer`) membungkus seluruh alur pembuatan akun `User` (role: `customer`), record `Customer`, pembaruan status `Lead` (`converted`), dan pembuatan `Ticket` pasang baru dalam `DB::transaction(...)`. Berhasil mem-bypass dan memusnahkan dependensi pada model/tabel polymorphic lawas.
+  - **Lead Conversion Transaction (VERIFIED & HARDENED):** Method `LeadController::convert` (`convertToCustomer`) membungkus seluruh alur pembuatan akun `User` (role: `customer`), record `Customer`, pembaruan status `Lead` (`aktif`), dan pembuatan `Ticket` pasang baru dalam `DB::transaction(...)`. Status prospek secara presisi dimutakhirkan ke `aktif` sesuai batasan ENUM skema MySQL/SQLite tanpa memicu kegagalan constraint. Berhasil mem-bypass dan memusnahkan dependensi pada model/tabel polymorphic lawas.
   - **KTP & Customer Photo Storage, Streaming Security & Orphan Cleanup (VERIFIED & HARDENED):** Upload identitas KTP dan foto calon pelanggan (wajah) diarahkan ke disk `local` (`storage/app/uploads/ktp` dan `storage/app/uploads/customer`) yang berada di luar jangkauan root publik web server. Akses hanya dapat dilakukan melalui controller terotentikasi `CustomerDocumentController@showKtp` dan `@showCustomerPhoto` dengan otorisasi ketat. Seluruh operasi `store()` dan `update()` pada `LeadController` dibungkus dalam `DB::transaction()` dengan proteksi *rollback* otomatis yang menghapus file fisik di storage jika query database gagal. Berkas fisik dibersihkan tuntas dari disk `local` (dan fallback `public`) saat prospek di-update atau di-destroy.
   - **Interactive File Upload UX & Real-time Progress (VERIFIED):** Form input prospek baru (`marketing/leads/create.blade.php`) dilengkapi preview interaktif (live thumbnail, ukuran berkas KB/MB, validasi batas 5MB, reset file) serta modal upload tracker real-time (`XMLHttpRequest.upload.onprogress`) yang menampilkan persentase dan status pengiriman data secara transparan.
   - **Real Data Binding & Clean Architecture (100% VERIFIED):** Seluruh modul operasional Marketing (Prospek, Pelanggan, Laporan Kinerja, Dashboard) telah 100% menggunakan query Eloquent database hidup dengan pagination dan agregasi dinamis. Fitur Jadwal (`/marketing/schedules`) yang sebelumnya menggunakan mock `@for` loop telah dihapus total (route, view, dan navigation menus dibersihkan) demi menjaga integritas sistem produksi.
@@ -124,14 +124,14 @@ sequenceDiagram
     participant T as Ticket Model (installation)
 
     M->>C: POST /marketing/leads/{lead}/convert
-    C->>C: Cek status: jika 'converted' / 'aktif' -> Return Error
+    C->>C: Cek status: jika 'aktif' -> Return Error
     C->>DB: DB::transaction(callback)
     activate DB
     DB->>U: User::create(role: 'customer', email, password, is_active: true)
     U-->>DB: $user instance
     DB->>Cust: Customer::create(user_id, lead_id, customer_code: 'CUST-XXXXX')
     Cust-->>DB: $customer instance
-    DB->>L: $lead->update(['status' => 'converted'])
+    DB->>L: $lead->update(['status' => 'aktif'])
     DB->>T: $customer->tickets()->create(type: 'installation', status: 'open')
     T-->>DB: $ticket created
     DB->>C: Commit Transaction & Flash Temporary Credentials
@@ -143,11 +143,11 @@ sequenceDiagram
 
 1. **State Guard:**
    ```php
-   if ($lead->status === 'converted' || $lead->status === 'aktif') {
+   if ($lead->status === 'aktif') {
        return back()->with('error', 'Sudah menjadi pelanggan.');
    }
    ```
-   Mencegah duplikasi akun pengguna jika tombol diklik berulang kali (*double submit protection*).
+   Mencegah duplikasi akun pengguna jika tombol diklik berulang kali (*double submit protection*). Menggunakan status ENUM resmi `aktif`.
 
 2. **Atomic Execution (`DB::transaction`):**
    Seluruh pembuatan entitas dibungkus dalam blok `DB::transaction(function () use ($lead) { ... })`. Jika terjadi kegagalan saat membuat tiket atau profil pelanggan, pembuatan record `users` akan di-rollback tanpa meninggalkan record *orphan* (yatim).
@@ -303,7 +303,7 @@ Pada [resources/views/marketing/leads/create.blade.php](file:///c:/Users/LENOVO/
 - **Controller:** [ReportController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Marketing/ReportController.php#L13-L89).
 - **Binding Data Database Asli (Confirmed):**
   - `$kpis['total_leads']`: Dihitung langsung via `Lead::where('marketing_id', $marketingId)->count()`.
-  - `$kpis['conversions']`: Dihitung via `Lead::where('marketing_id', $marketingId)->whereIn('status', ['aktif', 'converted'])->count()`.
+  - `$kpis['conversions']`: Dihitung via `Lead::where('marketing_id', $marketingId)->where('status', 'aktif')->count()`.
   - `$kpis['revenue']`: Menghitung total harga paket pada relasi `subscriptions` aktif milik pelanggan yang terhubung dengan lead marketing yang bersangkutan.
   - `$monthlyTrends`: Perhitungan agregasi 3 bulan terakhir menggunakan `whereMonth` dan `whereYear`.
   - `$dailyBreakdown`: Matriks aktivitas 10 hari terakhir menghitung prospek masuk (`created_at`) dan closing (`updated_at`) harian.
@@ -328,7 +328,7 @@ Pada [resources/views/marketing/leads/create.blade.php](file:///c:/Users/LENOVO/
 - **Controller:** [LeadController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Marketing/LeadController.php).
 - **Binding Data Database Asli (Confirmed):**
   - Form create mengambil daftar paket aktif via `Package::where('is_active', true)->get()`.
-  - Form edit mengunci data yang sudah dikonversi (`status === 'converted'`).
+  - Form edit mengunci data yang sudah dikonversi (`status === 'aktif'`).
   - Index memuat daftar prospek dengan paginasi `paginate(15)` dan eager loading paket.
 
 ### 5.5. Pembersihan Fitur Mocked: Eliminasi Modul Jadwal / Schedules (RESOLVED)

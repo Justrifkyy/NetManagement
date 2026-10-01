@@ -178,11 +178,12 @@ Salah satu tantangan terbesar integrasi payment gateway adalah ketergantungan pa
    - Pada [InvoiceController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Customer/InvoiceController.php#L107-L171):
    - Dipicu otomatis oleh callback Javascript `window.snap.pay(token, { onSuccess: ... })` pada [show.blade.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/resources/views/user/billing/show.blade.php#L187-L195).
    - Backend melakukan kueri langsung ke server Midtrans via `\Midtrans\Transaction::status($invoice->invoice_number)`.
-3. **Rantai Otomasi Pasca Lunas:**
+3. **Rantai Otomasi Pasca Lunas (Non-Blocking Queue Job):**
    Ketika status pembayaran terkonfirmasi lunas (`settlement` / `capture accept`):
-   - Status invoice diubah menjadi `paid` dengan stempel waktu `paid_at`.
-   - Mengaktifkan router MikroTik secara instan via `NetworkService::enableCustomer($invoice->subscription)` (mengaktifkan PPPoE Secret dan menghapus IP dari address-list `ISOLIR`).
-   - Mengirim notifikasi resi pelunasan otomatis via WhatsApp gateway (`WhatsappService::sendPaymentSuccess`).
+   - Status invoice diubah menjadi `paid` dengan stempel waktu `paid_at`, status langganan menjadi `active`, dan flag isolir customer dinonaktifkan (`is_isolated = false`) dalam transaksi DB atomik.
+   - Panggilan soket perangkat keras MikroTik dan gateway WhatsApp didelegasikan ke antrean latar belakang via `SyncPaidInvoiceHardwareJob::dispatch($invoice)`.
+   - Hal ini menghilangkan sumbatan arsitektur (*network blocking*), menjamin Midtrans menerima respons HTTP 200 segera, dan mengisolir potensi timeout router fisik dari proses transaksi perbankan pelanggan.
+   - MikroTik dinormalisasi untuk kompatibilitas RouterOS v6 dan v7 saat melepas address-list `ISOLIR`.
 
 ---
 

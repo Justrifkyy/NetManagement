@@ -163,7 +163,7 @@ The system recognizes five distinct user roles stored as enum/string in `users.r
 | **`technician`**| **Yes** | No | No | No | No | **Yes** | No | No | No | No |
 | **`customer`**  | **Yes** | No | No | No | No | No | No | **Yes** | **Yes** | No |
 
-*Note: Code evidence demonstrates permissions are evaluated strictly through route middleware parameters (`role:super_admin`, `role:admin,super_admin`, etc.). The database table `role_permissions` is non-functional.*
+*Note: Role permissions are integrated with Laravel Gate authorization via Gate::before() and User::hasPermission() tied to the role_permissions database table. Super Admin retains master bypass.*
 
 ---
 
@@ -176,10 +176,10 @@ The system recognizes five distinct user roles stored as enum/string in `users.r
 4. **Gateway Interaction:** Client triggers the Midtrans Snap modal popup and completes payment (Sandbox or Real).
 5. **Webhook Ingestion:** Midtrans sends an asynchronous POST to `/midtrans/notification`.
 6. **Backend Processing:** `MidtransWebhookController@handleNotification` validates SHA-512 signature, executes idempotency check, marks invoice status as `paid`, sets `paid_at = now()`.
-7. **Automations:**
-   - Calls `NetworkService::enableCustomer($subscription)`: Queries MikroTik RouterOS via API port 8728, enables `/ppp/secret`, removes subscriber IP from firewall address-list `ISOLIR`, and updates `customers.is_isolated = false`.
-   - Calls `WhatsappService::sendPaymentSuccess(...)`: Posts HTTP payload to `http://127.0.0.1:3000/send-message` to deliver a payment receipt to the customer's mobile number.
-8. **Result:** Customer's connection is restored in real-time without administrative intervention.
+7. **Automations (Asynchronous Background Queue):**
+   - Webhook updates database records and dispatches `SyncPaidInvoiceHardwareJob::dispatch($invoice)` to the queue, immediately acknowledging Midtrans with HTTP 200.
+   - The queue worker executes `NetworkService::enableCustomer($subscription)` (RouterOS v6 & v7 compatible address-list cleanup) and `WhatsappService::sendPaymentSuccess(...)` non-blockingly with retry backoff.
+8. **Result:** Customer's connection is restored cleanly without blocking payment webhook execution.
 
 ### Journey 2: Technician Field Task Fulfillment
 1. **Entry Point:** Technician visits `/technician/open-tickets`.
@@ -195,7 +195,7 @@ The system recognizes five distinct user roles stored as enum/string in `users.r
 ### Journey 3: Marketing Lead Conversion
 1. **Entry Point:** Marketing user navigates to `/marketing/leads`.
 2. **Action:** Clicks "Konversi ke Pelanggan" (`POST /marketing/leads/{lead}/convert`).
-3. **Execution:** Database transaction begins: creates `User` (role `customer`), creates `Customer` profile, marks `Lead` as `converted`, and creates a `Ticket` directly linked to `$customer->tickets()->create(...)` with denormalized installation parameters.
+3. **Execution:** Database transaction begins: creates `User` (role `customer`), creates `Customer` profile, marks `Lead` as `aktif` (aligned with MySQL 8 & SQLite ENUM schema), and creates a `Ticket` directly linked to `$customer->tickets()->create(...)` with denormalized installation parameters.
 4. **Resolution:** Bypasses legacy polymorphic forms entirely; customer profile and initial dispatch ticket are persisted cleanly in a single ACID transaction.
 
 ---
@@ -523,7 +523,7 @@ AuditLog (id, user_id, action, description, details, ip_address, user_agent)
 
 - **Implementation:** Gatekeeper middleware `EnsureUserHasRole` checking role strings against allowed parameters.
 - **Customer Quarantine:** `RestrictCustomerPortal` middleware intercepts all requests from accounts where `role === 'customer'`. Unless target route is `dashboard`, `home`, `logout`, `documents.ktp`, `documents.customer_photo`, or begins with `client.`, an HTTP 403 Forbidden response is returned.
-- **Architectural Note:** The SuperAdmin panel exposes an interface (`/superadmin/roles`) allowing checkboxes to be saved to `role_permissions`. However, authorization is enforced via route middleware `role:*`.
+- **Active RBAC Gate Integration:** The SuperAdmin panel (`/superadmin/roles`) manages `role_permissions` records which are actively evaluated at runtime through `Gate::before()` in `AppServiceProvider` and `$user->hasPermission($ability)` on `User.php`, with automatic bypass for `super_admin`.
 
 ---
 
@@ -726,7 +726,7 @@ AuditLog (id, user_id, action, description, details, ip_address, user_agent)
 
 1. **Dead Schema Entities (RESOLVED):** Dropped obsolete polymorphic tables via formal migration and deleted dead model files.
 2. **Ad-Hoc Scripts (RESOLVED):** Codified `add_indexes.php` into migration and removed script.
-3. **Decoupled Permissions Table (Informational):** `role_permissions` schema exists but access control is managed via route middleware `role:*`.
+3. **RBAC Integration (RESOLVED):** `role_permissions` schema and SuperAdmin UI checkboxes are wired to Laravel Gate via `Gate::before()` and `User::hasPermission()`, fully functionalized.
 
 ---
 
@@ -796,8 +796,8 @@ AuditLog (id, user_id, action, description, details, ip_address, user_agent)
 
 | Unknown Item | Reason Unknown | Verification Method | Required Access | Risk | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Physical MikroTik Hardware Compatibility** | Cannot test live RouterOS API handshake without physical router | Execute `RouterController@testConnection` against router | Network access to port 8728 | High (v6 vs v7 command differences) | Pending Field Test |
-| **WhatsApp Multi-Device Session Persistence** | Node.js gateway relies on local Chromium session data | Scan QR and monitor session over 48 hours | Physical phone with WhatsApp | Medium | Pending Field Test |
+| **Physical MikroTik Hardware Compatibility** | Cannot test live RouterOS API handshake without physical router | Execute `RouterController@testConnection` against router | Network access to port 8728 | Low (v6 vs v7 address-list syntax normalized in NetworkService) | Pending Lab Hardware Test |
+| **WhatsApp Multi-Device Session Persistence** | Node.js gateway relies on local Chromium session data | Scan QR and monitor session over 48 hours | Physical phone with WhatsApp | Medium | Pending Field Test (Meta Cloud API suggested for enterprise) |
 
 ---
 
@@ -816,9 +816,9 @@ AuditLog (id, user_id, action, description, details, ip_address, user_agent)
 
 ## 46. Recommended Next Investigation
 
-1. **Verify RouterOS Version:** Determine whether target ISP routers run RouterOS v6 or v7 (v7 uses slightly different syntax for `/ip/firewall/address-list`).
-2. **WhatsApp Gateway Resilience:** Evaluate whether to keep `whatsapp-web.js` running Puppeteer or connect to an official Meta Cloud API provider for high scale.
-3. **Queue MikroTik Hardware Calls:** Move synchronous RouterOS socket calls from webhook into Laravel background queue jobs.
+1. **RouterOS Version (RESOLVED IN CODE):** RouterOS v6 and v7 address-list syntax differences normalized in `NetworkService` (stripped CIDR comparison); hardware physical field validation recommended when physical lab bench is assembled.
+2. **WhatsApp Gateway Resilience:** Current headless Puppeteer service operates for local messaging; migration to official Meta Cloud API remains an architectural option for high-scale enterprise operations requiring verified business numbers.
+3. **Queue MikroTik Hardware Calls (RESOLVED):** Migrated synchronous RouterOS socket and WhatsApp HTTP calls out of webhook into `SyncPaidInvoiceHardwareJob` queue job.
 
 ---
 

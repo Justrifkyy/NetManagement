@@ -96,4 +96,18 @@ protected $fillable = [
     {
         return $this->hasOne(Customer::class);
     }
+
+    /**
+     * Cek apakah user memiliki hak akses spesifik via RolePermission
+     */
+    public function hasPermission(string $permission): bool
+    {
+        if ($this->role === 'super_admin') {
+            return true;
+        }
+
+        return \App\Models\RolePermission::where('role', $this->role)
+            ->where('permission', $permission)
+            ->exists();
+    }
 }
