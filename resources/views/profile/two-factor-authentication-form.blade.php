@@ -50,8 +50,8 @@
 
                 @if ($showingConfirmation)
                     <div class="mt-4">
-                        <label for="code" class="block text-slate-300 font-bold mb-2">{{ __('Kode OTP') }}</label>
-                        <input id="code" type="text" name="code" class="block w-1/2 bg-slate-800/50 border-slate-700 text-slate-100 rounded-xl focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all" inputmode="numeric" autofocus autocomplete="one-time-code"
+                        <label for="code" class="block text-slate-300 font-bold mb-2">{{ __('Kode OTP (6 Digit)') }}</label>
+                        <input id="code" type="text" name="code" class="block w-full sm:w-1/2 px-4 py-3 bg-slate-800/50 border border-slate-700 text-slate-100 rounded-xl focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all font-mono text-center tracking-widest text-lg placeholder-slate-500" placeholder="123456" inputmode="numeric" autofocus autocomplete="one-time-code"
                             wire:model="code"
                             wire:keydown.enter="confirmTwoFactorAuthentication" />
                         <x-input-error for="code" class="mt-2 text-rose-400" />
