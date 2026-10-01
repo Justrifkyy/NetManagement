@@ -91,7 +91,7 @@
                                     <td class="px-6 py-4 text-right">
                                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20 shadow-sm shadow-rose-500/10">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                            Lewat {{ now()->diffInDays($invoice->due_date) }} Hari
+                                            Lewat {{ (int) ceil(now()->diffInDays($invoice->due_date)) }} Hari
                                         </span>
                                     </td>
                                 </tr>
