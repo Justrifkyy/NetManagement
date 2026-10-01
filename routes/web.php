@@ -196,6 +196,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('/customers', [MarketingCustomerController::class, 'index'])->name('customers.index');
         Route::get('/customers/{customer}', [MarketingCustomerController::class, 'show'])->name('customers.show');
         Route::get('/reports', [MarketingReportController::class, 'index'])->name('reports.index');
+        Route::get('/reports/export', [MarketingReportController::class, 'export'])->name('reports.export');
         Route::view('/profile', 'marketing.profile.index')->name('profile.index');
     });
 

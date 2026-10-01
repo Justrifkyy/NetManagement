@@ -13,9 +13,36 @@
                     <h1 class="text-4xl font-black text-white tracking-tighter">Laporan <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-300">Kinerja Marketing</span></h1>
                     <p class="text-slate-400 mt-2 font-medium">Analisis mendalam mengenai konversi prospek, pertumbuhan revenue, dan efektivitas tim.</p>
                 </div>
-                <div class="flex gap-2">
-                    <button class="px-5 py-2.5 bg-slate-900 border border-slate-800 text-slate-300 text-xs font-bold rounded-xl hover:bg-slate-800 transition-all">Bulan Ini</button>
-                    <button class="px-5 py-2.5 bg-indigo-600 text-white text-xs font-black uppercase tracking-widest rounded-xl shadow-lg shadow-indigo-500/20 hover:bg-indigo-500 transition-all">Export Report</button>
+                <div class="flex items-center gap-3">
+                    {{-- Dropdown Periode Bulan --}}
+                    <div class="relative" x-data="{ open: false }">
+                        <button @click="open = !open" @click.outside="open = false" type="button"
+                            class="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-200 text-xs font-bold rounded-xl transition-all shadow-sm">
+                            <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            <span>{{ $currentPeriodLabel ?? 'Bulan Ini' }}</span>
+                            <svg class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+
+                        <div x-show="open" x-transition.origin.top.right x-cloak
+                            class="absolute right-0 mt-2 w-48 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl z-50 py-1.5 backdrop-blur-md">
+                            @foreach ($periodLabels as $key => $label)
+                                <a href="{{ route('marketing.reports.index', ['period' => $key]) }}"
+                                    class="flex items-center justify-between px-4 py-2.5 text-xs font-semibold transition-colors {{ ($period ?? 'this_month') === $key ? 'bg-indigo-600/10 text-indigo-400 font-bold border-l-2 border-indigo-500' : 'text-slate-300 hover:bg-slate-800/80 hover:text-white' }}">
+                                    <span>{{ $label }}</span>
+                                    @if (($period ?? 'this_month') === $key)
+                                        <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    @endif
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    {{-- Tombol Export Report --}}
+                    <a href="{{ route('marketing.reports.export', ['period' => $period ?? 'this_month']) }}"
+                        class="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black uppercase tracking-widest rounded-xl shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 transition-all">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                        <span>Export Report</span>
+                    </a>
                 </div>
             </div>
 
