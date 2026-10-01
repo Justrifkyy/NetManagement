@@ -117,13 +117,11 @@
                             <div>
                                 <label class="block text-sm font-bold text-slate-300 mb-2">Status Penjualan (Pipeline)</label>
                                 <select name="status" class="w-full px-4 py-3 bg-slate-800/50 text-slate-100 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all appearance-none cursor-pointer">
-                                    <option value="prospect" @selected($lead->status === 'prospect') class="bg-slate-800">Prospek</option>
-                                    <option value="contacted" @selected($lead->status === 'contacted') class="bg-slate-800">Sudah Dihubungi</option>
-                                    <option value="qualified" @selected($lead->status === 'qualified') class="bg-slate-800">Qualified</option>
-                                    <option value="proposal_sent" @selected($lead->status === 'proposal_sent') class="bg-slate-800">Penawaran Dikirim</option>
-                                    <option value="negotiation" @selected($lead->status === 'negotiation') class="bg-slate-800">Negosiasi</option>
-                                    <option value="converted" @selected($lead->status === 'converted') class="bg-slate-800">Berhasil (Konversi)</option>
-                                    <option value="lost" @selected($lead->status === 'lost') class="bg-slate-800">Gagal (Hilang)</option>
+                                    <option value="prospek" @selected($lead->status === 'prospek' || $lead->status === 'prospect') class="bg-slate-800">Prospek</option>
+                                    <option value="survey" @selected($lead->status === 'survey') class="bg-slate-800">Survey Lokasi</option>
+                                    <option value="instalasi" @selected($lead->status === 'instalasi') class="bg-slate-800">Instalasi Fisik</option>
+                                    <option value="aktif" @selected($lead->status === 'aktif' || $lead->status === 'converted') class="bg-slate-800">Aktif (Terpasang)</option>
+                                    <option value="batal" @selected($lead->status === 'batal' || $lead->status === 'lost') class="bg-slate-800">Batal</option>
                                 </select>
                             </div>
 

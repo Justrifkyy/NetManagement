@@ -74,8 +74,30 @@
                         <tbody class="divide-y divide-slate-800/60 text-sm">
                             @forelse ($leads as $lead)
                                 @php
-                                    $statusColor = match($lead->status) { 'prospect' => 'sky', 'contacted' => 'blue', 'qualified' => 'indigo', 'proposal_sent' => 'purple', 'negotiation' => 'amber', 'converted' => 'emerald', 'lost' => 'rose', default => 'slate' };
-                                    $statusText = match($lead->status) { 'prospect' => 'Prospek', 'contacted' => 'Dihubungi', 'qualified' => 'Qualified', 'proposal_sent' => 'Penawaran', 'negotiation' => 'Negosiasi', 'converted' => 'Konversi', 'lost' => 'Hilang', default => 'Unknown' };
+                                    $statusColor = match($lead->status) {
+                                        'prospek', 'prospect' => 'sky',
+                                        'survey' => 'amber',
+                                        'instalasi' => 'indigo',
+                                        'aktif', 'converted' => 'emerald',
+                                        'batal', 'lost' => 'rose',
+                                        'contacted' => 'blue',
+                                        'qualified' => 'indigo',
+                                        'proposal_sent' => 'purple',
+                                        'negotiation' => 'amber',
+                                        default => 'slate'
+                                    };
+                                    $statusText = match($lead->status) {
+                                        'prospek', 'prospect' => 'Prospek',
+                                        'survey' => 'Survey',
+                                        'instalasi' => 'Instalasi',
+                                        'aktif', 'converted' => 'Aktif',
+                                        'batal', 'lost' => 'Batal',
+                                        'contacted' => 'Dihubungi',
+                                        'qualified' => 'Qualified',
+                                        'proposal_sent' => 'Penawaran',
+                                        'negotiation' => 'Negosiasi',
+                                        default => ucfirst($lead->status ?? 'Unknown')
+                                    };
                                 @endphp
                                 <tr class="hover:bg-slate-800/40 transition-colors group">
                                     <td class="px-6 py-4">
@@ -105,7 +127,7 @@
                                     </td>
                                     <td class="px-6 py-4">
                                         <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-{{ $statusColor }}-500/10 text-{{ $statusColor }}-400 border border-{{ $statusColor }}-500/20">
-                                            @if(in_array($lead->status, ['prospect', 'negotiation', 'contacted']))
+                                            @if(in_array($lead->status, ['prospek', 'prospect', 'survey', 'instalasi', 'negotiation', 'contacted']))
                                                 <span class="w-1.5 h-1.5 rounded-full bg-{{ $statusColor }}-500 mr-1.5 animate-pulse"></span>
                                             @endif
                                             {{ $statusText }}

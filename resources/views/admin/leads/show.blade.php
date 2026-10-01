@@ -13,8 +13,30 @@
             <div class="bg-slate-900/80 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-8">
                 
                 @php
-                    $statusColor = match($lead->status) { 'prospect' => 'sky', 'contacted' => 'blue', 'qualified' => 'indigo', 'proposal_sent' => 'purple', 'negotiation' => 'amber', 'converted' => 'emerald', 'lost' => 'rose', default => 'slate' };
-                    $statusText = match($lead->status) { 'prospect' => 'Prospek', 'contacted' => 'Sudah Dihubungi', 'qualified' => 'Qualified', 'proposal_sent' => 'Penawaran Dikirim', 'negotiation' => 'Tahap Negosiasi', 'converted' => 'Berhasil (Konversi)', 'lost' => 'Gagal (Hilang)', default => 'Unknown' };
+                    $statusColor = match($lead->status) {
+                        'prospek', 'prospect' => 'sky',
+                        'survey' => 'amber',
+                        'instalasi' => 'indigo',
+                        'aktif', 'converted' => 'emerald',
+                        'batal', 'lost' => 'rose',
+                        'contacted' => 'blue',
+                        'qualified' => 'indigo',
+                        'proposal_sent' => 'purple',
+                        'negotiation' => 'amber',
+                        default => 'slate'
+                    };
+                    $statusText = match($lead->status) {
+                        'prospek', 'prospect' => 'Prospek',
+                        'survey' => 'Survey',
+                        'instalasi' => 'Instalasi',
+                        'aktif', 'converted' => 'Aktif (Berhasil)',
+                        'batal', 'lost' => 'Batal (Gagal)',
+                        'contacted' => 'Sudah Dihubungi',
+                        'qualified' => 'Qualified',
+                        'proposal_sent' => 'Penawaran Dikirim',
+                        'negotiation' => 'Tahap Negosiasi',
+                        default => ucfirst($lead->status ?? 'Unknown')
+                    };
                 @endphp
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
