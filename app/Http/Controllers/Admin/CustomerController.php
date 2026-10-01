@@ -81,11 +81,16 @@ class CustomerController extends Controller
         }
 
         // Log activity
+        $customerName = $customer->user?->name ?? $customer->customer_code;
         \App\Models\AuditLog::create([
             'user_id' => Auth::id(),
             'action' => 'isolate_customer',
-            'description' => "Pelanggan {$customer->id} diisolir. Alasan: {$reason}",
-            'details' => ['reason' => $reason],
+            'description' => "Pelanggan {$customer->customer_code} ({$customerName}) diisolir. Alasan: {$reason}",
+            'details' => [
+                'reason' => $reason,
+                'customer_id' => $customer->id,
+                'customer_code' => $customer->customer_code,
+            ],
         ]);
 
         return redirect()->route('admin.customers.show', $customer)->with('success', 'Pelanggan berhasil diisolir');
@@ -112,10 +117,15 @@ class CustomerController extends Controller
             Log::error("CustomerController activate: Gagal aktivasi router untuk Customer #{$customer->id}: " . $e->getMessage());
         }
 
+        $customerName = $customer->user?->name ?? $customer->customer_code;
         \App\Models\AuditLog::create([
             'user_id' => Auth::id(),
             'action' => 'activate_customer',
-            'description' => "Pelanggan {$customer->id} diaktifkan kembali",
+            'description' => "Pelanggan {$customer->customer_code} ({$customerName}) diaktifkan kembali.",
+            'details' => [
+                'customer_id' => $customer->id,
+                'customer_code' => $customer->customer_code,
+            ],
         ]);
 
         return redirect()->route('admin.customers.show', $customer)->with('success', 'Pelanggan berhasil diaktifkan');

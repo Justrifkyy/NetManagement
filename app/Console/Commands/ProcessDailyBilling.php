@@ -117,9 +117,21 @@ class ProcessDailyBilling extends Command
 
             try {
                 // Database updates wrapped in transaction
-                DB::transaction(function () use ($customer, $subscription) {
+                DB::transaction(function () use ($customer, $subscription, $invoice) {
                     $customer->update(['is_isolated' => true]);
                     $subscription->update(['status' => 'isolated']);
+
+                    \App\Models\AuditLog::create([
+                        'user_id'     => null,
+                        'action'      => 'isolate_customer',
+                        'description' => "Pelanggan {$customer->customer_code} (" . ($customer->user?->name ?? 'Customer') . ") diisolir otomatis oleh sistem karena tagihan {$invoice->invoice_number} lewat jatuh tempo.",
+                        'details'     => [
+                            'reason'         => "Tagihan {$invoice->invoice_number} lewat jatuh tempo",
+                            'invoice_id'     => $invoice->id,
+                            'customer_id'    => $customer->id,
+                            'customer_code'  => $customer->customer_code,
+                        ],
+                    ]);
                 });
 
                 // Disable access on MikroTik router
