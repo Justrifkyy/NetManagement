@@ -23,15 +23,28 @@ class NetworkAsset extends Model
         'ip_address', 
         'brand', 
         'type', // OLT, Router, AP, ODP
-        'is_active'
+        'is_active',
+        'api_username',
+        'api_password',
+        'api_port',
+        'port_capacity',
+        'coordinates',
     ];
 
     protected $casts = [
-        'is_active' => 'boolean',
+        'is_active'     => 'boolean',
+        'api_password'  => 'encrypted',
+        'api_port'      => 'integer',
+        'port_capacity' => 'integer',
     ];
 
     public function tickets()
     {
         return $this->hasMany(Ticket::class, 'router_id');
+    }
+
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class, 'router_id');
     }
 }

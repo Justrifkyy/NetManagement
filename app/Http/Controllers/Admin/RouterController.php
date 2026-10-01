@@ -24,13 +24,24 @@ class RouterController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'location' => 'required|string',
-            'ip_address' => 'required|ip',
-            'brand' => 'required|string|max:255',
-            'type' => 'required|in:OLT,Router,AP,ODP',
-            'is_active' => 'required|boolean',
+            'name'          => 'required|string|max:255',
+            'location'      => 'required|string|max:255',
+            'brand'         => 'required|string|max:255',
+            'type'          => 'required|in:OLT,Router,AP,ODP',
+            'is_active'     => 'required|boolean',
+            'ip_address'    => 'required_if:type,Router,OLT,AP|nullable|ip',
+            'api_username'  => 'required_if:type,Router,OLT|nullable|string|max:255',
+            'api_password'  => 'required_if:type,Router,OLT|nullable|string',
+            'api_port'      => 'required_if:type,Router,OLT|nullable|integer|min:1|max:65535',
+            'port_capacity' => 'required_if:type,ODP|nullable|integer|min:1',
+            'coordinates'   => 'nullable|string|max:255',
         ]);
+
+        if ($validated['type'] === 'ODP') {
+            $validated['api_username'] = null;
+            $validated['api_password'] = null;
+            $validated['api_port'] = null;
+        }
 
         NetworkAsset::create($validated);
 
@@ -46,13 +57,29 @@ class RouterController extends Controller
     public function update(Request $request, NetworkAsset $router)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'location' => 'required|string',
-            'ip_address' => 'required|ip',
-            'brand' => 'required|string|max:255',
-            'type' => 'required|in:OLT,Router,AP,ODP',
-            'is_active' => 'required|boolean',
+            'name'          => 'required|string|max:255',
+            'location'      => 'required|string|max:255',
+            'brand'         => 'required|string|max:255',
+            'type'          => 'required|in:OLT,Router,AP,ODP',
+            'is_active'     => 'required|boolean',
+            'ip_address'    => 'required_if:type,Router,OLT,AP|nullable|ip',
+            'api_username'  => 'required_if:type,Router,OLT|nullable|string|max:255',
+            'api_password'  => 'nullable|string',
+            'api_port'      => 'required_if:type,Router,OLT|nullable|integer|min:1|max:65535',
+            'port_capacity' => 'required_if:type,ODP|nullable|integer|min:1',
+            'coordinates'   => 'nullable|string|max:255',
         ]);
+
+        // Pertahankan password lama jika tidak diisi saat update
+        if (empty($validated['api_password'])) {
+            unset($validated['api_password']);
+        }
+
+        if ($validated['type'] === 'ODP') {
+            $validated['api_username'] = null;
+            $validated['api_password'] = null;
+            $validated['api_port'] = null;
+        }
 
         $router->update($validated);
 
@@ -61,13 +88,27 @@ class RouterController extends Controller
 
     public function testConnection(NetworkAsset $router)
     {
-        // Tes koneksi non-blocking ke port API MikroTik (default 8728)
-        $port = (int) config('services.mikrotik.port', 8728);
+        if ($router->type === 'ODP') {
+            return response()->json([
+                'status' => 'info',
+                'message' => 'Perangkat ODP merupakan splitter pasif optik (tidak memiliki socket IP).',
+            ]);
+        }
+
+        if (empty($router->ip_address)) {
+            return response()->json([
+                'status' => 'offline',
+                'message' => 'IP Address perangkat belum dikonfigurasi.',
+            ]);
+        }
+
+        // Tes koneksi non-blocking ke port API MikroTik (dari database perangkat atau default 8728)
+        $port = (int) ($router->api_port ?: config('services.mikrotik.port', 8728));
         $isOnline = $this->checkSocket($router->ip_address, $port, 2);
 
         return response()->json([
             'status' => $isOnline ? 'online' : 'offline',
-            'message' => $isOnline ? 'Koneksi ke perangkat berhasil (Online)' : 'Perangkat tidak merespons (Offline / Timeout)',
+            'message' => $isOnline ? "Koneksi ke port {$port} berhasil (Online)" : "Perangkat tidak merespons pada port {$port} (Offline / Timeout)",
         ]);
     }
 

@@ -17,6 +17,7 @@ class Subscription extends Model
     protected $fillable = [
         'customer_id',
         'package_id',
+        'router_id',
         'pppoe_username',
         'pppoe_password',
         'ip_address',
@@ -37,6 +38,11 @@ class Subscription extends Model
     public function package()
     {
         return $this->belongsTo(Package::class);
+    }
+
+    public function router()
+    {
+        return $this->belongsTo(NetworkAsset::class, 'router_id');
     }
 
     // Satu langganan punya banyak tagihan (bulan ini, bulan lalu, dst)

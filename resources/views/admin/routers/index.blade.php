@@ -57,9 +57,17 @@
                                         </div>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <div class="px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg inline-flex items-center text-sky-400 font-mono text-xs tracking-wider shadow-inner">
-                                            {{ $router->ip_address }}
-                                        </div>
+                                        @if($router->ip_address)
+                                            <div class="px-3 py-1.5 bg-slate-950 border border-slate-700 rounded-lg inline-flex items-center text-sky-400 font-mono text-xs tracking-wider shadow-inner">
+                                                {{ $router->ip_address }}{{ $router->api_port && $router->api_port != 8728 ? ':' . $router->api_port : '' }}
+                                            </div>
+                                        @elseif($router->type === 'ODP' && $router->port_capacity)
+                                            <div class="px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-lg inline-flex items-center text-xs font-semibold">
+                                                {{ $router->port_capacity }} Port Splitter
+                                            </div>
+                                        @else
+                                            <span class="text-slate-500 font-mono text-xs">-</span>
+                                        @endif
                                     </td>
                                     <td class="px-6 py-4">
                                         <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-{{ $typeColor }}-500/10 text-{{ $typeColor }}-400 border border-{{ $typeColor }}-500/20">

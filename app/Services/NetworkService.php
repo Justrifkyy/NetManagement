@@ -41,35 +41,57 @@ class NetworkService
     }
 
     /**
-     * Mendapatkan opsi router berdasarkan langganan/customer jika ada data router fisik
+     * Mendapatkan konfigurasi koneksi router (IP, port, username, password)
+     * Membaca dari objek router subscription/tiket dengan fallback ke .env
      */
     private function resolveRouterConfig(Subscription $subscription, ?Ticket $ticket = null): array
     {
         $config = [];
+        $router = null;
 
-        // 1. Prioritaskan router langsung dari tiket jika tersedia
-        if ($ticket && $ticket->router_id) {
+        // 1. Prioritaskan relasi router langsung dari subscription
+        if ($subscription->router_id) {
+            $router = $subscription->router ?? NetworkAsset::find($subscription->router_id);
+        }
+
+        // 2. Jika belum ada di subscription, ambil dari tiket jika tersedia
+        if (!$router && $ticket && $ticket->router_id) {
             $router = $ticket->router ?? NetworkAsset::find($ticket->router_id);
-            if ($router && !empty($router->ip_address)) {
+        }
+
+        // 3. Fallback: Cari dari riwayat tiket instalasi customer
+        if (!$router) {
+            $customer = $subscription->customer;
+            if ($customer) {
+                $installationTicket = $customer->tickets()
+                    ->whereNotNull('router_id')
+                    ->latest()
+                    ->with('router')
+                    ->first();
+
+                if ($installationTicket && $installationTicket->router) {
+                    $router = $installationTicket->router;
+                }
+            }
+        }
+
+        // 4. Petakan kredensial router jika objek router ditemukan
+        if ($router) {
+            if (!empty($router->ip_address)) {
                 $config['host'] = $router->ip_address;
-                return $config;
+            }
+            if (!empty($router->api_username)) {
+                $config['user'] = $router->api_username;
+            }
+            if (!empty($router->api_password)) {
+                $config['pass'] = $router->api_password;
+            }
+            if (!empty($router->api_port)) {
+                $config['port'] = (int) $router->api_port;
             }
         }
 
-        // 2. Cek jika ada relasi router via ticket instalasi customer
-        $customer = $subscription->customer;
-        if ($customer) {
-            $installationTicket = $customer->tickets()
-                ->whereNotNull('router_id')
-                ->latest()
-                ->with('router')
-                ->first();
-
-            if ($installationTicket && $installationTicket->router && !empty($installationTicket->router->ip_address)) {
-                $config['host'] = $installationTicket->router->ip_address;
-            }
-        }
-
+        // Fallback ke .env tetap otomatis berlaku di getClient() jika key tidak disetel
         return $config;
     }
 

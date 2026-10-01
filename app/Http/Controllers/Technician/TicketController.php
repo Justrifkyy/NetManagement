@@ -199,6 +199,7 @@ class TicketController extends Controller
                     ['customer_id' => $customer->id],
                     [
                         'package_id'        => $packageId,
+                        'router_id'         => $ticket->router_id,
                         'pppoe_username'    => $username,
                         'pppoe_password'    => $password,
                         'installation_date' => now()->toDateString(),
@@ -207,12 +208,19 @@ class TicketController extends Controller
                     ]
                 );
 
-                // Sinkronkan username & password jika subscription sudah ada sebelumnya
-                if ($subscription->pppoe_username !== $username || $subscription->pppoe_password !== $password) {
-                    $subscription->update([
-                        'pppoe_username' => $username,
-                        'pppoe_password' => $password,
-                    ]);
+                // Sinkronkan router_id, username & password jika subscription sudah ada sebelumnya
+                $subscriptionUpdates = [];
+                if ($ticket->router_id && $subscription->router_id !== $ticket->router_id) {
+                    $subscriptionUpdates['router_id'] = $ticket->router_id;
+                }
+                if ($subscription->pppoe_username !== $username) {
+                    $subscriptionUpdates['pppoe_username'] = $username;
+                }
+                if ($subscription->pppoe_password !== $password) {
+                    $subscriptionUpdates['pppoe_password'] = $password;
+                }
+                if (!empty($subscriptionUpdates)) {
+                    $subscription->update($subscriptionUpdates);
                 }
 
                 // Buat Invoice Perdana jika belum ada tagihan unpaid
