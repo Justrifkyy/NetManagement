@@ -172,12 +172,12 @@
                                         @if ($inv->status === 'paid')
                                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                                LUNAS
+                                                Lunas
                                             </span>
                                         @else
                                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">
                                                 <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
-                                                BELUM BAYAR
+                                                Belum Bayar
                                             </span>
                                         @endif
                                     </td>
@@ -185,7 +185,7 @@
                                         <div class="flex items-center justify-end gap-2 font-semibold">
                                             <a href="{{ route('admin.billing.show', $inv->id) }}"
                                                 class="text-sky-400 hover:text-sky-300 transition-colors bg-sky-400/10 hover:bg-sky-400/20 px-3.5 py-1.5 rounded-lg border border-sky-400/20 text-xs font-bold">
-                                                Detail
+                                                Lihat
                                             </a>
                                         </div>
                                     </td>
