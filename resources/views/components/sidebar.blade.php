@@ -157,7 +157,7 @@
                         {{ __('Meja Kerja') }}
                     </x-sidebar-link>
 
-                    <x-sidebar-link href="{{ route('technician.history.index') }}" :active="request()->routeIs('technician.history.*')" icon="alert">
+                    <x-sidebar-link href="{{ route('technician.history.index') }}" :active="request()->routeIs('technician.history.*')" icon="clock">
                         {{ __('Riwayat Pekerjaan') }}
                     </x-sidebar-link>
                 </div>
@@ -179,7 +179,7 @@
                         {{ __('Pembayaran') }}
                     </x-sidebar-link>
                     
-                    <x-sidebar-link href="{{ route('client.complaints.index') }}" :active="request()->routeIs('client.complaints.*')" icon="alert">
+                    <x-sidebar-link href="{{ route('client.complaints.index') }}" :active="request()->routeIs('client.complaints.*')" icon="chat">
                         {{ __('Pengajuan') }}
                     </x-sidebar-link>
                 </div>
