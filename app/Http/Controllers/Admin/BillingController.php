@@ -14,16 +14,59 @@ use Throwable;
 class BillingController extends Controller
 {
     // 1. Tampilkan Daftar Tagihan & Statistik
-    public function index()
+    public function index(Request $request)
     {
-        $invoices = Invoice::with(['subscription.customer.user', 'subscription.package'])
-            ->latest()
-            ->get();
+        $query = Invoice::with(['subscription.customer.user', 'subscription.package']);
+
+        // Filter pencarian (No. Invoice, Nama Pelanggan, Kode Pelanggan)
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('invoice_number', 'like', "%{$search}%")
+                  ->orWhereHas('subscription.customer.user', function ($u) use ($search) {
+                      $u->where('name', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('subscription.customer', function ($c) use ($search) {
+                      $c->where('customer_code', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        // Filter status (paid / unpaid)
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $invoices = $query->latest()->paginate(15)->withQueryString();
+
+        // Total akumulasi pendapatan lunas (Semua Periode)
+        $paidTotal = (float) Invoice::where('status', 'paid')->sum('amount');
+
+        // Total lunas bulan ini (dengan fallback ke updated_at jika paid_at null)
+        $paidThisMonth = (float) Invoice::where('status', 'paid')
+            ->where(function ($q) {
+                $q->where(function ($sub) {
+                    $sub->whereNotNull('paid_at')
+                        ->whereMonth('paid_at', now()->month)
+                        ->whereYear('paid_at', now()->year);
+                })->orWhere(function ($sub) {
+                    $sub->whereNull('paid_at')
+                        ->whereMonth('updated_at', now()->month)
+                        ->whereYear('updated_at', now()->year);
+                });
+            })
+            ->sum('amount');
+
+        $unpaidTotal = (float) Invoice::where('status', 'unpaid')->sum('amount');
+        $unpaidCount = (int) Invoice::where('status', 'unpaid')->count();
+        $paidCount   = (int) Invoice::where('status', 'paid')->count();
 
         $stats = [
-            'paid_this_month' => Invoice::where('status', 'paid')->whereMonth('paid_at', now()->month)->sum('amount'),
-            'unpaid_total'    => Invoice::where('status', 'unpaid')->sum('amount'),
-            'unpaid_count'    => Invoice::where('status', 'unpaid')->count(),
+            'paid_total'      => $paidTotal,
+            'paid_this_month' => $paidThisMonth,
+            'unpaid_total'    => $unpaidTotal,
+            'unpaid_count'    => $unpaidCount,
+            'paid_count'      => $paidCount,
         ];
 
         return view('admin.billing.index', compact('invoices', 'stats'));
