@@ -8,7 +8,7 @@
 - **Audit Target:** Domain Modul & Hak Akses `Technician` (Teknisi Lapangan) pada platform NetManagement (NetManager / PT. Mandiri Global Data).
 - **Auditor Role:** Senior System Auditor & Full-Stack Laravel Expert.
 - **Audit Date:** 2026-09-26.
-- **Last Synchronized:** 2026-09-26 (Synced to Commit `97c2ec7` / CI Green).
+- **Last Synchronized:** 2026-10-01 (Synced to Commit `4973567` / Dynamic Profile & Hardware Provisioning Hardened).
 - **Audit Scope:**
   1. Routing & Authorization Gates (`routes/web.php`, `EnsureUserHasRole.php`).
   2. Technician Controllers (`TechnicianDashboardController`, `TicketController`).
@@ -27,7 +27,7 @@
 ## 2. Route & Middleware Security Audit
 
 ### 2.1. Definisi Route Group Technician
-Pada [routes/web.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/routes/web.php#L202-L226), zona kerja teknisi didaftarkan dengan middleware dan prefix terisolasi:
+Pada [routes/web.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/routes/web.php#L202-L226), zona kerja teknisi didaftarkan dengan middleware dan prefix terisolasi:
 
 ```php
 // ZONE 3: TECHNICIAN AREA
@@ -51,7 +51,7 @@ Route::middleware(['role:technician'])->prefix('technician')->name('technician.'
 ```
 
 ### 2.2. Mekanisme Gatekeeper & Sandboxing Middleware
-Akses teknisi dikawal oleh middleware [EnsureUserHasRole.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Middleware/EnsureUserHasRole.php):
+Akses teknisi dikawal oleh middleware [EnsureUserHasRole.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Middleware/EnsureUserHasRole.php):
 
 1. **Authentication Guard:** Memastikan user terotentikasi melalui Fortify/Sanctum. Pengguna yang belum login dilempar ke `/login`.
 2. **Instant Deactivation Guard:**
@@ -93,7 +93,7 @@ stateDiagram-v2
 ```
 
 ### 3.2. Tahap 1: Bursa Tugas (Open Tickets Marketplace)
-- **Controller:** [TicketController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/Technician/TicketController.php#L16-L38).
+- **Controller:** [TicketController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Technician/TicketController.php#L16-L38).
 - **Kueri Data:**
   ```php
   $tickets = Ticket::with(['customer', 'customer.user'])
@@ -102,10 +102,10 @@ stateDiagram-v2
       ->get();
   ```
   Menampilkan semua tiket berstatus `open` yang belum memiliki penugasan teknisi. Eager loading `customer.user` menjamin tidak terjadi masalah kueri $N+1$.
-- **Tampilan:** [open-tickets/index.blade.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/resources/views/technician/open-tickets/index.blade.php) menyajikan kartu tiket dengan badge tipe pekerjaan dinamis (`survey`, `installation`, `repair`), nama pelanggan, alamat, dan deskripsi masalah.
+- **Tampilan:** [open-tickets/index.blade.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/resources/views/technician/open-tickets/index.blade.php) menyajikan kartu tiket dengan badge tipe pekerjaan dinamis (`survey`, `installation`, `repair`), nama pelanggan, alamat, dan deskripsi masalah.
 
 ### 3.3. Tahap 2: Klaim Tiket (`take`), Row Locking & Proteksi Overwrite
-- **Controller:** [TicketController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/Technician/TicketController.php#L45-L73).
+- **Controller:** [TicketController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Technician/TicketController.php#L45-L73).
 - **Implementasi Enterprise Guard:**
   ```php
   public function take(Request $request, Ticket $ticket)
@@ -140,7 +140,7 @@ stateDiagram-v2
   4. **Immediate Routing:** Teknisi langsung diarahkan ke Meja Kerja (`technician.process.index`).
 
 ### 3.4. Tahap 3: Meja Kerja (`my-tasks`) & Auto-Transition ke `in_progress`
-- **Controller:** [TicketController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/Technician/TicketController.php#L65-L102).
+- **Controller:** [TicketController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Technician/TicketController.php#L65-L102).
 - **Isolasi Tugas:**
   ```php
   $tasks = Ticket::with(['customer', 'customer.user'])
@@ -178,7 +178,7 @@ stateDiagram-v2
 ## 4. Field Data & Evidence Photo Handling
 
 ### 4.1. Parameter Fisik Lapangan yang Disimpan
-Pembaruan tiket pada [TicketController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/Technician/TicketController.php#L104-L140) melalui `PUT /technician/my-tasks/{ticket}` (`processUpdate`) menangkap data spesifik berikut:
+Pembaruan tiket pada [TicketController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Technician/TicketController.php#L104-L140) melalui `PUT /technician/my-tasks/{ticket}` (`processUpdate`) menangkap data spesifik berikut:
 
 | Kategori Data | Field Database | Tipe Validasi | Form Penginput | Deskripsi Operasional |
 | :--- | :--- | :--- | :--- | :--- |
@@ -246,6 +246,8 @@ Sesuai arsitektur *Customer Domain Lifecycle*, saat teknisi menyelesaikan tiket 
    - Mengubah status prospek pelanggan (`lead.status`) menjadi `'aktif'`.
 2. **Pendaftaran PPPoE Secret ke Router MikroTik (`NetworkService::addCustomer`):**
    - Dijalankan di luar transaksi DB untuk menjamin atomisitas data relational.
+   - Prioritasi target router: Membaca `$ticket->router_id` langsung dari tiket teknisi sebelum fallback ke tiket instalasi pelanggan atau default host.
+   - Auto-provisioning profil PPP: Mengecek `/ppp/profile/print`. Jika profil belum ada, otomatis membuat profil via `/ppp/profile/add` lengkap dengan parameter batas bandwidth `rate-limit: {$speed}M/{$speed}M` sesuai paket langganan.
    - Mengeksekusi API MikroTik port 8728 (`RouterOS\Client`).
    - Memeriksa ketersediaan secret (`/ppp/secret/print`), lalu mengeksekusi `/ppp/secret/add` atau `/ppp/secret/set`.
    - Mengikat parameter teknis hasil input form teknisi: mengaitkan MAC address ONT (`device_mac`) ke parameter `caller-id`, mengaitkan profil paket, dan menetapkan remote IP.
@@ -254,7 +256,7 @@ Sesuai arsitektur *Customer Domain Lifecycle*, saat teknisi menyelesaikan tiket 
    - Kegagalan komunikasi fisik (router padam, kabel fiber putus, atau timeout API) tidak menyebabkan HTTP 500 dan tidak membatalkan penyimpanan tiket maupun data tagihan di database MySQL.
 
 ### 4.4. Riwayat Pekerjaan (`historyIndex`)
-Pada [TicketController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/Technician/TicketController.php#L261-L270):
+Pada [TicketController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Technician/TicketController.php#L261-L270):
 - Menampilkan seluruh tiket berstatus `resolved` atau `closed` milik teknisi yang sedang login:
   ```php
   $tickets = Ticket::with(['customer.user'])
@@ -263,7 +265,7 @@ Pada [TicketController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetM
       ->latest('completed_at')
       ->get();
   ```
-- Ditampilkan pada view [history/index.blade.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/resources/views/technician/history/index.blade.php) dengan stempel waktu penyelesaian, tipe pekerjaan, dan status akhir.
+- Ditampilkan pada view [history/index.blade.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/resources/views/technician/history/index.blade.php) dengan stempel waktu penyelesaian, tipe pekerjaan, dan status akhir.
 
 ---
 
@@ -284,18 +286,18 @@ Pengecekan hak kepemilikan diterapkan secara konsisten pada setiap operasi manip
 *Hasil Audit:* Teknisi A tidak dapat melihat, mengubah, atau menyelesaikan tiket yang sedang dikerjakan oleh Teknisi B.
 
 ### 5.2. Larangan Hak Hapus Tiket (No Deletion Privilege)
-- **Evaluasi Controller:** Pada [TicketController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/Technician/TicketController.php), tidak ditemukan method `destroy` atau pemanggilan `$ticket->delete()`.
+- **Evaluasi Controller:** Pada [TicketController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Technician/TicketController.php), tidak ditemukan method `destroy` atau pemanggilan `$ticket->delete()`.
 - **Evaluasi Routing:** Tidak ada rute `Route::delete` yang didaftarkan pada grup `technician`.
 - **Hak Eksklusif Admin:** Fitur penghapusan tiket hanya tersedia bagi `super_admin` dan `admin` melalui `Admin\TicketManagementController@destroy`.
 *Hasil Audit:* Integritas data riwayat pekerjaan terjamin, teknisi lapangan tidak dapat menghapus atau menghilangkan tiket pekerjaan secara sepihak.
 
 ### 5.3. Dashboard KPI Real-Time
-Pada [TechnicianDashboardController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/Technician/TechnicianDashboardController.php#L12-L33):
+Pada [TechnicianDashboardController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Technician/TechnicianDashboardController.php#L12-L33):
 - Menghitung jumlah riil dari database:
   - `openTickets`: `Ticket::where('status', 'open')->count()`
   - `myActiveTasks`: `Ticket::where('technician_id', $user->id)->whereIn('status', ['assigned', 'in_progress'])->count()`
   - `completedThisMonth`: `Ticket::where('technician_id', $user->id)->whereIn('status', ['resolved', 'closed'])->whereMonth('updated_at', now()->month)->count()`
-- Tampilan [dashboard/index.blade.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/resources/views/technician/dashboard/index.blade.php) menampilkan metrik akurat tanpa dummy data.
+- Tampilan [dashboard/index.blade.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/resources/views/technician/dashboard/index.blade.php) menampilkan metrik akurat tanpa dummy data.
 
 ---
 
@@ -317,7 +319,7 @@ Pada [TechnicianDashboardController.php](file:///c:/Users/USER/OneDrive/Dokumen/
 | **Photo Storage Cleanup** | Bersihkan foto lama di disk saat unggah revisi | **100% VERIFIED & HARDENED** | `Storage::disk('public')->delete(...)` di baris 136 |
 | **State Machine Automation** | Transisi `open` $\rightarrow$ `assigned` $\rightarrow$ `in_progress` $\rightarrow$ `resolved` | **100% VERIFIED** | `take()`, `processShow()`, `processUpdate()` |
 | **Post-Installation Billing Auto** | Penerbitan Subscription & Invoice perdana saat tiket resolved | **100% VERIFIED** | `TicketController.php:finalizeInstallation()` |
-| **MikroTik PPPoE Auto-Provisioning** | Eksekusi `/ppp/secret/add` binding `caller-id` & paket | **100% VERIFIED** | `NetworkService.php:addCustomer()` |
+| **MikroTik PPPoE Auto-Provisioning** | Eksekusi `/ppp/secret/add` binding `caller-id`, router priority, & auto-profile rate-limit | **100% VERIFIED** | `NetworkService.php:addCustomer()` |
 | **Hardware Fault Tolerance** | Try-catch terisolasi agar error MikroTik tidak merusak DB | **100% VERIFIED** | `finalizeInstallation()` & `NetworkService::addCustomer()` |
 
 ### 6.2. Catatan Implementasi Enterprise-Grade (Hardened Status)

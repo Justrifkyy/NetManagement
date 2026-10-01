@@ -3,7 +3,7 @@
 **Auditor:** Senior System Auditor & Full-Stack Laravel Expert  
 **Target:** Admin Domain (`role:admin,super_admin`, NOC, Keuangan, Dispatch)  
 **Status Audit:** Verified, Hardened & Bulletproof (100% Implemented)  
-**Last Synchronized:** 2026-09-26 (Synced to Commit `97c2ec7` / CI Green)
+**Last Synchronized:** 2026-10-01 (Synced to Commit `4973567` / HTTPS Proxy Trust & Dynamic Profile Hardened)
 
 ---
 
@@ -32,7 +32,7 @@ Domain **Admin** pada NetManager memegang peranan krusial sebagai pusat kendali 
 ## 2. Route & Middleware Boundary Audit
 
 ### 2.1. Isolasi Zona Super Admin vs Admin
-Pada `routes/web.php`, routing dipisahkan secara tegas ke dalam dua zona yang terisolasi melalui middleware [EnsureUserHasRole.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Middleware/EnsureUserHasRole.php):
+Pada `routes/web.php`, routing dipisahkan secara tegas ke dalam dua zona yang terisolasi melalui middleware [EnsureUserHasRole.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Middleware/EnsureUserHasRole.php):
 
 ```php
 // ZONE 0: SUPER ADMIN AREA (HANYA Super Admin)
@@ -76,7 +76,7 @@ Route::middleware(['role:admin,super_admin'])->prefix('admin')->name('admin.')->
 ### 3.1. Analisis `RouterController@testConnection`
 Pada aplikasi ISP, salah satu kerentanan paling berbahaya adalah eksekusi *OS Command Injection* saat melakukan tes koneksi router (misalnya menggunakan fungsi PHP `exec("ping -c 1 " . $ip)`).
 
-Pemeriksaan baris kode pada [RouterController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/Admin/RouterController.php#L62-L96):
+Pemeriksaan baris kode pada [RouterController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Admin/RouterController.php#L62-L96):
 
 ```php
 public function testConnection(NetworkAsset $router)
@@ -119,7 +119,7 @@ private function checkSocket(string $host, int $port = 8728, int $timeout = 2): 
 ## 4. Billing & Network Synchronization (Manual Payment)
 
 ### 4.1. Alur Validasi Pelunasan (`BillingController@markAsPaid`)
-Ketika pelanggan membayar tagihan secara tunai atau transfer langsung ke rekening kantor, Admin menekan tombol pelunasan manual pada [BillingController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/Admin/BillingController.php#L39-L85).
+Ketika pelanggan membayar tagihan secara tunai atau transfer langsung ke rekening kantor, Admin menekan tombol pelunasan manual pada [BillingController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Admin/BillingController.php#L39-L85).
 
 Sistem mengeksekusi 3 rantai otomasi secara berurutan:
 
@@ -195,11 +195,22 @@ Saat pemulihan layanan dipicu:
 ## 5. Customer Isolation Workflow (MikroTik API)
 
 ### 5.1. Analisis Implementasi Saat Ini
-Pemeriksaan method `isolate` dan `activate` pada [CustomerController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/Admin/CustomerController.php#L57-L91):
+Pemeriksaan method `isolate` dan `activate` pada [CustomerController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Admin/CustomerController.php#L60-L125) serta definisi rute pada [routes/web.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/routes/web.php#L139-L140):
 
 ```php
+// routes/web.php - Dukungan ganda GET & POST untuk mencegah HTTP 405 di balik reverse proxy
+Route::match(['get', 'post'], '/customers/{customer}/isolate', [CustomerController::class, 'isolate'])->name('customers.isolate');
+Route::match(['get', 'post'], '/customers/{customer}/activate', [CustomerController::class, 'activate'])->name('customers.activate');
+```
+
+```php
+// app/Http/Controllers/Admin/CustomerController.php
 public function isolate(Request $request, Customer $customer)
 {
+    if ($request->isMethod('get')) {
+        return redirect()->route('admin.customers.show', $customer);
+    }
+
     $reason = $request->validate(['reason' => 'required|string'])['reason'];
 
     Subscription::where('customer_id', $customer->id)
@@ -225,11 +236,15 @@ public function isolate(Request $request, Customer $customer)
         'details' => ['reason' => $reason],
     ]);
 
-    return redirect()->back()->with('success', 'Pelanggan berhasil diisolir');
+    return redirect()->route('admin.customers.show', $customer)->with('success', 'Pelanggan berhasil diisolir');
 }
 
-public function activate(Customer $customer)
+public function activate(Request $request, Customer $customer)
 {
+    if ($request->isMethod('get')) {
+        return redirect()->route('admin.customers.show', $customer);
+    }
+
     Subscription::where('customer_id', $customer->id)
         ->update(['status' => 'active']);
 
@@ -251,31 +266,46 @@ public function activate(Customer $customer)
         'description' => "Pelanggan {$customer->id} diaktifkan kembali",
     ]);
 
-    return redirect()->back()->with('success', 'Pelanggan berhasil diaktifkan');
+    return redirect()->route('admin.customers.show', $customer)->with('success', 'Pelanggan berhasil diaktifkan');
 }
 ```
 
-### 5.2. Verifikasi Patch Sinkronisasi MikroTik Real-Time
-1. **Pemutusan Koneksi PPPoE (`disableCustomer`):**
+### 5.2. Verifikasi Patch Sinkronisasi MikroTik Real-Time & Reverse Proxy Hardening
+1. **Pencegahan HTTP 405 Method Not Allowed:**
+   - Rute `/customers/{customer}/isolate` dan `/activate` menggunakan `Route::match(['get', 'post'], ...)` dan penanganan request GET yang mengembalikan redirect ke detail pelanggan (`admin.customers.show`).
+   - Pada lingkungan hosting VPS/Cloud dengan reverse proxy HTTPS (Nginx/Cloudflare), konfigurasi middleware proxy di-trust penuh pada [bootstrap/app.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/bootstrap/app.php):
+     ```php
+     $middleware->trustProxies(at: '*');
+     ```
+   - Skema HTTPS dipaksa secara deterministik saat proxy meneruskan header `X-Forwarded-Proto: https` pada [AppServiceProvider.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Providers/AppServiceProvider.php):
+     ```php
+     if (request()->server('HTTP_X_FORWARDED_PROTO') === 'https' || request()->header('X-Forwarded-Proto') === 'https' || request()->isSecure()) {
+         \Illuminate\Support\Facades\URL::forceScheme('https');
+     }
+     ```
+2. **Pemutusan Koneksi PPPoE (`disableCustomer`):**
    - Menyetel parameter PPPoE Secret menjadi `disabled=yes`.
    - Mengeluarkan sesi aktif saat ini (`/ppp/active/remove`) sehingga internet pelanggan langsung terputus seketika tanpa menunggu pergantian sesi lease.
    - Mendaftarkan IP pelanggan ke Firewall Address List `ISOLIR`.
-2. **Pemulihan Akses (`enableCustomer`):**
+3. **Pemulihan Akses (`enableCustomer`):**
    - Menyetel PPPoE Secret kembali menjadi `disabled=no`.
    - Menghapus IP pelanggan dari daftar `ISOLIR`.
-3. **Resilience & Fault Tolerance:**
+4. **Resilience & Fault Tolerance:**
    - Seluruh loop eksekusi router dibungkus blok `try-catch` dengan logging error khusus, sehingga kegagalan koneksi fisik (misal router mati) tidak menyebabkan UI crash / 500 error bagi Admin.
 
-### 5.3. Pendaftaran Akun PPPoE Otomatis Baru (`addCustomer`)
-Modul `NetworkService` kini dilengkapi method `addCustomer(Subscription $subscription, Ticket $ticket)`:
-1. **Eksekusi `/ppp/secret/add` & `/ppp/secret/set`:**
+### 5.3. Pendaftaran Akun PPPoE Otomatis Baru (`addCustomer`) & Auto-Provision Profil
+Modul `NetworkService` dilengkapi method `addCustomer(Subscription $subscription, Ticket $ticket)`:
+1. **Auto-Provisioning Profil PPP Dinamis (`/ppp/profile/add`):**
+   - Memeriksa ketersediaan profil paket pelanggan di MikroTik via `/ppp/profile/print`.
+   - Jika profil belum ada, otomatis membuat profil baru dengan menyetel atribut bandwidth `rate-limit` (misal `20M/20M`) berdasarkan `package->speed_mbps`.
+2. **Eksekusi `/ppp/secret/add` & `/ppp/secret/set`:**
    - Mengecek keberadaan akun secret via `/ppp/secret/print`.
    - Mengisi `name` (username PPPoE), `password`, `service=pppoe`, `profile`, dan `comment`.
    - Mengikat MAC Address perangkat pelanggan (`caller-id`) dari input form instalasi teknisi (`$ticket->device_mac`).
    - Mengatur remote address sesuai alokasi IP pelanggan (`$subscription->ip_address`).
-2. **Multi-Router Dispatcher:**
-   - Membaca `router_id` dari tiket instalasi jika tersedia, mengarahkan koneksi API RouterOS ke IP router spesifik yang menangani area tersebut.
-3. **Resilience:**
+3. **Multi-Router Dispatcher:**
+   - Membaca `router_id` langsung dari tiket instalasi jika tersedia, mengarahkan koneksi API RouterOS ke IP router spesifik yang menangani area tersebut.
+4. **Resilience:**
    - Dibungkus blok `try-catch (\Throwable $e)` mandiri dengan `Log::error(...)`, menjamin transaksi database sistem tetap konsisten meskipun router mengalami kegagalan socket.
 
 ---
@@ -291,7 +321,8 @@ Modul `NetworkService` kini dilengkapi method `addCustomer(Subscription $subscri
 | **Keamanan Ping Router** | **PASSED** (100%) | Bersih dari Command Injection; menggunakan socket connection (`fsockopen`) non-blocking. |
 | **Sinkronisasi Billing (Manual Paid)** | **PASSED** (100%) | Terbungkus `DB::transaction()` atomik, sinkronisasi MikroTik & WhatsApp resi di luar transaksi. |
 | **Isolasi Manual Pelanggan** | **PASSED** (100%) | Terhubung penuh ke `NetworkService::disableCustomer` & `enableCustomer` dengan fault tolerance. |
-| **Otomasi PPPoE Pelanggan Baru** | **PASSED** (100%) | Terintegrasi via `NetworkService::addCustomer` dengan binding `caller-id` MAC ONT. |
+| **Proteksi 405 & Proxy HTTPS** | **PASSED** (100%) | `Route::match(['get', 'post'])`, GET redirect fallback, dan HTTPS trustProxies di `bootstrap/app.php` & `AppServiceProvider`. |
+| **Otomasi PPPoE & Profil MikroTik** | **PASSED** (100%) | Terintegrasi via `NetworkService::addCustomer` dengan binding `caller-id` MAC ONT dan auto-create profil PPP rate-limit. |
 | **Restorasi CustomerController & CI** | **PASSED** (100%) | Implementasi lengkap `CustomerController` tersinkron dengan route list dan pipeline CI GitHub Actions. |
 | **Sanitasi Codebase (Ponytail)** | **PASSED** (100%) | File orphaned dead code (`Admin\UserController` & `TicketQCController`) telah dihapus. |
 

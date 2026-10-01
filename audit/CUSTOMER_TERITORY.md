@@ -3,7 +3,7 @@
 **Auditor:** Senior System Auditor & Full-Stack Laravel Expert  
 **Target:** Customer Domain (`role:customer`, Client Portal, Tagihan, Pengaduan)  
 **Status Audit:** Verified, Hardened & Bulletproof (100% Compliance)  
-**Last Synchronized:** 2026-09-26 (Synced to Commit `97c2ec7` / CI Green)
+**Last Synchronized:** 2026-10-01 (Synced to Commit `4973567` / Hardened & Synchronized)
 
 ---
 
@@ -31,7 +31,7 @@ Domain **Customer (Client Portal)** adalah perimeter terluar dan paling sensitif
 ## 2. Portal Sandboxing & Route Security
 
 ### 2.1. Arsitektur Firewall Karantina (`RestrictCustomerPortal.php`)
-Di tingkat middleware global [bootstrap/app.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/bootstrap/app.php#L29-L31), setiap request HTTP diperiksa oleh middleware [RestrictCustomerPortal.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Middleware/RestrictCustomerPortal.php):
+Di tingkat middleware global [bootstrap/app.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/bootstrap/app.php), setiap request HTTP diperiksa oleh middleware [RestrictCustomerPortal.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Middleware/RestrictCustomerPortal.php):
 
 ```php
 public function handle(Request $request, Closure $next): Response
@@ -68,14 +68,14 @@ private function isAllowedRoute(Request $request): bool
 2. **Pencegahan Penetrasi Staf (Trapped in Sandbox):**
    Jika pelanggan mencoba mengakses URL internal staf mana pun (misalnya `/admin/customers`, `/superadmin/users`, `/marketing/leads`, atau `/technician/my-tasks`), middleware `RestrictCustomerPortal` langsung mencegat request dan melempar respons `HTTP 403 Forbidden` bahkan sebelum controller internal sempat dievaluasi.
 3. **Proteksi Ganda via `EnsureUserHasRole`:**
-   Rute `client.*` pada [routes/web.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/routes/web.php#L231) juga dipagari oleh `middleware(['role:customer'])`. Jika staf yang sedang login mencoba mengakses portal klien, sistem menolak dengan HTTP 403.
+   Rute `client.*` pada [routes/web.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/routes/web.php#L231) juga dipagari oleh `middleware(['role:customer'])`. Jika staf yang sedang login mencoba mengakses portal klien, sistem menolak dengan HTTP 403.
 4. **Terminasi Sesi Otomatis:** Jika akun pelanggan dinonaktifkan (`is_active = false`), `EnsureUserHasRole` langsung menghancurkan sesi dan memaksa logout seketika pada request berikutnya.
 
 ---
 
 ## 3. Multi-Tenancy & Data Privacy (Invoice & Complaints)
 
-### 3.1. Pencegahan Kebocoran Tagihan ([InvoiceController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/Customer/InvoiceController.php))
+### 3.1. Pencegahan Kebocoran Tagihan ([InvoiceController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Customer/InvoiceController.php))
 Pada sistem multi-tenant, kerentanan kritis *Insecure Direct Object Reference (IDOR)* terjadi jika pengguna dapat mengganti ID parameter URL untuk melihat atau membayar tagihan milik entitas lain.
 
 Pemeriksaan proteksi baris kode pada `InvoiceController`:
@@ -101,7 +101,7 @@ Pemeriksaan proteksi baris kode pada `InvoiceController`:
    ```
    Jika Pelanggan A (ID: 10) mencoba mengakses URL `/client/billing/99` milik Pelanggan B, pengecekan `user_id !== Auth::id()` langsung melempar `HTTP 403 (Akses Ditolak)`.
 
-### 3.2. Isolasi Tiket Pengaduan Kerusakan ([ComplaintController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/Customer/ComplaintController.php))
+### 3.2. Isolasi Tiket Pengaduan Kerusakan ([ComplaintController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Customer/ComplaintController.php))
 
 1. **Resolusi Customer Terikat Auth:**
    ```php
@@ -152,7 +152,7 @@ Saat teknisi di lapangan menyelesaikan instalasi fisik:
 ## 4. Payment Gateway Flow (Midtrans Snap)
 
 ### 4.1. Pembuatan Token Snap Pembayaran Mandiri (`pay`)
-Pada [InvoiceController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/Customer/InvoiceController.php#L47-L101):
+Pada [InvoiceController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Customer/InvoiceController.php#L47-L101):
 
 1. **Konfigurasi Keamanan SDK:**
    ```php
@@ -171,12 +171,12 @@ Pada [InvoiceController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/Net
 Salah satu tantangan terbesar integrasi payment gateway adalah ketergantungan pada webhook eksternal, yang sering gagal pada jaringan lokal/NAT atau server dev. NetManager menerapkan arsitektur **Dual-Sync**:
 
 1. **Passive Synchronization (Midtrans Webhook):**
-   - Dilayani oleh [MidtransWebhookController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/MidtransWebhookController.php).
+   - Dilayani oleh [MidtransWebhookController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/MidtransWebhookController.php).
    - Dikecualikan dari verifikasi CSRF di `bootstrap/app.php`.
    - Menggunakan hashing SHA512 untuk memverifikasi keaslian payload dari Midtrans sebelum memproses transaksi.
 2. **Active Polling Synchronization (`checkStatus`):**
-   - Pada [InvoiceController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/Customer/InvoiceController.php#L107-L171):
-   - Dipicu otomatis oleh callback Javascript `window.snap.pay(token, { onSuccess: ... })` pada [show.blade.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/resources/views/user/billing/show.blade.php#L187-L195).
+   - Pada [InvoiceController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Customer/InvoiceController.php#L107-L171):
+   - Dipicu otomatis oleh callback Javascript `window.snap.pay(token, { onSuccess: ... })` pada [show.blade.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/resources/views/user/billing/show.blade.php#L187-L195).
    - Backend melakukan kueri langsung ke server Midtrans via `\Midtrans\Transaction::status($invoice->invoice_number)`.
 3. **Rantai Otomasi Pasca Lunas:**
    Ketika status pembayaran terkonfirmasi lunas (`settlement` / `capture accept`):
@@ -189,7 +189,7 @@ Salah satu tantangan terbesar integrasi payment gateway adalah ketergantungan pa
 ## 5. Network Data Leak Prevention (UI Audit)
 
 ### 5.1. Audit Sanitasi Kredensial Jaringan
-Pemeriksaan kode mendalam pada seluruh template Blade pelanggan ([resources/views/user/dashboard/index.blade.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/resources/views/user/dashboard/index.blade.php), `billing/*`, `complaints/*`):
+Pemeriksaan kode mendalam pada seluruh template Blade pelanggan ([resources/views/user/dashboard/index.blade.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/resources/views/user/dashboard/index.blade.php), `billing/*`, `complaints/*`):
 
 | Data Sensitif Jaringan | Status di Tampilan Klien | Hasil Analisis |
 | :--- | :---: | :--- |

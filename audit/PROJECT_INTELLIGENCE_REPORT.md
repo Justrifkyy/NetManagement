@@ -17,10 +17,13 @@
   6. **Query Performance & Telemetry Hardening (RESOLVED):** SuperAdmin revenue calculation executed 12 SQL queries in a loop, `add_indexes.php` was unmigrated, and audit log exports suffered from null-pointer crashes on deleted users. **Resolved:** Optimized revenue to a single `GROUP BY YEAR, MONTH` query; codified indexes into migration `2026_09_25_132436_add_performance_indexes_to_core_tables.php`; applied null-safe operators and fallbacks across audit exports and Blade views.
   7. **Payment Gateway & WhatsApp Gateway Pre-Flight Hardening (RESOLVED):** Midtrans webhook lacked idempotency checks against duplicate webhooks, customer portal lacked real-time status reconciliation after checkout, customer dashboard leaked technical PPPoE parameters and clashed with the dark theme, WhatsApp gateway crashed when message models lacked `.id` or returned internal `@lid` accounts, and daily billing lacked H-0 (due today) reminders. **Resolved:** Implemented webhook idempotency early-return (`Already processed`), direct Midtrans status synchronization endpoint with Snap JS callback triggers, dark slate theme customer dashboard with customer support card, hardened Node.js gateway with `@c.us` target sanitization and safe exception handling, full H-3/H-1/H-0/overdue billing cycle, and triple-path payment success WA dispatching (Webhook, Customer Portal, Admin Manual). Live dispatch verified 100% successful.
   8. **Customer Portal Routing, Reverse Proxy & Auth UI Refresh (RESOLVED):** Authenticated customers visiting root URL `/` were blocked by portal restrictions; reverse proxies dropped SSL forwarding headers; landing page relied on slow external Tailwind CDN; login password lacked show/hide toggle. **Resolved:** Added `home` route allowance in `RestrictCustomerPortal` middleware; added `trustProxies` in `bootstrap/app.php`; bundled landing page CSS via `@vite('resources/css/app.css')`; implemented accessible password reveal toggle in `resources/views/auth/login.blade.php`; added automated feature test `CustomerPortalAccessTest.php`.
-  9. **Native Architecture & Deployment Migration (RESOLVED):** Docker configurations (`compose.yaml`, `Dockerfile`, `docker/`, `.devcontainer/`) were removed in favor of 100% native runtime. **Resolved:** Standardized environment defaults (`.env.example`) and authored comprehensive native LEMP + PM2 production guide in [docs/deployment-guide.md](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/docs/deployment-guide.md).
+  9. **Native Architecture & Deployment Migration (RESOLVED):** Docker configurations (`compose.yaml`, `Dockerfile`, `docker/`, `.devcontainer/`) were removed in favor of 100% native runtime. **Resolved:** Standardized environment defaults (`.env.example`) and authored comprehensive native LEMP + PM2 production guide in [docs/deployment-guide.md](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/docs/deployment-guide.md).
   10. **Customer Activation, Fortify Guard & Complaint Detail View (RESOLVED):** Inactive user rejection was inconsistent between Fortify login and subsequent requests, customer complaints list had dead '#' links with no detail view, and database seeding lacked full realistic operations data. **Resolved:** Enforced `$user->is_active` validation in `FortifyServiceProvider` throwing an informative validation error message ("Akun Anda belum aktif. Silakan hubungi administrator untuk aktivasi."), verified by `tests/Feature/AuthenticationTest.php`; added `client.complaints.show` route (`/client/complaints/{ticket}`) and dark-themed `resources/views/client/complaints/show.blade.php` displaying assigned technician, status badge, issue description, and technician notes; overhauled `DatabaseSeeder.php` with complete realistic ISP workflow entities (roles, customer, active subscription, unpaid invoice, open repair ticket, prospect lead).
   11. **Codespaces 1-Click Environment & Repository Decluttering (RESOLVED):** Repository contained orphaned dead controllers (`Admin\UserController`, `TicketQCController`), unmigrated dummy photos in public storage, and complex local setup steps. **Resolved:** Purged dead controllers and orphaned routes; protected storage directories with `.gitignore`; automated 1-Click cloud developer environment in `.devcontainer` and `codespace.md` running on containerized MySQL 8 and Node 20 WhatsApp service.
   12. **Continuous Integration (CI) Workflow Hardening & Route Validation (RESOLVED):** GitHub Actions runner failed due to missing local MySQL service, uncommitted lockfile assertions, and route reflection errors. **Resolved:** Re-architected `.github/workflows/ci.yml` using isolated in-memory SQLite and file-backed session/cache/maintenance drivers; audited and committed explicit npm lockfiles; fully restored and verified Admin `CustomerController.php` with complete RouterOS PPPoE isolation & activation methods.
+  13. **MikroTik Automated PPPoE Secret Provisioning & Dynamic Profile Rate-Limit (RESOLVED):** Field installations previously required manual RouterOS configuration. **Resolved:** Implemented `NetworkService::addCustomer` with `/ppp/profile/add` auto-provisioning dynamic rate limits (`{$speed}M/{$speed}M`), `/ppp/secret/add` and `set` with physical MAC address binding (`caller-id`), and prioritized ticket router resolution (`$ticket->router_id`).
+  14. **Customer Isolation & Activation Reverse Proxy Trust & 405 Remediation (RESOLVED):** Reverse proxies caused HTTP 405 Method Not Allowed errors when isolating or activating customers. **Resolved:** Added `trustProxies(at: '*')` in `bootstrap/app.php`, enforced HTTPS via `URL::forceScheme('https')` in `AppServiceProvider.php`, mapped routes with `Route::match(['get', 'post'], ...)`, and added GET redirect fallbacks to `admin.customers.show`.
+  15. **Marketing Lead Form Validation & City Field (RESOLVED):** Lead creation encountered validation issues and lacked explicit administrative city input. **Resolved:** Added `city` input to `create.blade.php`, made `address_installation` and `city` nullable with fallback in `LeadController@store`, and enhanced reactive validation error display using `x-show="errorMessage"` with `x-cloak`.
 
 ---
 
@@ -579,7 +582,7 @@ AuditLog (id, user_id, action, description, details, ip_address, user_agent)
 
 - **Queue Driver:** Configured as `QUEUE_CONNECTION=database` in `.env`.
 - **Database Tables:** `jobs`, `job_batches`, `failed_jobs`.
-- **Scheduled Tasks:** [ProcessDailyBilling.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Console/Commands/ProcessDailyBilling.php) is scheduled in [routes/console.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/routes/console.php) to run daily at `00:01`:
+- **Scheduled Tasks:** [ProcessDailyBilling.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Console/Commands/ProcessDailyBilling.php) is scheduled in [routes/console.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/routes/console.php) to run daily at `00:01`:
   - Dispatches H-3, H-1, and H-0 WhatsApp billing reminders.
   - Automatically isolates overdue accounts on MikroTik routers and marks customers isolated.
 
@@ -641,7 +644,7 @@ AuditLog (id, user_id, action, description, details, ip_address, user_agent)
   - Network: Server must have direct IP or VPN routing to MikroTik RouterOS API port 8728.
 - **Platform Incompatibility:**
   - Serverless platforms (Vercel, Cloudflare Pages) are incompatible due to long-lived Puppeteer Chromium processes and raw TCP socket connections.
-- **Recommended Platform:** Native Linux VPS (Ubuntu 22.04 / 24.04 LTS). See full guide at [docs/deployment-guide.md](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/docs/deployment-guide.md).
+- **Recommended Platform:** Native Linux VPS (Ubuntu 22.04 / 24.04 LTS). See full guide at [docs/deployment-guide.md](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/docs/deployment-guide.md).
 
 ---
 
@@ -1013,7 +1016,7 @@ NetManagement is a comprehensive, production-hardened ISP management and billing
 - **Enhancement:**
   - Standardized local and VPS deployment configuration to run 100% natively without Docker overhead.
   - Configured native background management using PM2 for the Node.js WhatsApp microservice and Laravel queue worker.
-  - Documented complete LEMP stack installation, Nginx virtual host, SSL certbot, and systemd/crontab scheduler in [docs/deployment-guide.md](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/docs/deployment-guide.md).
+  - Documented complete LEMP stack installation, Nginx virtual host, SSL certbot, and systemd/crontab scheduler in [docs/deployment-guide.md](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/docs/deployment-guide.md).
 
 ### 2. Codebase Decluttering & Elimination of Dead Controllers
 - **Files Deleted / Pruned:** `app/Http/Controllers/Admin/UserController.php`, `app/Http/Controllers/Admin/TicketQCController.php`, `resources/views/marketing/schedules/index.blade.php`.
@@ -1025,7 +1028,7 @@ NetManagement is a comprehensive, production-hardened ISP management and billing
 - **Enhancement:**
   - Removed dummy/test camera uploads (`bmuW2kHz...jpg`, `rHVLqfJz...jpg`, `pxKYaEIY...jpg`) from `storage/app/public/uploads/teknisi/`.
   - Added strict `.gitignore` rules (`*\n!.gitignore`) inside upload directories to prevent developer test uploads from polluting version control.
-  - Structured all deployment and operational documentation into [docs/deployment-guide.md](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/docs/deployment-guide.md).
+  - Structured all deployment and operational documentation into [docs/deployment-guide.md](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/docs/deployment-guide.md).
 
 ---
 
@@ -1069,7 +1072,7 @@ NetManagement is a comprehensive, production-hardened ISP management and billing
 
 ---
 
-## 56. Automated PPPoE Provisioning & Post-Installation Lifecycle
+## 57. Automated PPPoE Provisioning & Dynamic Profile Rate-Limit (Commits e2c8bc9, f08bb82)
 
 ### 1. MikroTik RouterOS Secret Provisioning (`NetworkService::addCustomer`)
 - **File:** `app/Services/NetworkService.php`
@@ -1095,4 +1098,37 @@ NetManagement is a comprehensive, production-hardened ISP management and billing
 - **Decoupled Hardware Execution:**
   - RouterOS API call executed *outside* the database transaction.
   - Router socket failures cannot trigger database rollback, keeping technician work orders and billing records fully intact.
+
+---
+
+## 58. Reverse Proxy Trust & 405 Method Not Allowed Remediation (Commit 4973567)
+
+### 1. Reverse Proxy Header Trusting & Forced HTTPS Scheme
+- **Files:** `bootstrap/app.php`, `app/Providers/AppServiceProvider.php`
+- **Problem:** When hosted behind an HTTPS reverse proxy (such as Cloudflare or Nginx reverse proxy), Laravel received HTTP requests internally. Form submissions to `/admin/customers/{customer}/isolate` and `/activate` resulted in HTTP 405 Method Not Allowed errors or redirect loops due to proxy scheme mismatch.
+- **Resolution:**
+  - Configured `$middleware->trustProxies(at: '*')` in `bootstrap/app.php` to trust all reverse proxy forwarding headers (`X-Forwarded-For`, `X-Forwarded-Proto`, `X-Forwarded-Host`).
+  - Enforced HTTPS URL scheme in `AppServiceProvider::boot()`:
+    ```php
+    if (request()->server('HTTP_X_FORWARDED_PROTO') === 'https' || request()->header('X-Forwarded-Proto') === 'https' || request()->isSecure()) {
+        \Illuminate\Support\Facades\URL::forceScheme('https');
+    }
+    ```
+
+### 2. Dual HTTP Verb Routing & GET Fallback Guard
+- **Files:** `routes/web.php`, `app/Http/Controllers/Admin/CustomerController.php`
+- **Problem:** If a client or browser follows a redirect to `/admin/customers/{customer}/isolate` via GET, Laravel previously threw a 405 Method Not Allowed exception.
+- **Resolution:**
+  - Registered route with dual verb support:
+    ```php
+    Route::match(['get', 'post'], '/customers/{customer}/isolate', [CustomerController::class, 'isolate'])->name('customers.isolate');
+    Route::match(['get', 'post'], '/customers/{customer}/activate', [CustomerController::class, 'activate'])->name('customers.activate');
+    ```
+  - Added early GET request handling in `CustomerController@isolate` and `@activate`:
+    ```php
+    if ($request->isMethod('get')) {
+        return redirect()->route('admin.customers.show', $customer);
+    }
+    ```
+  - Updated completion redirects to point explicitly to `admin.customers.show` with flash alerts instead of `back()`.
 

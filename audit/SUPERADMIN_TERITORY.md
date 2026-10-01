@@ -3,7 +3,7 @@
 **Auditor:** Senior System Auditor & Full-Stack Laravel Expert  
 **Target:** Super Admin Domain (`role:super_admin`, Tier 0 Master Control)  
 **Status Audit:** Verified, Hardened & Bulletproof (100% Compliance)  
-**Last Synchronized:** 2026-09-26 (Synced to Commit `97c2ec7` / CI Green)
+**Last Synchronized:** 2026-10-01 (Synced to Commit `4973567` / Production-Ready & Hardened)
 
 ---
 
@@ -31,7 +31,7 @@ Berbeda dengan peran operasional (Admin, Marketing, dan Teknisi) yang memiliki b
 ## 2. Route & Absolute Boundary Audit
 
 ### 2.1. Isolasi Zona 0 (Super Admin Area)
-Pada [routes/web.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/routes/web.php#L94-L126), rute Super Admin dikelompokkan secara eksklusif dalam `ZONE 0`:
+Pada [routes/web.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/routes/web.php#L94-L126), rute Super Admin dikelompokkan secara eksklusif dalam `ZONE 0`:
 
 ```php
 // ZONE 0: SUPER ADMIN AREA (HANYA Super Admin)
@@ -69,7 +69,7 @@ Route::middleware(['role:super_admin'])->prefix('superadmin')->name('superadmin.
 ```
 
 ### 2.2. Verifikasi Batas Absolut Gatekeeper
-Keamanan gerbang dikawal oleh middleware [EnsureUserHasRole.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Middleware/EnsureUserHasRole.php):
+Keamanan gerbang dikawal oleh middleware [EnsureUserHasRole.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Middleware/EnsureUserHasRole.php):
 - **Otentikasi Wajib:** Pengguna yang belum terotentikasi langsung diarahkan ke form login.
 - **Strict Role Match:** Middleware mengecek kecocokan peran dengan array roles yang diizinkan (`['super_admin']`).
 - **Penolakan Tanpa Kompromi:** Staf dengan role `admin`, `marketing`, `technician`, atau `customer` yang mencoba mengakses URL `/superadmin/*` akan langsung diblokir dengan respons `HTTP 403 (Akses Ditolak. Anda tidak memiliki izin untuk halaman ini.)`.
@@ -79,7 +79,7 @@ Keamanan gerbang dikawal oleh middleware [EnsureUserHasRole.php](file:///c:/User
 ## 3. System Maintenance & Artisan Execution Safety
 
 ### 3.1. Analisis `MaintenanceController`
-Operasi pemeliharaan sistem pada [MaintenanceController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/SuperAdmin/MaintenanceController.php) diaudit secara menyeluruh untuk memastikan tidak ada celah eksekusi perintah berbahaya.
+Operasi pemeliharaan sistem pada [MaintenanceController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/SuperAdmin/MaintenanceController.php) diaudit secara menyeluruh untuk memastikan tidak ada celah eksekusi perintah berbahaya.
 
 ```php
 public function toggleMaintenanceMode(Request $request)
@@ -131,7 +131,7 @@ Pada sistem pengelolaan staf, skenario umum yang sering menimbulkan crash fatal 
 ### 4.2. Bukti Implementasi Null-Safe di Seluruh Lapisan
 Pemeriksaan kode pada domain Super Admin menunjukkan penerapan operator *Null-Safe* (`?->`) dan *Null Coalescing* (`??`) secara konsisten:
 
-1. **Pada Export CSV Forensik ([AuditController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/SuperAdmin/AuditController.php#L56-L60)):**
+1. **Pada Export CSV Forensik ([AuditController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/SuperAdmin/AuditController.php#L56-L60)):**
    ```php
    $csv = "ID,User,Action,IP Address,Created At\n";
    foreach ($logsData as $log) {
@@ -141,13 +141,13 @@ Pemeriksaan kode pada domain Super Admin menunjukkan penerapan operator *Null-Sa
    ```
    Jika staf telah dihapus, CSV akan menampilkan `'Deleted User'` tanpa menginterupsi proses pengunduhan dokumen forensik.
 
-2. **Pada Tampilan Tabel Audit ([superadmin/audits/index.blade.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/resources/views/superadmin/audits/index.blade.php#L38-L40)):**
+2. **Pada Tampilan Tabel Audit ([superadmin/audits/index.blade.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/resources/views/superadmin/audits/index.blade.php#L38-L40)):**
    ```blade
    <td class="px-6 py-4 text-sm font-medium text-white">{{ $log->user?->name ?? 'System' }}</td>
    ```
    Jika log dihasilkan oleh sistem terjadwal (*cron job*) atau akun pegawai yang telah nonaktif/terhapus, tabel tetap ter-render sempurna dengan label `'System'`.
 
-3. **Pada Dashboard Super Admin ([superadmin/dashboard/index.blade.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/resources/views/superadmin/dashboard/index.blade.php#L210)):**
+3. **Pada Dashboard Super Admin ([superadmin/dashboard/index.blade.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/resources/views/superadmin/dashboard/index.blade.php#L210)):**
    ```blade
    $userName = $log->user?->name ?? 'System';
    ```
@@ -156,7 +156,7 @@ Pemeriksaan kode pada domain Super Admin menunjukkan penerapan operator *Null-Sa
 
 ## 5. Staff Identity & Access Management
 
-### 5.1. Manajemen Siklus Hidup Pegawai ([UserManagementController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/SuperAdmin/UserManagementController.php))
+### 5.1. Manajemen Siklus Hidup Pegawai ([UserManagementController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/SuperAdmin/UserManagementController.php))
 Super Admin mengelola seluruh pegawai lintas divisi (`super_admin`, `admin`, `marketing`, `technician`, `customer`) dengan aturan bisnis ketat:
 
 1. **Validasi Unik & Penugasan Area:**
@@ -177,7 +177,7 @@ public function resetPassword(User $user)
     return redirect()->back()->with('success', "Password reset. Temporary password: $newPassword");
 }
 ```
-**Penyajian UI Aman ([superadmin/users/index.blade.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/resources/views/superadmin/users/index.blade.php#L101-L120)):**
+**Penyajian UI Aman ([superadmin/users/index.blade.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/resources/views/superadmin/users/index.blade.php#L101-L120)):**
 - Flash message dideteksi secara otomatis oleh script frontend.
 - Sandi sementara disajikan melalui modal interaktif **SweetAlert2** dengan tipografi monospace berukuran besar (`select-all`) dan atribut `allowOutsideClick: false`, sehingga Super Admin tidak dapat melewatkan atau kehilangan kata sandi sementara sebelum diserahkan kepada staf bersangkutan.
 
@@ -185,7 +185,7 @@ public function resetPassword(User $user)
 Jika seorang staf diberhentikan atau dicurigai melakukan pelanggaran:
 1. Super Admin mengubah toggle `is_active` menjadi `false` (0) melalui menu edit user.
 2. **Mekanisme Instant Session Termination:**
-   Pada request HTTP berikutnya dari browser staf yang bersangkutan, middleware [EnsureUserHasRole.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Middleware/EnsureUserHasRole.php#L20-L29) langsung mendeteksi perubahan flag tersebut:
+   Pada request HTTP berikutnya dari browser staf yang bersangkutan, middleware [EnsureUserHasRole.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Middleware/EnsureUserHasRole.php#L20-L29) langsung mendeteksi perubahan flag tersebut:
    ```php
    if (!$user->is_active) {
        Auth::logout();
@@ -200,7 +200,7 @@ Jika seorang staf diberhentikan atau dicurigai melakukan pelanggaran:
    Sesi aktif langsung dimusnahkan seketika (*instant force logout*), mencegah staf non-aktif melanjutkan tindakan di dalam aplikasi.
 
 ### 5.4. Proteksi Akun Master (Root ID 1) & Anti-Self-Destruction
-Pada [UserManagementController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/SuperAdmin/UserManagementController.php#L77-L91):
+Pada [UserManagementController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/SuperAdmin/UserManagementController.php#L77-L91):
 ```php
 public function destroy(User $user)
 {

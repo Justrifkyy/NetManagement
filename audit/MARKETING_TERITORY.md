@@ -8,7 +8,7 @@
 - **Audit Target:** Domain Modul & Hak Akses `Marketing` pada platform NetManagement (NetManager / PT. Mandiri Global Data).
 - **Auditor Role:** Senior System Auditor & Full-Stack Laravel Expert.
 - **Audit Date:** 2026-09-26.
-- **Last Synchronized:** 2026-09-26 (Synced to Commit `97c2ec7` / CI Green).
+- **Last Synchronized:** 2026-10-01 (Synced to Commit `4973567` / Lead Validation & City Hardened).
 - **Audit Scope:**
   1. Routing & Authorization Gates (`routes/web.php`, `EnsureUserHasRole.php`).
   2. Marketing Controllers (`MarketingDashboardController`, `LeadController`, `CustomerController`, `ReportController`).
@@ -28,7 +28,7 @@
 ## 2. Route & Middleware Security Audit
 
 ### 2.1. Definisi Route Group Marketing
-Pada [routes/web.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/routes/web.php#L184-L200), area marketing didaftarkan dalam zona khusus:
+Pada [routes/web.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/routes/web.php#L184-L200), area marketing didaftarkan dalam zona khusus:
 
 ```php
 // ZONE 2: MARKETING AREA
@@ -48,7 +48,7 @@ Route::middleware(['role:marketing'])->prefix('marketing')->name('marketing.')->
 ```
 
 ### 2.2. Mekanisme Gatekeeper & Sandboxing Middleware
-Akses dikontrol melalui middleware [EnsureUserHasRole.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Middleware/EnsureUserHasRole.php):
+Akses dikontrol melalui middleware [EnsureUserHasRole.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Middleware/EnsureUserHasRole.php):
 
 1. **Authentication Enforcement:** Memvalidasi `Auth::check()`. Jika tidak login, di-redirect ke `/login`.
 2. **Instant Deactivation Interception:**
@@ -81,9 +81,9 @@ Akses dikontrol melalui middleware [EnsureUserHasRole.php](file:///c:/Users/USER
 ### 2.3. Multi-Tenancy & Data Ownership Verification
 Selain proteksi tingkat rute, controller marketing mengimplementasikan isolasi data tingkat baris (Row-Level Security):
 
-- **[MarketingDashboardController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/Marketing/MarketingDashboardController.php#L17-L27):**
+- **[MarketingDashboardController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Marketing/MarketingDashboardController.php#L17-L27):**
   Menggunakan kueri berbasis `where('marketing_id', Auth::id())`.
-- **[LeadController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/Marketing/LeadController.php#L28-L30):**
+- **[LeadController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Marketing/LeadController.php#L28-L30):**
   Untuk user non-admin, index dibatasi via `Lead::with('package')->where('marketing_id', $user->id)`.
   Pada `show()`, `edit()`, dan `destroy()`, terdapat guard eksplisit:
   ```php
@@ -91,7 +91,7 @@ Selain proteksi tingkat rute, controller marketing mengimplementasikan isolasi d
       abort(403, 'Akses ditolak.');
   }
   ```
-- **[CustomerController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/Marketing/CustomerController.php#L16-L18):**
+- **[CustomerController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Marketing/CustomerController.php#L16-L18):**
   Hanya menampilkan customer yang memiliki relasi lead kepemilikan marketing bersangkutan:
   ```php
   $query = Customer::whereHas('lead', function ($q) use ($marketingId) {
@@ -110,7 +110,7 @@ Selain proteksi tingkat rute, controller marketing mengimplementasikan isolasi d
 ## 3. Lead Conversion Workflow (Transaction Analysis)
 
 ### 3.1. Alur Transaksi Konversi (`LeadController@convert`)
-Fungsi konversi lead diimplementasikan pada [LeadController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/Marketing/LeadController.php#L242-L293).
+Fungsi konversi lead diimplementasikan pada [LeadController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Marketing/LeadController.php#L242-L293).
 
 ```mermaid
 sequenceDiagram
@@ -300,7 +300,7 @@ Pada [resources/views/marketing/leads/create.blade.php](file:///c:/Users/LENOVO/
 ## 5. View & Data Binding Verification
 
 ### 5.1. Laporan Kinerja Marketing (`marketing/reports/index.blade.php`)
-- **Controller:** [ReportController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/Marketing/ReportController.php#L13-L89).
+- **Controller:** [ReportController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Marketing/ReportController.php#L13-L89).
 - **Binding Data Database Asli (Confirmed):**
   - `$kpis['total_leads']`: Dihitung langsung via `Lead::where('marketing_id', $marketingId)->count()`.
   - `$kpis['conversions']`: Dihitung via `Lead::where('marketing_id', $marketingId)->whereIn('status', ['aktif', 'converted'])->count()`.
@@ -310,7 +310,7 @@ Pada [resources/views/marketing/leads/create.blade.php](file:///c:/Users/LENOVO/
 - **Blade Template:** Menampilkan visualisasi dinamis tanpa loop dummy `@for` statis. Menggunakan `@forelse ($dailyBreakdown as $row)` dan `@foreach ($monthlyTrends as $trend)`.
 
 ### 5.2. Manajemen Pelanggan Marketing (`marketing/customers/index.blade.php` & `show.blade.php`)
-- **Controller:** [CustomerController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/Marketing/CustomerController.php#L12-L56).
+- **Controller:** [CustomerController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Marketing/CustomerController.php#L12-L56).
 - **Binding Data Database Asli (Confirmed):**
   - Mengambil data melalui query relasional: `Customer::whereHas('lead', ...)->with(['user', 'lead.package', 'subscriptions'])`.
   - Filter pencarian teks langsung pada nomor telepon, kode pelanggan, dan nama user.
@@ -319,13 +319,13 @@ Pada [resources/views/marketing/leads/create.blade.php](file:///c:/Users/LENOVO/
   - Tidak ada mock array atau dummy stubs.
 
 ### 5.3. Dashboard Marketing (`marketing/dashboard/index.blade.php`)
-- **Controller:** [MarketingDashboardController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/Marketing/MarketingDashboardController.php#L12-L33).
+- **Controller:** [MarketingDashboardController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Marketing/MarketingDashboardController.php#L12-L33).
 - **Binding Data Database Asli (Confirmed):**
   - Stat cards: Total prospek, status prospek, status proses survey/instalasi, dan closing terkonversi dihitung langsung dari tabel `leads`.
   - Recent Leads: Mengambil 5 prospek terbaru via `Lead::where('marketing_id', $marketingId)->with('package')->latest()->take(5)->get()`.
 
 ### 5.4. CRUD Prospek (`marketing/leads/*`)
-- **Controller:** [LeadController.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/app/Http/Controllers/Marketing/LeadController.php).
+- **Controller:** [LeadController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Marketing/LeadController.php).
 - **Binding Data Database Asli (Confirmed):**
   - Form create mengambil daftar paket aktif via `Package::where('is_active', true)->get()`.
   - Form edit mengunci data yang sudah dikonversi (`status === 'converted'`).
@@ -335,7 +335,7 @@ Pada [resources/views/marketing/leads/create.blade.php](file:///c:/Users/LENOVO/
 - **Status Tindakan:** Dihapus total dari sistem aplikasi (*completely removed*).
 - **Alasan Pembersihan:** Fitur sebelumnya merupakan prototipe statis (`Route::view` dengan loop `@for` acak dan `rand()` dummy) yang belum memiliki skema database pendukung.
 - **Rincian Perubahan:**
-  1. Rute `Route::view('/schedules', ...)` dihapus dari [routes/web.php](file:///c:/Users/USER/OneDrive/Dokumen/Projects/NetManager/routes/web.php).
+  1. Rute `Route::view('/schedules', ...)` dihapus dari [routes/web.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/routes/web.php).
   2. Direktori dan file view `resources/views/marketing/schedules/index.blade.php` telah dihapus permanen.
   3. Menu navigasi "Jadwal" telah dihapus dari `resources/views/components/sidebar.blade.php` dan `resources/views/navigation-menu.blade.php` (desktop dan responsif).
 - **Hasil:** UI dan sistem navigasi Marketing kini 100% bersih dari stubs mock, hanya menyajikan fitur-fitur yang terikat penuh pada basis data.
