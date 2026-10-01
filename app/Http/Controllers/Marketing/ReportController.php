@@ -14,38 +14,46 @@ class ReportController extends Controller
     private function resolveDateRange(string $period): array
     {
         return match ($period) {
+            'this_month'    => [now()->startOfMonth(), now()->endOfMonth()],
             'last_month'    => [now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth()],
             'last_3_months' => [now()->subMonths(2)->startOfMonth(), now()->endOfMonth()],
             'this_year'     => [now()->startOfYear(), now()->endOfYear()],
-            'all'           => [now()->subYears(10)->startOfDay(), now()->endOfDay()],
-            default         => [now()->startOfMonth(), now()->endOfMonth()], // 'this_month'
+            default         => [now()->subYears(10)->startOfDay(), now()->endOfDay()], // 'all'
         };
     }
 
     public function index(Request $request)
     {
-        $marketingId = Auth::id();
-        $period = $request->input('period', 'this_month');
+        $user = Auth::user();
+        $isMarketingOnly = ($user->role === 'marketing');
+
+        $period = $request->input('period', 'all');
         $dateRange = $this->resolveDateRange($period);
 
         $periodLabels = [
+            'all'           => 'Semua Waktu',
             'this_month'    => 'Bulan Ini',
             'last_month'    => 'Bulan Lalu',
             'last_3_months' => '3 Bulan Terakhir',
             'this_year'     => 'Tahun Ini',
-            'all'           => 'Semua Waktu',
         ];
-        $currentPeriodLabel = $periodLabels[$period] ?? 'Bulan Ini';
+        $currentPeriodLabel = $periodLabels[$period] ?? 'Semua Waktu';
+
+        // Query dasar leads sesuai role
+        $baseLeads = Lead::query();
+        if ($isMarketingOnly) {
+            $baseLeads->where('marketing_id', $user->id);
+        }
 
         // Leads acquired pada periode ini
-        $leadsQuery = Lead::where('marketing_id', $marketingId);
+        $leadsQuery = (clone $baseLeads);
         if ($period !== 'all') {
             $leadsQuery->whereBetween('created_at', $dateRange);
         }
         $totalLeads = $leadsQuery->count();
 
         // Converted customer count
-        $convertedQuery = Lead::where('marketing_id', $marketingId)->where('status', 'aktif');
+        $convertedQuery = (clone $baseLeads)->where('status', 'aktif');
         if ($period !== 'all') {
             $convertedQuery->whereBetween('updated_at', $dateRange);
         }
@@ -54,8 +62,10 @@ class ReportController extends Controller
         $conversionRate = $totalLeads > 0 ? round(($convertedCount / $totalLeads) * 100, 1) : 0;
 
         // Estimated revenue from converted customers
-        $customerRevenueQuery = Customer::whereHas('lead', function ($q) use ($marketingId, $period, $dateRange) {
-            $q->where('marketing_id', $marketingId);
+        $customerRevenueQuery = Customer::whereHas('lead', function ($q) use ($user, $isMarketingOnly, $period, $dateRange) {
+            if ($isMarketingOnly) {
+                $q->where('marketing_id', $user->id);
+            }
             if ($period !== 'all') {
                 $q->whereBetween('created_at', $dateRange);
             }
@@ -70,43 +80,45 @@ class ReportController extends Controller
             return $subPrice > 0 ? $subPrice : ($cust->lead?->package?->price ?? 0);
         });
 
-        // Pipeline statuses
-        $statusBase = Lead::where('marketing_id', $marketingId);
-        if ($period !== 'all') {
-            $statusBase->whereBetween('created_at', $dateRange);
-        }
-
+        // Pipeline statuses (Live Funnel - real-time status seluruh prospek aktif)
         $statuses = [
-            ['label' => 'Prospek Baru', 'count' => (clone $statusBase)->where('status', 'prospek')->count(), 'color' => 'indigo'],
-            ['label' => 'Tahap Survey', 'count' => (clone $statusBase)->where('status', 'survey')->count(), 'color' => 'amber'],
-            ['label' => 'Tahap Instalasi', 'count' => (clone $statusBase)->where('status', 'instalasi')->count(), 'color' => 'purple'],
-            ['label' => 'Akun Aktif', 'count' => $convertedCount, 'color' => 'emerald'],
+            ['label' => 'Prospek Baru', 'count' => (clone $baseLeads)->where('status', 'prospek')->count(), 'color' => 'indigo'],
+            ['label' => 'Tahap Survey', 'count' => (clone $baseLeads)->where('status', 'survey')->count(), 'color' => 'amber'],
+            ['label' => 'Tahap Instalasi', 'count' => (clone $baseLeads)->where('status', 'instalasi')->count(), 'color' => 'purple'],
+            ['label' => 'Akun Aktif', 'count' => (clone $baseLeads)->where('status', 'aktif')->count(), 'color' => 'emerald'],
         ];
 
-        // Monthly trends (3 bulan terakhir)
+        // Monthly trends (3 bulan terakhir - persentase relatif terhadap volume tertinggi)
         $monthlyTrends = [];
+        $maxTrendCount = 1;
         for ($m = 2; $m >= 0; $m--) {
             $date = now()->subMonths($m);
-            $count = Lead::where('marketing_id', $marketingId)
+            $count = (clone $baseLeads)
                 ->whereMonth('created_at', $date->month)
                 ->whereYear('created_at', $date->year)
                 ->count();
+            if ($count > $maxTrendCount) {
+                $maxTrendCount = $count;
+            }
             $monthlyTrends[] = [
                 'month' => $date->translatedFormat('F Y'),
                 'count' => $count,
-                'percentage' => $totalLeads > 0 ? min(100, round(($count / max($totalLeads, 1)) * 100)) : 0,
             ];
         }
+        foreach ($monthlyTrends as &$trend) {
+            $trend['percentage'] = $trend['count'] > 0 ? min(100, round(($trend['count'] / $maxTrendCount) * 100)) : 0;
+        }
+        unset($trend);
 
         // Daily activity breakdown (10 hari terakhir dari akhir periode)
         $dailyBreakdown = [];
         $endDate = $dateRange[1]->isFuture() ? now() : $dateRange[1];
         for ($d = 0; $d < 10; $d++) {
             $date = (clone $endDate)->subDays($d);
-            $leadsCount = Lead::where('marketing_id', $marketingId)
+            $leadsCount = (clone $baseLeads)
                 ->whereDate('created_at', $date)
                 ->count();
-            $convCount = Lead::where('marketing_id', $marketingId)
+            $convCount = (clone $baseLeads)
                 ->where('status', 'aktif')
                 ->whereDate('updated_at', $date)
                 ->count();
@@ -135,21 +147,26 @@ class ReportController extends Controller
 
     public function export(Request $request)
     {
-        $marketingId = Auth::id();
-        $period = $request->input('period', 'this_month');
+        $user = Auth::user();
+        $isMarketingOnly = ($user->role === 'marketing');
+
+        $period = $request->input('period', 'all');
         $dateRange = $this->resolveDateRange($period);
 
         $periodLabels = [
+            'all'           => 'Semua Waktu',
             'this_month'    => 'Bulan Ini',
             'last_month'    => 'Bulan Lalu',
             'last_3_months' => '3 Bulan Terakhir',
             'this_year'     => 'Tahun Ini',
-            'all'           => 'Semua Waktu',
         ];
-        $periodLabel = $periodLabels[$period] ?? 'Bulan Ini';
+        $periodLabel = $periodLabels[$period] ?? 'Semua Waktu';
 
         // Ambil data leads pada periode
-        $leadsQuery = Lead::with('package')->where('marketing_id', $marketingId);
+        $leadsQuery = Lead::with('package');
+        if ($isMarketingOnly) {
+            $leadsQuery->where('marketing_id', $user->id);
+        }
         if ($period !== 'all') {
             $leadsQuery->whereBetween('created_at', $dateRange);
         }

@@ -19,7 +19,7 @@
                         <button @click="open = !open" @click.outside="open = false" type="button"
                             class="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-200 text-xs font-bold rounded-xl transition-all shadow-sm">
                             <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            <span>{{ $currentPeriodLabel ?? 'Bulan Ini' }}</span>
+                            <span>{{ $currentPeriodLabel ?? 'Semua Waktu' }}</span>
                             <svg class="w-3.5 h-3.5 text-slate-400 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
 
@@ -27,9 +27,9 @@
                             class="absolute right-0 mt-2 w-48 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl z-50 py-1.5 backdrop-blur-md">
                             @foreach ($periodLabels as $key => $label)
                                 <a href="{{ route('marketing.reports.index', ['period' => $key]) }}"
-                                    class="flex items-center justify-between px-4 py-2.5 text-xs font-semibold transition-colors {{ ($period ?? 'this_month') === $key ? 'bg-indigo-600/10 text-indigo-400 font-bold border-l-2 border-indigo-500' : 'text-slate-300 hover:bg-slate-800/80 hover:text-white' }}">
+                                    class="flex items-center justify-between px-4 py-2.5 text-xs font-semibold transition-colors {{ ($period ?? 'all') === $key ? 'bg-indigo-600/10 text-indigo-400 font-bold border-l-2 border-indigo-500' : 'text-slate-300 hover:bg-slate-800/80 hover:text-white' }}">
                                     <span>{{ $label }}</span>
-                                    @if (($period ?? 'this_month') === $key)
+                                    @if (($period ?? 'all') === $key)
                                         <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                                     @endif
                                 </a>
@@ -38,7 +38,7 @@
                     </div>
 
                     {{-- Tombol Export Report --}}
-                    <a href="{{ route('marketing.reports.export', ['period' => $period ?? 'this_month']) }}"
+                    <a href="{{ route('marketing.reports.export', ['period' => $period ?? 'all']) }}"
                         class="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-black uppercase tracking-widest rounded-xl shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 transition-all">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                         <span>Export Report</span>
@@ -135,7 +135,8 @@
                     </div>
                     <div class="space-y-8">
                         @php
-                            $maxPipeline = max(1, $kpis['total_leads']);
+                            $totalPipeline = array_sum(array_column($statuses, 'count'));
+                            $maxPipeline = max(1, $totalPipeline);
                         @endphp
                         @foreach($statuses as $status)
                             @php $statusPerc = min(100, round(($status['count'] / $maxPipeline) * 100)); @endphp
@@ -214,22 +215,6 @@
                     <span class="text-[10px] text-slate-500 font-black uppercase tracking-widest">Showing last 10 audit logs</span>
                     <button class="px-6 py-2 bg-slate-800 border border-slate-700 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-indigo-600 transition-all">View All History</button>
                 </div>
-            </div>
-
-            {{-- Action Tools --}}
-            <div class="flex flex-col md:flex-row items-center justify-center gap-4 mb-20">
-                <button class="w-full md:w-auto px-10 py-5 bg-slate-900 border border-slate-800 text-white font-black uppercase tracking-[0.2em] text-[10px] rounded-[2rem] hover:bg-indigo-600 hover:border-indigo-500 transition-all duration-300 shadow-xl flex items-center justify-center gap-3">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
-                    Generate PDF Audit
-                </button>
-                <button class="w-full md:w-auto px-10 py-5 bg-slate-900 border border-slate-800 text-white font-black uppercase tracking-[0.2em] text-[10px] rounded-[2rem] hover:bg-emerald-600 hover:border-emerald-500 transition-all duration-300 shadow-xl flex items-center justify-center gap-3">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    Export to Excel
-                </button>
-                <button class="w-full md:w-auto px-10 py-5 bg-slate-900 border border-slate-800 text-white font-black uppercase tracking-[0.2em] text-[10px] rounded-[2rem] hover:bg-purple-600 hover:border-purple-500 transition-all duration-300 shadow-xl flex items-center justify-center gap-3">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                    Broadcast Email
-                </button>
             </div>
 
             <div class="text-center py-10 border-t border-slate-900">
