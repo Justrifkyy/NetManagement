@@ -8,7 +8,7 @@
 - **Audit Target:** Domain Modul & Hak Akses `Marketing` pada platform NetManagement (NetManager / PT. Mandiri Global Data).
 - **Auditor Role:** Senior System Auditor & Full-Stack Laravel Expert.
 - **Audit Date:** 2026-09-26.
-- **Last Synchronized:** 2026-10-01 (Synced to Commit `4973567` / Lead Validation & City Hardened).
+- **Last Synchronized:** 2026-10-02 (Synced to Commit `edc701a` / Reporting & Customer Profile Hardened).
 - **Audit Scope:**
   1. Routing & Authorization Gates (`routes/web.php`, `EnsureUserHasRole.php`).
   2. Marketing Controllers (`MarketingDashboardController`, `LeadController`, `CustomerController`, `ReportController`).
@@ -300,23 +300,30 @@ Pada [resources/views/marketing/leads/create.blade.php](file:///c:/Users/LENOVO/
 ## 5. View & Data Binding Verification
 
 ### 5.1. Laporan Kinerja Marketing (`marketing/reports/index.blade.php`)
-- **Controller:** [ReportController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Marketing/ReportController.php#L13-L89).
-- **Binding Data Database Asli (Confirmed):**
-  - `$kpis['total_leads']`: Dihitung langsung via `Lead::where('marketing_id', $marketingId)->count()`.
-  - `$kpis['conversions']`: Dihitung via `Lead::where('marketing_id', $marketingId)->where('status', 'aktif')->count()`.
-  - `$kpis['revenue']`: Menghitung total harga paket pada relasi `subscriptions` aktif milik pelanggan yang terhubung dengan lead marketing yang bersangkutan.
-  - `$monthlyTrends`: Perhitungan agregasi 3 bulan terakhir menggunakan `whereMonth` dan `whereYear`.
-  - `$dailyBreakdown`: Matriks aktivitas 10 hari terakhir menghitung prospek masuk (`created_at`) dan closing (`updated_at`) harian.
+- **Controller:** [ReportController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Marketing/ReportController.php).
+- **Binding Data Database Asli & Fitur Laporan (Confirmed & Hardened):**
+  - `$kpis['total_leads']`: Dihitung langsung via `Lead::where('marketing_id', $marketingId)` dengan filter periode dinamis.
+  - `$kpis['conversions']`: Dihitung via status `'aktif'` pada periode yang ditentukan.
+  - `$kpis['revenue']`: Menghitung total harga paket pada relasi `subscriptions` aktif milik pelanggan yang terhubung dengan lead marketing bersangkutan.
+  - **Filter Periode Dinamis:** Dropdown periode waktu terpadu (`Semua Waktu`, `Bulan Ini`, `Bulan Lalu`, `3 Bulan Terakhir`, `Tahun Ini`) dengan default `all` (**Semua Waktu**) agar data historis prospek tidak lenyap secara tak terduga saat awal bulan baru.
+  - **Live Funnel Real-Time:** Status pipeline (`Prospek Baru`, `Tahap Survey`, `Tahap Instalasi`, `Akun Aktif`) tidak dibatasi filter rentang tanggal agar seluruh prospek yang masih berproses di lapangan tetap terpantau secara utuh.
+  - **Tren Perolehan Lead Relatif:** Bar progres tren 3 bulan dihitung relatif terhadap volume bulan tertinggi (skala 100%), bukan dibandingkan dengan variabel periode yang tidak sepadan.
+  - **Ekspor Laporan CSV:** Tombol `Export Report` terhubung ke endpoint `/marketing/reports/export` yang mengalirkan file CSV berformat UTF-8 BOM dengan ringkasan matriks KPI dan rincian lengkap prospek.
+  - **Eliminasi Tombol Dummy:** Tombol mockup non-fungsional di bagian bawah halaman (`Generate PDF Audit`, `Export to Excel`, `Broadcast Email`) telah dibersihkan sepenuhnya.
 - **Blade Template:** Menampilkan visualisasi dinamis tanpa loop dummy `@for` statis. Menggunakan `@forelse ($dailyBreakdown as $row)` dan `@foreach ($monthlyTrends as $trend)`.
 
 ### 5.2. Manajemen Pelanggan Marketing (`marketing/customers/index.blade.php` & `show.blade.php`)
 - **Controller:** [CustomerController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Marketing/CustomerController.php#L12-L56).
-- **Binding Data Database Asli (Confirmed):**
+- **Binding Data Database Asli & UI Hardened (Confirmed):**
   - Mengambil data melalui query relasional: `Customer::whereHas('lead', ...)->with(['user', 'lead.package', 'subscriptions'])`.
   - Filter pencarian teks langsung pada nomor telepon, kode pelanggan, dan nama user.
   - Filter status layanan (`is_isolated = false` / `true`).
   - Paginasi real database: `paginate(10)->withQueryString()` yang dirender melalui `{{ $customers->links() }}`.
-  - Tidak ada mock array atau dummy stubs.
+  - **Halaman Detail Pelanggan (`show.blade.php`) Berstandar Marketing:**
+    - Elemen teknis murni (seperti kredensial PPPoE dan IP address) dieliminasi agar tampilan fokus pada informasi relevan tim sales.
+    - Tombol interaktif **Hubungi Pelanggan** via WhatsApp terintegrasi langsung dengan nomor telepon format internasional (`62...`) dan draf pesan sapaan otomatis.
+    - Durasi berlangganan diformat secara humanis (`X Bulan Y Hari` atau `X Hari`).
+    - Tag penutup `</div>` header diperbaiki sehingga tata letak kartu kembali melebar penuh (*full-width responsive grid*) tanpa terjepit ke samping.
 
 ### 5.3. Dashboard Marketing (`marketing/dashboard/index.blade.php`)
 - **Controller:** [MarketingDashboardController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/Marketing/MarketingDashboardController.php#L12-L33).

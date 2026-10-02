@@ -3,7 +3,7 @@
 **Auditor:** Senior System Auditor & Full-Stack Laravel Expert  
 **Target:** Admin Domain (`role:admin,super_admin`, NOC, Keuangan, Dispatch)  
 **Status Audit:** Verified, Hardened & Bulletproof (100% Implemented)  
-**Last Synchronized:** 2026-10-01 (Synced to Commit `4973567` / HTTPS Proxy Trust & Dynamic Profile Hardened)
+**Last Synchronized:** 2026-10-02 (Synced to Commit `fd45a2b` / Multi-Router Credentials & Modernized Billing Table Hardened)
 
 ---
 
@@ -308,6 +308,20 @@ Modul `NetworkService` dilengkapi method `addCustomer(Subscription $subscription
 4. **Resilience:**
    - Dibungkus blok `try-catch (\Throwable $e)` mandiri dengan `Log::error(...)`, menjamin transaksi database sistem tetap konsisten meskipun router mengalami kegagalan socket.
 
+### 5.4. Multi-Router Credentials, ODP Specifications & Modernized Billing Table (RESOLVED)
+1. **Multi-Router API Credentials & Enkripsi:**
+   - Model `NetworkAsset` diperluas dengan kolom `username`, `password` (terenkripsi via Laravel Crypt), `api_port` (default 8728), dan `web_port` (default 80).
+   - `NetworkService` membaca kredensial router spesifik secara dinamis sehingga sistem dapat mengelola puluhan router MikroTik dengan kredensial berbeda tanpa konfigurasi `.env` monolitik.
+2. **Spesifikasi Fisik & Kapasitas Port ODP:**
+   - Ditambahkan pelacakan kapasitas ODP: `odp_capacity`, `odp_available_ports`, `odp_splitter_type`, dan `odp_notes`.
+3. **Pengikatan Permanen Langganan ke Router (`router_id`):**
+   - Tabel `subscriptions` dilengkapi kolom `router_id` yang mengikat pelanggan ke router spesifik sejak fase instalasi awal.
+   - Operasi `disableCustomer` dan `enableCustomer` secara deterministik menarget router tempat pelanggan terdaftar.
+4. **Modernisasi Tabel Billing (`admin/billing/index.blade.php`):**
+   - Filter pencarian teks langsung (nama pelanggan, kode pelanggan, no. invoice).
+   - Filter status dinamis (`Semua Status`, `Lunas`, `Belum Bayar`, `Kedaluwarsa`).
+   - Perhitungan total pendapatan lunas terverifikasi secara akurat dari invoice berstatus `paid`.
+
 ---
 
 ## 6. Conclusion & Recommendations
@@ -323,6 +337,8 @@ Modul `NetworkService` dilengkapi method `addCustomer(Subscription $subscription
 | **Isolasi Manual Pelanggan** | **PASSED** (100%) | Terhubung penuh ke `NetworkService::disableCustomer` & `enableCustomer` dengan fault tolerance. |
 | **Proteksi 405 & Proxy HTTPS** | **PASSED** (100%) | `Route::match(['get', 'post'])`, GET redirect fallback, dan HTTPS trustProxies di `bootstrap/app.php` & `AppServiceProvider`. |
 | **Otomasi PPPoE & Profil MikroTik** | **PASSED** (100%) | Terintegrasi via `NetworkService::addCustomer` dengan binding `caller-id` MAC ONT dan auto-create profil PPP rate-limit. |
+| **Multi-Router & ODP Specs** | **PASSED** (100%) | Kredensial router terenkripsi, spesifikasi ODP & kapasitas port tercatat, dan `subscriptions.router_id` terikat permanen. |
+| **Modernisasi Antarmuka Billing** | **PASSED** (100%) | UI tabel billing modern dilengkapi pencarian, filter status instan, dan kalkulasi pendapatan riil. |
 | **Restorasi CustomerController & CI** | **PASSED** (100%) | Implementasi lengkap `CustomerController` tersinkron dengan route list dan pipeline CI GitHub Actions. |
 | **Sanitasi Codebase (Ponytail)** | **PASSED** (100%) | File orphaned dead code (`Admin\UserController` & `TicketQCController`) telah dihapus. |
 
