@@ -91,10 +91,12 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
 
-            <div class="mt-6 px-4 sm:px-0">
-                {{ $invoices->links() }}
+                @if($invoices->hasPages())
+                    <div class="px-6 border-t border-slate-800/80 bg-slate-900/40">
+                        {{ $invoices->links() }}
+                    </div>
+                @endif
             </div>
 
         </div>

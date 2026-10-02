@@ -16,9 +16,12 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
-            <div class="mt-8">
-                {{ $tasks->links() }}
+
+                @if($tasks->hasPages())
+                    <div class="px-6 border-t border-slate-800/80 bg-slate-900/40">
+                        {{ $tasks->links() }}
+                    </div>
+                @endif
             </div>
         </div>
     </div>

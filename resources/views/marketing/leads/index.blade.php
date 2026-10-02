@@ -145,6 +145,12 @@
                         </tbody>
                     </table>
                 </div>
+
+                @if($leads->hasPages())
+                    <div class="px-8 border-t border-slate-800/80 bg-slate-900/40">
+                        {{ $leads->links() }}
+                    </div>
+                @endif
             </div>
 
             <div class="md:hidden space-y-6">
@@ -236,9 +242,11 @@
                 @endforelse
             </div>
 
-            <div class="mt-8 px-4 sm:px-0">
-                {{ $leads->links() }}
-            </div>
+            @if($leads->hasPages())
+                <div class="md:hidden mt-8 bg-slate-900/80 backdrop-blur-md rounded-2xl border border-slate-800 px-6">
+                    {{ $leads->links() }}
+                </div>
+            @endif
 
         </div>
     </div>

@@ -85,10 +85,12 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
 
-            <div class="mt-8 px-4 sm:px-0">
-                {{ $users->links() }}
+                @if($users->hasPages())
+                    <div class="px-6 border-t border-slate-800/80 bg-slate-900/40">
+                        {{ $users->links() }}
+                    </div>
+                @endif
             </div>
         </div>
     </div>

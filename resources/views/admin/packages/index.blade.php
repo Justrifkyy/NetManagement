@@ -69,10 +69,11 @@
                 @endforelse
             </div>
 
-            <!-- Pagination -->
-            <div class="mt-6 px-4 sm:px-0">
-                {{ $packages->links() }}
-            </div>
+            @if($packages->hasPages())
+                <div class="mt-8 bg-slate-900/80 backdrop-blur-sm rounded-2xl border border-slate-800 px-6 shadow-xl">
+                    {{ $packages->links() }}
+                </div>
+            @endif
         </div>
     </div>
 </x-app-layout>

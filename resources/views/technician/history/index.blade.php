@@ -6,9 +6,12 @@
                 <div class="overflow-x-auto"><table class="w-full text-left text-sm"><thead class="border-b border-slate-800 text-xs uppercase tracking-wider text-slate-500"><tr><th class="px-6 py-4">Tanggal Selesai</th><th class="px-6 py-4">Tipe Pekerjaan</th><th class="px-6 py-4">Pelanggan</th><th class="px-6 py-4">Status Akhir</th></tr></thead>
                     <tbody class="divide-y divide-slate-800/70">@forelse ($tickets as $ticket)<tr class="text-slate-300"><td class="px-6 py-5">{{ $ticket->completed_at?->format('d M Y H:i') ?? '-' }}</td><td class="px-6 py-5 capitalize">{{ $ticket->type }}</td><td class="px-6 py-5 font-semibold text-white">{{ $ticket->customer?->user?->name ?? '-' }}</td><td class="px-6 py-5"><span class="rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-bold capitalize text-emerald-400">{{ $ticket->status }}</span></td></tr>@empty<tr><td colspan="4" class="px-6 py-12 text-center text-slate-400">Belum ada riwayat pekerjaan.</td></tr>@endforelse</tbody>
                 </table></div>
-            </div>
-            <div class="mt-8">
-                {{ $tickets->links() }}
+
+                @if($tickets->hasPages())
+                    <div class="px-6 border-t border-slate-800/80 bg-slate-900/40">
+                        {{ $tickets->links() }}
+                    </div>
+                @endif
             </div>
         </div>
     </div>

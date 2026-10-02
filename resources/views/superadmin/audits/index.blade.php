@@ -53,10 +53,12 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
 
-            <div class="mt-6 px-4 sm:px-0">
-                {{ $logs->links() }}
+                @if($logs->hasPages())
+                    <div class="px-6 border-t border-slate-800/80 bg-slate-900/40">
+                        {{ $logs->links() }}
+                    </div>
+                @endif
             </div>
         </div>
     </div>

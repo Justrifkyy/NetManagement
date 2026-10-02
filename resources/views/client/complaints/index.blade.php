@@ -70,7 +70,7 @@
             </div>
 
             @if ($tickets->hasPages())
-                <div class="mt-6 px-4 sm:px-0">
+                <div class="mt-8 bg-slate-900/80 backdrop-blur-md rounded-2xl border border-slate-800 px-6 shadow-xl">
                     {{ $tickets->links() }}
                 </div>
             @endif

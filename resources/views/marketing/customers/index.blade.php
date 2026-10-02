@@ -130,6 +130,12 @@
                         </tbody>
                     </table>
                 </div>
+
+                @if($customers->hasPages())
+                    <div class="px-8 border-t border-slate-800/80 bg-slate-900/40">
+                        {{ $customers->links() }}
+                    </div>
+                @endif
             </div>
 
             <div class="md:hidden space-y-4">
@@ -186,9 +192,11 @@
                 @endforelse
             </div>
 
-            <div class="mt-8">
-                {{ $customers->links() }}
-            </div>
+            @if($customers->hasPages())
+                <div class="md:hidden mt-8 bg-slate-900/80 backdrop-blur-md rounded-2xl border border-slate-800 px-6">
+                    {{ $customers->links() }}
+                </div>
+            @endif
 
             <div class="mt-8 text-center hidden md:block">
                 <p class="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em]">

@@ -140,10 +140,12 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
 
-            <div class="mt-8 px-4 sm:px-0">
-                {{ $tickets->links() }}
+                @if($tickets->hasPages())
+                    <div class="px-6 border-t border-slate-800/80 bg-slate-900/40">
+                        {{ $tickets->links() }}
+                    </div>
+                @endif
             </div>
         </div>
     </div>

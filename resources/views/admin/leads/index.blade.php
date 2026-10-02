@@ -168,10 +168,12 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
 
-            <div class="mt-8 px-4 sm:px-0">
-                {{ $leads->links() }}
+                @if($leads->hasPages())
+                    <div class="px-6 border-t border-slate-800/80 bg-slate-900/40">
+                        {{ $leads->links() }}
+                    </div>
+                @endif
             </div>
         </div>
     </div>

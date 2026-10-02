@@ -208,7 +208,7 @@
                 </div>
 
                 @if($invoices->hasPages())
-                    <div class="p-6 border-t border-slate-800/80 bg-slate-900/40">
+                    <div class="px-6 border-t border-slate-800/80 bg-slate-900/40">
                         {{ $invoices->links() }}
                     </div>
                 @endif
