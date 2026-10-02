@@ -1,12 +1,12 @@
 <x-app-layout>
     <div class="py-10 bg-gradient-to-b from-slate-900 to-slate-950 min-h-screen">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
             <!-- Header -->
-            <div class="mb-8 px-4 sm:px-0">
-                <div class="flex justify-between items-start">
+            <div class="mb-8">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
-                        <h1 class="text-4xl font-black text-white">Pusat Pengajuan</h1>
+                        <h1 class="text-3xl sm:text-4xl font-black text-white">Pusat Pengajuan</h1>
                         <p class="text-slate-400 mt-2">Laporkan masalah jaringan atau buat pengajuan baru</p>
                     </div>
                     <a href="{{ route('client.complaints.create') }}" dusk="create-complaint" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 text-slate-900 font-bold rounded-lg hover:from-amber-400 hover:to-amber-500 shadow-lg transform hover:-translate-y-0.5 transition">
@@ -17,7 +17,7 @@
             </div>
 
             <!-- Info Alert -->
-            <div class="mb-6 px-4 sm:px-0">
+            <div class="mb-6">
                 <div class="bg-blue-900/40 border border-blue-500/50 rounded-lg p-4 flex items-start">
                     <svg class="w-5 h-5 text-blue-400 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2z" clip-rule="evenodd"/></svg>
                     <div>
@@ -76,7 +76,7 @@
             @endif
 
             <!-- Quick Actions -->
-            <div class="mt-10 px-4 sm:px-0 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <a href="{{ route('client.billing.index') }}" class="bg-slate-800 border border-slate-700 rounded-lg p-6 hover:border-amber-500 transition">
                     <div class="flex items-center">
                         <div class="w-12 h-12 bg-green-900/30 rounded-lg flex items-center justify-center text-green-400 mr-4">

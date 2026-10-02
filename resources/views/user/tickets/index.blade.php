@@ -1,8 +1,8 @@
 <x-app-layout>
     <div class="py-10 bg-slate-50 min-h-screen">
-        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            <div class="mb-8 px-4 sm:px-0 flex flex-col sm:flex-row justify-between items-start sm:items-center">
+            <div class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center">
                 <div>
                     <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">Pusat Bantuan (Keluhan)</h2>
                     <p class="text-slate-500 mt-1">Lacak status laporan kendala internet Anda di sini.</p>
@@ -15,7 +15,7 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mx-4 sm:mx-0">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-slate-200">
                         <thead class="bg-slate-50">

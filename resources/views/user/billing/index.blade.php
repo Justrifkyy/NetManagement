@@ -1,13 +1,13 @@
 <x-app-layout>
     <div class="py-10 bg-slate-950 min-h-screen selection:bg-indigo-500/30">
-        <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            <div class="mb-10 px-4 sm:px-0">
+            <div class="mb-10">
                 <h2 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 tracking-tight">Tagihan & Pembayaran</h2>
                 <p class="text-slate-400 mt-2 font-medium">Pantau riwayat tagihan dan kelola pembayaran layanan internet Anda.</p>
             </div>
 
-            <div class="bg-slate-900/80 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 overflow-hidden mx-4 sm:mx-0">
+            <div class="bg-slate-900/80 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 overflow-hidden">
                 <div class="px-6 py-5 border-b border-slate-700/50 bg-slate-800/30 flex items-center gap-3">
                     <div class="p-2 bg-indigo-500/10 rounded-lg border border-indigo-500/20">
                         <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>

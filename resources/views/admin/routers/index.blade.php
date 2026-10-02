@@ -1,8 +1,8 @@
 <x-app-layout>
     <div class="py-10 bg-slate-950 min-h-screen selection:bg-indigo-500/30">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            <div class="mb-10 px-4 sm:px-0 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div class="mb-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h2 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 tracking-tight">Manajemen Perangkat Jaringan</h2>
                     <p class="text-slate-400 mt-2 font-medium">Kelola inventaris Router, OLT, AP, dan ODP sistem Anda.</p>
@@ -13,7 +13,7 @@
                 </a>
             </div>
 
-            <div class="bg-slate-900/80 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-800 overflow-hidden mx-4 sm:mx-0">
+            <div class="bg-slate-900/80 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-800 overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead class="bg-slate-800/50 text-xs font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-700/50">

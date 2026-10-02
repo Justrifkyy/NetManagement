@@ -1,8 +1,8 @@
 <x-app-layout>
     <div class="py-10 bg-slate-950 min-h-screen selection:bg-purple-500/30">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            <div class="mb-8 px-4 sm:px-0">
+            <div class="mb-8">
                 <a href="{{ route('admin.customers.index') }}" class="inline-flex items-center text-sm font-semibold text-slate-400 hover:text-white transition-colors mb-4 group">
                     <svg class="w-4 h-4 mr-1.5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     Kembali ke Daftar Pelanggan
@@ -18,7 +18,7 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 px-4 sm:px-0">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="lg:col-span-2 bg-slate-900/80 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-6 sm:p-8">
                     <div class="flex items-center gap-3 mb-6">
                         <div class="p-2 bg-blue-500/10 rounded-lg border border-blue-500/20">

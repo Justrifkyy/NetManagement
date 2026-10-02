@@ -1,9 +1,9 @@
 <x-app-layout>
     <div class="py-10 bg-slate-950 min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-extrabold text-white mb-8 px-4 sm:px-0">Audit & Keamanan</h2>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-extrabold text-white mb-8">Audit & Keamanan</h2>
 
-            <div class="bg-slate-900 rounded-xl shadow-sm border border-slate-800 p-6 px-4 sm:px-0 mb-6">
+            <div class="bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-6 mb-6">
                 <h3 class="font-bold mb-4">Filter Log</h3>
                 <form method="GET" class="flex flex-col md:flex-row gap-4">
                     <select name="user_id" class="px-4 py-2 border border-slate-700 rounded-lg">
@@ -22,7 +22,7 @@
                 </form>
             </div>
 
-            <div class="bg-slate-900 rounded-xl shadow-sm border border-slate-800 overflow-hidden px-4 sm:px-0">
+            <div class="bg-slate-900 rounded-2xl shadow-xl border border-slate-800 overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full">
                         <thead class="bg-slate-950 border-b border-slate-800">

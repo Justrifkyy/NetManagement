@@ -6,7 +6,7 @@
     </x-slot>
 
     <div class="py-10 bg-blue-50 min-h-screen">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 

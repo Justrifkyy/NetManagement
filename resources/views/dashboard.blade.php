@@ -10,17 +10,13 @@
 
     </div>
     <div class="py-12 bg-slate-950 min-h-screen selection:bg-indigo-500/30">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-slate-900/80 backdrop-blur-md overflow-hidden shadow-2xl sm:rounded-[2.5rem] border border-slate-800 relative group">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-slate-900/80 backdrop-blur-md overflow-hidden shadow-2xl rounded-3xl sm:rounded-[2.5rem] border border-slate-800 relative group">
                 
                 <div class="absolute -right-24 -top-24 w-96  h-96 bg-indigo-600/10 rounded-full blur-[100px] pointer-events-none"></div>
                 <div class="absolute -left-24 -bottom-24 w-80 h-80 bg-purple-600/10 rounded-full blur-[100px] pointer-events-none"></div>
 
                 <div class="p-10 md:p-16 text-center relative z-10">
-                    <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-indigo-500/10 border border-indigo-500/20 rounded-full mb-8">
-                        <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
-                        <span class="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em]">Koneksi Terverifikasi</span>
-                    </div>
 
                     <h2 class="text-4xl md:text-5xl font-black text-white mb-4 tracking-tighter leading-tight">
                         Selamat Datang di <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">NetManagement</span>

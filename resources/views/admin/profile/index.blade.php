@@ -1,8 +1,8 @@
 <x-app-layout>
     <div class="py-10 bg-slate-950 min-h-screen selection:bg-indigo-500/30">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            <div class="mb-10 px-4 sm:px-0">
+            <div class="mb-10">
                 <a href="javascript:history.back()" class="inline-flex items-center text-sm font-semibold text-slate-400 hover:text-white transition-colors mb-4 group">
                     <svg class="w-4 h-4 mr-1.5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     Kembali
@@ -11,7 +11,7 @@
                 <p class="text-slate-400 mt-2 font-medium">Kelola informasi pribadi, kredensial keamanan, dan status akun Anda.</p>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 px-4 sm:px-0">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 
                 <div class="lg:col-span-2 space-y-8">
                     

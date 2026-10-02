@@ -5,8 +5,8 @@
         </h2>
     </x-slot>
 
-    <div class="bg-slate-950 min-h-screen py-10 selection:bg-purple-500/30">
-        <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
+    <div class="bg-slate-950 min-h-screen py-6 sm:py-10 selection:bg-purple-500/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-0">
             @if (Laravel\Fortify\Features::canUpdateProfileInformation())
                 @livewire('profile.update-profile-information-form')
 

@@ -1,9 +1,9 @@
 <x-app-layout>
     <div class="py-10 bg-slate-950 min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             {{-- Back --}}
-            <div class="mb-6 px-4 sm:px-0">
+            <div class="mb-6">
                 <a href="{{ route('admin.reports.index') }}" class="inline-flex items-center text-sm font-semibold text-slate-400 hover:text-white transition-colors group">
                     <svg class="w-4 h-4 mr-1.5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     Kembali ke Pusat Laporan
@@ -11,12 +11,12 @@
             </div>
 
             {{-- Header & Filter --}}
-            <div class="mb-8 px-4 sm:px-0">
+            <div class="mb-8">
                 <h2 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-400 tracking-tight">Laporan Pendapatan</h2>
                 <p class="text-slate-400 mt-2 font-medium">Kalkulasi total pendapatan dari invoice yang sudah lunas dalam periode tertentu.</p>
             </div>
 
-            <form method="GET" class="bg-slate-900/80 rounded-2xl border border-slate-800 p-6 mb-8 mx-4 sm:mx-0 flex flex-col md:flex-row items-end gap-4">
+            <form method="GET" class="bg-slate-900/80 rounded-2xl border border-slate-800 p-6 mb-8 flex flex-col md:flex-row items-end gap-4">
                 <div class="w-full md:w-1/3">
                     <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Dari Tanggal</label>
                     <input type="date" name="from_date" value="{{ $fromDate }}" style="color-scheme: dark;"
@@ -34,7 +34,7 @@
             </form>
 
             {{-- Summary Card --}}
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 px-4 sm:px-0">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div class="md:col-span-1 bg-gradient-to-br from-purple-900/40 to-indigo-900/40 rounded-2xl border border-purple-500/30 p-6">
                     <p class="text-xs font-bold text-purple-300 uppercase tracking-widest mb-2">Total Pendapatan</p>
                     <h3 class="text-3xl font-black text-white">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</h3>
@@ -53,7 +53,7 @@
             </div>
 
             {{-- Table --}}
-            <div class="bg-slate-900/80 rounded-2xl border border-slate-800 overflow-hidden mx-4 sm:mx-0">
+            <div class="bg-slate-900/80 rounded-2xl border border-slate-800 overflow-hidden">
                 <div class="px-6 py-5 border-b border-slate-700/50 bg-slate-800/30">
                     <h3 class="font-bold text-white text-lg">Detail Transaksi Lunas</h3>
                 </div>

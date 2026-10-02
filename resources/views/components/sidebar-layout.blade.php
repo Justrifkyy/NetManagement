@@ -45,13 +45,13 @@
             <div class="flex-1 flex flex-col overflow-hidden">
                 
                 <header class="bg-slate-900 border-b border-slate-800 shadow-lg relative z-10">
-                    <div class="flex justify-between items-center px-6 py-4">
+                    <div class="flex justify-between items-center px-4 sm:px-6 py-3.5 sm:py-4">
                         
                         <div>
                             @if (isset($header))
-                                <h2 class="text-2xl font-extrabold text-white tracking-tight">{{ $header }}</h2>
+                                <h2 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight truncate max-w-[200px] sm:max-w-none">{{ $header }}</h2>
                             @else
-                                <h2 class="text-2xl font-extrabold text-transparent select-none">&nbsp;</h2>
+                                <h2 class="text-xl sm:text-2xl font-extrabold text-transparent select-none">&nbsp;</h2>
                             @endif
                         </div>
 

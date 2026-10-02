@@ -1,13 +1,13 @@
 <x-app-layout>
     <div class="py-10 bg-slate-50 min-h-screen">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            <div class="mb-8 px-4 sm:px-0">
+            <div class="mb-8">
                 <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">Notifikasi Sistem</h2>
                 <p class="text-slate-500 mt-1">Pemberitahuan terkait tagihan, status jaringan, dan info terbaru.</p>
             </div>
 
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mx-4 sm:mx-0">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                 
                 <div class="p-6 border-b border-slate-100 hover:bg-slate-50 transition flex items-start">
                     <div class="w-10 h-10 rounded-full bg-blue-100 text-amber-400 flex items-center justify-center flex-shrink-0 mt-1">

@@ -1,15 +1,15 @@
 <x-app-layout>
     <div class="py-10 bg-slate-950 min-h-screen selection:bg-indigo-500/30">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            <div class="mb-8 px-4 sm:px-0">
+            <div class="mb-8">
                 <a href="{{ route('client.billing.index') }}" class="inline-flex items-center text-sm font-semibold text-slate-400 hover:text-white transition-colors mb-4 group">
                     <svg class="w-4 h-4 mr-1.5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     Kembali ke Daftar Tagihan
                 </a>
             </div>
 
-            <div class="bg-slate-900/80 backdrop-blur-md shadow-2xl sm:rounded-3xl border border-slate-800 overflow-hidden relative mx-4 sm:mx-0">
+            <div class="bg-slate-900/80 backdrop-blur-md shadow-2xl rounded-3xl border border-slate-800 overflow-hidden relative">
                 
                 @if($invoice->status === 'paid')
                     <div class="absolute top-0 right-0 -mr-10 mt-6 transform rotate-45 bg-emerald-600/90 text-white font-black py-1 px-14 shadow-lg border-y border-emerald-400/50 uppercase tracking-widest text-xs z-10 text-center">

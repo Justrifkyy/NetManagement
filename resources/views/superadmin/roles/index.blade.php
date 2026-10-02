@@ -1,9 +1,9 @@
 <x-app-layout>
     <div class="py-10 bg-slate-950 min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-extrabold text-white mb-8 px-4 sm:px-0">Pengaturan Role & Akses</h2>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-extrabold text-white mb-8">Pengaturan Role & Akses</h2>
 
-            <div class="bg-slate-900 rounded-xl shadow-sm border border-slate-800 p-6 px-4 sm:px-0">
+            <div class="bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-6">
                 <p class="text-slate-300 mb-6">Atur hak akses dan permission untuk setiap role dalam sistem</p>
 
                 <div class="space-y-6">

@@ -1,8 +1,8 @@
 <x-app-layout>
     <div class="py-10 bg-slate-950 min-h-screen selection:bg-purple-500/30">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            <div class="mb-8 px-4 sm:px-0">
+            <div class="mb-8">
                 <a href="{{ route('admin.reports.index') }}" class="inline-flex items-center text-sm font-semibold text-slate-400 hover:text-white transition-colors mb-4 group">
                     <svg class="w-4 h-4 mr-1.5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     Kembali ke Pusat Laporan
@@ -10,7 +10,7 @@
                 <h2 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 tracking-tight">Laporan Data Pelanggan</h2>
             </div>
 
-            <div class="bg-slate-900/80 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-6 mb-8 mx-4 sm:mx-0">
+            <div class="bg-slate-900/80 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-6 mb-8">
                 <form action="{{ route('admin.reports.customers') }}" method="GET" class="flex flex-col sm:flex-row items-end gap-5">
                     <div class="w-full sm:w-1/3">
                         <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Mulai Dari Tanggal</label>
@@ -29,7 +29,7 @@
                 </form>
             </div>
 
-            <div class="bg-slate-900/80 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 overflow-hidden mx-4 sm:mx-0">
+            <div class="bg-slate-900/80 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 overflow-hidden">
                 <div class="px-6 py-5 border-b border-slate-700/50 bg-slate-800/30 flex items-center gap-3">
                     <div class="p-1.5 bg-emerald-500/20 rounded-lg">
                         <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>

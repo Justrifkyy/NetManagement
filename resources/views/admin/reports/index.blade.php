@@ -1,13 +1,13 @@
 <x-app-layout>
     <div class="py-10 bg-slate-950 min-h-screen selection:bg-purple-500/30">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            <div class="mb-10 px-4 sm:px-0">
+            <div class="mb-10">
                 <h2 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 tracking-tight">Pusat Laporan & Log Sistem</h2>
                 <p class="text-slate-400 mt-2 font-medium">Akses cepat ke seluruh data rekapitulasi, tunggakan, dan rekam jejak aktivitas.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 sm:px-0">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <a href="{{ route('admin.reports.customers') }}" class="bg-slate-900/80 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-6 hover:border-emerald-500/50 hover:-translate-y-1 hover:shadow-2xl hover:shadow-emerald-500/10 transition-all duration-300 group relative overflow-hidden flex flex-col h-full">
                     <div class="absolute -right-6 -top-6 text-emerald-500/5 group-hover:text-emerald-500/10 transition-colors duration-500">
                         <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>

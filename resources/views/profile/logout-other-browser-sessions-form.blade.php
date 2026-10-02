@@ -28,13 +28,13 @@
                             @endif
                         </div>
 
-                        <div class="ml-4">
-                            <div class="text-sm text-slate-200 font-bold">
+                        <div class="ml-4 min-w-0 flex-1">
+                            <div class="text-sm text-slate-200 font-bold truncate">
                                 {{ $session->agent->platform() ? $session->agent->platform() : __('Tidak Diketahui') }} - {{ $session->agent->browser() ? $session->agent->browser() : __('Tidak Diketahui') }}
                             </div>
 
                             <div>
-                                <div class="text-xs text-slate-500 font-medium mt-0.5">
+                                <div class="text-xs text-slate-500 font-medium mt-0.5 truncate">
                                     {{ $session->ip_address }},
 
                                     @if ($session->is_current_device)
@@ -50,12 +50,12 @@
             </div>
         @endif
 
-        <div class="flex items-center mt-6">
-            <button wire:click="confirmLogout" wire:loading.attr="disabled" class="px-6 py-3 bg-amber-600 text-white font-bold rounded-xl hover:bg-amber-500 shadow-[0_0_15px_rgba(217,119,6,0.3)] hover:shadow-[0_0_20px_rgba(217,119,6,0.5)] transition-all duration-200 disabled:opacity-50">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-3 mt-6">
+            <button wire:click="confirmLogout" wire:loading.attr="disabled" class="w-full sm:w-auto px-6 py-3 bg-amber-600 text-white font-bold rounded-xl hover:bg-amber-500 shadow-[0_0_15px_rgba(217,119,6,0.3)] hover:shadow-[0_0_20px_rgba(217,119,6,0.5)] transition-all duration-200 disabled:opacity-50 text-center">
                 {{ __('Logout dari Perangkat Lain') }}
             </button>
 
-            <x-action-message class="ml-4 text-emerald-400 font-bold flex items-center gap-2" on="loggedOut">
+            <x-action-message class="text-emerald-400 font-bold flex items-center gap-2" on="loggedOut">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                 {{ __('Berhasil Selesai.') }}
             </x-action-message>

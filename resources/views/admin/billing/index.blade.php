@@ -1,8 +1,8 @@
 <x-app-layout>
     <div class="py-10 bg-slate-950 min-h-screen selection:bg-amber-500/30">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            <div class="mb-8 px-4 sm:px-0 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h2 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 tracking-tight">Manajemen Tagihan</h2>
                     <p class="text-slate-400 mt-2 font-medium">Pantau arus kas, verifikasi pelunasan pelanggan, dan kelola invoice ISP Anda.</p>
@@ -10,7 +10,7 @@
             </div>
 
             <!-- Statistics Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 px-4 sm:px-0">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div class="bg-slate-900/80 backdrop-blur-sm rounded-2xl border border-slate-800 p-6 shadow-xl relative overflow-hidden group hover:border-slate-700 transition-all">
                     <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-emerald-500/10 rounded-full blur-xl pointer-events-none"></div>
                     <div class="flex items-center justify-between">
@@ -65,7 +65,7 @@
             </div>
 
             <!-- Search & Filter Controls -->
-            <div class="mb-6 px-4 sm:px-0 flex flex-col sm:flex-row gap-4 justify-between items-stretch sm:items-center">
+            <div class="mb-6 flex flex-col sm:flex-row gap-4 justify-between items-stretch sm:items-center">
                 <form action="{{ route('admin.billing.index') }}" method="GET" class="flex-1 max-w-xl relative group">
                     @if(request('status'))
                         <input type="hidden" name="status" value="{{ request('status') }}">
@@ -98,7 +98,7 @@
             </div>
 
             <!-- Table Container -->
-            <div class="bg-slate-900/80 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-800 overflow-hidden mx-4 sm:mx-0">
+            <div class="bg-slate-900/80 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-800 overflow-hidden">
                 <div class="px-6 py-5 border-b border-slate-800/80 bg-slate-900/50 flex justify-between items-center">
                     <h3 class="font-bold text-slate-200 text-base">Daftar Semua Tagihan</h3>
                     <span class="text-xs font-semibold text-slate-500">Menampilkan {{ $invoices->count() }} data</span>

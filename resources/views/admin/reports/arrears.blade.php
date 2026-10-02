@@ -1,8 +1,8 @@
 <x-app-layout>
     <div class="py-10 bg-slate-950 min-h-screen selection:bg-purple-500/30">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            <div class="mb-8 px-4 sm:px-0">
+            <div class="mb-8">
                 <a href="{{ route('admin.reports.index') }}" class="inline-flex items-center text-sm font-semibold text-slate-400 hover:text-white transition-colors mb-4 group">
                     <svg class="w-4 h-4 mr-1.5 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     Kembali ke Pusat Laporan
@@ -10,7 +10,7 @@
                 <h2 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 tracking-tight">Laporan Rekap Tunggakan</h2>
             </div>
 
-            <div class="bg-slate-900/80 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-6 mb-8 mx-4 sm:mx-0">
+            <div class="bg-slate-900/80 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 p-6 mb-8">
                 <form action="{{ route('admin.reports.arrears') }}" method="GET" class="flex flex-col sm:flex-row items-end gap-5">
                     <div class="w-full sm:w-1/3">
                         <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Tampilkan Tunggakan Sampai Tanggal</label>
@@ -25,7 +25,7 @@
                 </form>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 px-4 sm:px-0">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div class="bg-slate-900/60 backdrop-blur-md rounded-2xl border border-rose-500/20 p-6 flex flex-col justify-center relative overflow-hidden group hover:border-rose-500/40 transition-colors">
                     <div class="absolute -right-4 -bottom-4 text-rose-500/5 group-hover:text-rose-500/10 transition-colors">
                         <svg class="w-24 h-24" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
@@ -51,7 +51,7 @@
                 </div>
             </div>
 
-            <div class="bg-slate-900/80 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 overflow-hidden mx-4 sm:mx-0">
+            <div class="bg-slate-900/80 backdrop-blur-md rounded-2xl shadow-xl border border-slate-800 overflow-hidden">
                 <div class="px-6 py-5 border-b border-slate-700/50 bg-slate-800/30 flex items-center gap-3">
                     <div class="p-1.5 bg-rose-500/20 rounded-lg">
                         <svg class="w-5 h-5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>

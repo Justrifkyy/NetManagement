@@ -8,10 +8,8 @@
 
                 <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div>
-                        <div class="flex items-center gap-3 mb-2">
+                        <div class="mb-2">
                             <span class="px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-indigo-400 text-[10px] font-black uppercase tracking-[0.2em]">Technician Portal</span>
-                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                            <span class="text-slate-500 text-xs font-bold uppercase tracking-widest">System Online</span>
                         </div>
                         <h1 class="text-4xl font-black text-white tracking-tighter">
                             Selamat Bertugas, <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">{{ Auth::user()->name }}</span>!
@@ -20,9 +18,9 @@
                             Pantau bursa tugas secara berkala. Pastikan standar <span class="text-indigo-300 font-bold">K3 (Kesehatan & Keselamatan Kerja)</span> terpenuhi di setiap instalasi lapangan.
                         </p>
                     </div>
-                    <div class="hidden lg:block text-right">
-                        <div class="text-slate-500 text-xs font-bold uppercase tracking-widest mb-1">Waktu Server</div>
-                        <div class="text-2xl font-mono font-black text-white" id="clock">{{ now()->format('H:i') }} <span class="text-indigo-500 text-sm">WITA</span></div>
+                    <div class="hidden lg:flex items-center gap-2.5 px-4 py-2 bg-slate-800/60 rounded-2xl border border-slate-700/60 text-slate-300">
+                        <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span class="text-xl font-mono font-bold text-white tracking-wider" id="clock">{{ now()->setTimezone('Asia/Makassar')->format('H:i') }}</span>
                     </div>
                 </div>
             </div>
@@ -127,8 +125,10 @@
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
-            document.getElementById('clock').innerHTML = `${hours}:${minutes} <span class="text-indigo-500 text-sm">WITA</span>`;
+            const el = document.getElementById('clock');
+            if (el) el.textContent = `${hours}:${minutes}`;
         }
+        updateClock();
         setInterval(updateClock, 1000);
     </script>
 </x-app-layout>

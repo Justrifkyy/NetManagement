@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="py-10 bg-slate-950 min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="mb-8 px-4 sm:px-0 flex justify-between items-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-8 flex justify-between items-center">
                 <div>
                     <h2 class="text-3xl font-extrabold text-white">Manajemen Paket</h2>
                     <p class="text-slate-400 mt-1">Kelola katalog produk internet dan paket layanan.</p>
@@ -12,7 +12,7 @@
             </div>
 
             @if ($message = Session::get('success'))
-                <div class="mb-4 px-4 sm:px-0">
+                <div class="mb-4">
                     <div class="rounded-xl bg-green-50 p-4 border border-green-200">
                         <p class="text-green-700">{{ $message }}</p>
                     </div>
@@ -20,7 +20,7 @@
             @endif
 
             <!-- Packages Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 sm:px-0">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @forelse ($packages as $package)
                     <div class="bg-slate-900 rounded-xl shadow-sm border border-slate-800 p-6">
                         <div class="flex justify-between items-start mb-4">

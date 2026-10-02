@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="py-10 bg-slate-950 min-h-screen selection:bg-emerald-500/30">
-        <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
             @php
                 /** @var \App\Models\Customer $customer */
@@ -21,7 +21,7 @@
             @endphp
 
             {{-- Welcome Header --}}
-            <div class="mb-8 px-4 sm:px-0 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h2 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400 tracking-tight">Halo, {{ Auth::user()->name }}! 👋</h2>
                     <p class="text-slate-400 mt-1 font-medium">Selamat datang di Ringkasan Layanan NetManagement Anda.</p>
@@ -35,7 +35,7 @@
 
             {{-- Unpaid Invoice Warning Alert --}}
             @if($unpaidCount > 0)
-                <div class="mb-8 px-4 sm:px-0">
+                <div class="mb-8">
                     <div class="bg-rose-500/10 border-l-4 border-rose-500 p-5 rounded-r-2xl border border-rose-500/20 backdrop-blur-md shadow-lg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div class="flex items-start">
                             <div class="p-2.5 bg-rose-500/20 rounded-xl mr-4 mt-0.5 text-rose-400 shrink-0 border border-rose-500/30">
@@ -54,7 +54,7 @@
             @endif
 
             {{-- Recent Complaints Section --}}
-            <div class="mb-8 px-4 sm:px-0">
+            <div class="mb-8">
                 <div class="bg-slate-900/80 backdrop-blur-md rounded-2xl p-6 shadow-xl border border-slate-800">
                     <div class="flex items-center justify-between mb-4">
                         <div>
@@ -84,7 +84,7 @@
             </div>
 
             {{-- 4 Stat Metric Cards --}}
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-4 sm:px-0 mb-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 
                 {{-- Card 1: Status Internet --}}
                 <div class="bg-slate-900/80 backdrop-blur-md rounded-2xl p-6 shadow-xl border {{ isset($subscription) && $subscription->status === 'active' ? 'border-emerald-500/30 hover:border-emerald-500/50' : 'border-rose-500/30 hover:border-rose-500/50' }} transition-all flex flex-col justify-between group">
@@ -162,7 +162,7 @@
             </div>
 
             {{-- Bottom Section: Lokasi & Pusat Bantuan --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 px-4 sm:px-0">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {{-- Card Left: Lokasi --}}
                 <div class="bg-slate-900/80 backdrop-blur-md shadow-xl rounded-2xl border border-slate-800 p-6 flex flex-col justify-between">
                     <div>

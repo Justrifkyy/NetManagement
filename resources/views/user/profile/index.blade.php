@@ -1,13 +1,13 @@
 <x-app-layout>
     <div class="py-10 bg-slate-50 min-h-screen">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            <div class="mb-8 px-4 sm:px-0">
+            <div class="mb-8">
                 <h2 class="text-3xl font-extrabold text-slate-800 tracking-tight">Akun & Profil Saya</h2>
                 <p class="text-slate-500 mt-1">Kelola informasi pribadi dan data kontak Anda.</p>
             </div>
 
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mx-4 sm:px-0">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="bg-slate-800 px-8 py-10 text-white flex flex-col md:flex-row items-center gap-6">
                     <div class="w-24 h-24 rounded-full bg-blue-500 flex items-center justify-center text-4xl font-black border-4 border-slate-700">
                         {{ substr(Auth::user()->name, 0, 1) }}

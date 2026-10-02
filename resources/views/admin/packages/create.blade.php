@@ -1,12 +1,12 @@
 <x-app-layout>
     <div class="py-10 bg-slate-950 min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="mb-8 px-4 sm:px-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-8">
                 <a href="{{ route('admin.packages.index') }}" class="text-purple-600 hover:text-purple-900">← Kembali</a>
                 <h2 class="text-3xl font-extrabold text-white mt-2">Tambah Paket Baru</h2>
             </div>
 
-            <div class="max-w-2xl bg-slate-900 rounded-xl shadow-sm border border-slate-800 p-6 px-4 sm:px-0">
+            <div class="max-w-2xl bg-slate-900 rounded-2xl shadow-xl border border-slate-800 p-6">
                 <form action="{{ route('admin.packages.store') }}" method="POST" class="space-y-6">
                     @csrf
 
