@@ -33,20 +33,45 @@ class SuperAdminDashboardController extends Controller
             ->pluck('count', 'role')
             ->toArray();
 
-        $userRoleChart = [
-            'labels' => array_map(fn($role) => ucfirst(str_replace('_', ' ', $role)), array_keys($usersByRole)),
-            'data' => array_values($usersByRole),
-            'backgroundColor' => ['#8b5cf6', '#ef4444', '#f59e0b', '#3b82f6', '#10b981'],
+        $roleColors = [
+            'super_admin' => '#8b5cf6', // purple
+            'admin'       => '#3b82f6', // blue
+            'marketing'   => '#f59e0b', // amber
+            'technician'  => '#06b6d4', // cyan
+            'customer'    => '#10b981', // emerald
         ];
 
-        // Chart Data: Revenue Trend (Last 12 Months) - Single aggregated query
+        $roleLabels = [
+            'super_admin' => 'Super Admin',
+            'admin'       => 'Admin',
+            'marketing'   => 'Marketing',
+            'technician'  => 'Teknisi',
+            'customer'    => 'Pelanggan',
+        ];
+
+        $roleChartLabels = [];
+        $roleChartData = [];
+        $roleChartColors = [];
+        foreach ($usersByRole as $role => $count) {
+            $roleChartLabels[] = $roleLabels[$role] ?? ucfirst(str_replace('_', ' ', $role));
+            $roleChartData[] = (int) $count;
+            $roleChartColors[] = $roleColors[$role] ?? '#94a3b8';
+        }
+
+        $userRoleChart = [
+            'labels' => $roleChartLabels,
+            'data' => $roleChartData,
+            'backgroundColor' => $roleChartColors,
+        ];
+
+        // Chart Data: Revenue Trend (Last 12 Months) - Aggregated by paid date
         $startDate = now()->subMonths(11)->startOfMonth();
         $isSqlite = DB::connection()->getDriverName() === 'sqlite';
-        $yearExpr = $isSqlite ? "strftime('%Y', created_at)" : "YEAR(created_at)";
-        $monthExpr = $isSqlite ? "strftime('%m', created_at)" : "MONTH(created_at)";
+        $yearExpr = $isSqlite ? "strftime('%Y', COALESCE(paid_at, created_at))" : "YEAR(COALESCE(paid_at, created_at))";
+        $monthExpr = $isSqlite ? "strftime('%m', COALESCE(paid_at, created_at))" : "MONTH(COALESCE(paid_at, created_at))";
 
         $monthlyRevenues = Invoice::where('status', 'paid')
-            ->where('created_at', '>=', $startDate)
+            ->where(DB::raw('COALESCE(paid_at, created_at)'), '>=', $startDate)
             ->selectRaw("{$yearExpr} as year, {$monthExpr} as month, SUM(amount) as total")
             ->groupByRaw("{$yearExpr}, {$monthExpr}")
             ->get()
@@ -59,15 +84,15 @@ class SuperAdminDashboardController extends Controller
         for ($i = 11; $i >= 0; $i--) {
             $date = now()->subMonths($i);
             $key = $date->format('Y-m');
-            $labels[] = $date->format('M Y');
+            $labels[] = $date->translatedFormat('M Y');
             $revenueTrend[] = (float) ($monthlyRevenues->get($key)->total ?? 0);
         }
 
         $revenueChart = [
             'labels' => $labels,
             'data' => $revenueTrend,
-            'backgroundColor' => 'rgba(139, 92, 246, 0.1)',
-            'borderColor' => 'rgba(139, 92, 246, 1)',
+            'backgroundColor' => 'rgba(244, 63, 94, 0.15)',
+            'borderColor' => '#f43f5e',
         ];
 
         // Chart Data: Subscription Status
@@ -76,13 +101,38 @@ class SuperAdminDashboardController extends Controller
             ->pluck('count', 'status')
             ->toArray();
 
-        $subscriptionChart = [
-            'labels' => array_map(fn($status) => ucfirst($status), array_keys($subscriptionStatus)),
-            'data' => array_values($subscriptionStatus),
-            'backgroundColor' => ['#10b981', '#ef4444', '#f59e0b', '#6b7280'],
+        $statusColors = [
+            'active'    => '#10b981', // emerald
+            'inactive'  => '#ef4444', // red
+            'pending'   => '#f59e0b', // amber
+            'isolated'  => '#f43f5e', // rose
+            'cancelled' => '#64748b', // slate
         ];
 
-        // Chart Data: Daily User Growth (Last 7 days) - Single aggregated query
+        $statusLabels = [
+            'active'    => 'Aktif',
+            'inactive'  => 'Nonaktif',
+            'pending'   => 'Tertunda',
+            'isolated'  => 'Terisolir',
+            'cancelled' => 'Dibatalkan',
+        ];
+
+        $subLabels = [];
+        $subData = [];
+        $subColors = [];
+        foreach ($subscriptionStatus as $status => $count) {
+            $subLabels[] = $statusLabels[$status] ?? ucfirst($status);
+            $subData[] = (int) $count;
+            $subColors[] = $statusColors[$status] ?? '#94a3b8';
+        }
+
+        $subscriptionChart = [
+            'labels' => $subLabels,
+            'data' => $subData,
+            'backgroundColor' => $subColors,
+        ];
+
+        // Chart Data: Daily User Growth (Last 7 days)
         $startDateGrowth = now()->subDays(6)->startOfDay();
         $dailyUsers = User::where('created_at', '>=', $startDateGrowth)
             ->selectRaw('DATE(created_at) as date, count(*) as count')
@@ -93,15 +143,15 @@ class SuperAdminDashboardController extends Controller
         $growthLabels = [];
         for ($i = 6; $i >= 0; $i--) {
             $date = now()->subDays($i);
-            $growthLabels[] = $date->format('D');
+            $growthLabels[] = $date->translatedFormat('D, d M');
             $userGrowth[] = (int) ($dailyUsers->get($date->format('Y-m-d')) ?? 0);
         }
 
         $userGrowthChart = [
             'labels' => $growthLabels,
             'data' => $userGrowth,
-            'backgroundColor' => 'rgba(59, 130, 246, 0.1)',
-            'borderColor' => 'rgba(59, 130, 246, 1)',
+            'backgroundColor' => '#3b82f6',
+            'borderColor' => '#60a5fa',
         ];
 
         // Recent Audit Logs with eager loading and pagination

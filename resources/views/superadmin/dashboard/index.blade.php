@@ -65,7 +65,8 @@
                         </div>
                         <div class="p-3 bg-rose-500/10 rounded-xl group-hover:bg-rose-500/20 transition-colors border border-rose-500/10">
                             <svg class="w-8 h-8 text-rose-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M8.16 2.75a.75.75 0 00-.328 1.456l3.492 1.746-4.8-1.2a.75.75 0 10-.368 1.456l6 1.5a.75.75 0 00.368-.056l2-1a.75.75 0 10-.672-1.344l-1.185.592-3.492-1.746a.75.75 0 00-.615-.178zM2.75 9.25a.75.75 0 000 1.5h14.5a.75.75 0 000-1.5H2.75z" />
+                                <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd" />
                             </svg>
                         </div>
                     </div>
@@ -77,7 +78,8 @@
                     <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
                         <div class="p-2 bg-purple-500/10 rounded-lg border border-purple-500/20">
                             <svg class="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
+                                <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z" />
+                                <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z" />
                             </svg>
                         </div>
                         Distribusi User Berdasarkan Role
@@ -91,7 +93,7 @@
                     <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
                         <div class="p-2 bg-emerald-500/10 rounded-lg border border-emerald-500/20">
                             <svg class="w-5 h-5 text-emerald-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v2a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a2 2 0 002 2h8a2 2 0 002-2V6H6v1z" clip-rule="evenodd" />
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
                             </svg>
                         </div>
                         Status Langganan
@@ -187,7 +189,7 @@
                     <div class="p-2 bg-amber-500/10 rounded-lg border border-amber-500/20">
                         <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
-                            <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 1 1 0 000-2H6a6 6 0 100 12H4a1 1 0 100 2 2 2 0 01-2-2V5zm15 7a1 1 0 11-2 0 1 1 0 012 0z" clip-rule="evenodd" />
+                            <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd" />
                         </svg>
                     </div>
                     <h3 class="text-lg font-bold text-white tracking-wide">Audit Log Terbaru</h3>
@@ -238,6 +240,7 @@
     </div>
 
     @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
         @keyframes progress {
             0% { background-position: 1rem 0; }
@@ -246,133 +249,203 @@
     </style>
     
     <script>
-        // Chart.js Configuration
-        Chart.defaults.color = '#94a3b8';
-        Chart.defaults.borderColor = '#1e293b'; // Warna border chart yang lebih gelap agar menyatu
-        Chart.defaults.font.family = "'Figtree', system-ui, sans-serif";
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js library failed to load.');
+                return;
+            }
 
-        // Script chart tetap sama seperti sebelumnya (tidak ada yang dihapus)
-        
-        // 1. User by Role Chart (Doughnut)
-        const userRoleCtx = document.getElementById('userRoleChart');
-        if (userRoleCtx) {
-            new Chart(userRoleCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: @json($userRoleChart['labels']),
-                    datasets: [{
-                        data: @json($userRoleChart['data']),
-                        backgroundColor: @json($userRoleChart['backgroundColor']),
-                        borderColor: '#0f172a', // Outline chart sesuai background slate-900
-                        borderWidth: 3,
-                        hoverOffset: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom', labels: { padding: 20, font: { size: 12, weight: 'bold' } } }
+            // Global Chart Defaults
+            Chart.defaults.color = '#94a3b8';
+            Chart.defaults.borderColor = '#1e293b';
+            Chart.defaults.font.family = "'Figtree', system-ui, sans-serif";
+
+            // 1. User by Role Chart (Doughnut)
+            const userRoleCtx = document.getElementById('userRoleChart');
+            if (userRoleCtx) {
+                const roleLabels = @json($userRoleChart['labels']);
+                const roleData = @json($userRoleChart['data']);
+                const roleColors = @json($userRoleChart['backgroundColor']);
+
+                new Chart(userRoleCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: roleLabels,
+                        datasets: [{
+                            data: roleData,
+                            backgroundColor: roleColors,
+                            borderColor: '#0f172a',
+                            borderWidth: 3,
+                            hoverOffset: 6
+                        }]
                     },
-                    cutout: '70%'
-                }
-            });
-        }
-
-        // 2. Subscription Status Chart (Pie)
-        const subscriptionCtx = document.getElementById('subscriptionChart');
-        if (subscriptionCtx) {
-            new Chart(subscriptionCtx, {
-                type: 'pie',
-                data: {
-                    labels: @json($subscriptionChart['labels']),
-                    datasets: [{
-                        data: @json($subscriptionChart['data']),
-                        backgroundColor: @json($subscriptionChart['backgroundColor']),
-                        borderColor: '#0f172a',
-                        borderWidth: 3,
-                        hoverOffset: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom', labels: { padding: 20, font: { size: 12, weight: 'bold' } } }
-                    }
-                }
-            });
-        }
-
-        // 3. Revenue Trend Chart (Line)
-        const revenueCtx = document.getElementById('revenueChart');
-        if (revenueCtx) {
-            new Chart(revenueCtx, {
-                type: 'line',
-                data: {
-                    labels: @json($revenueChart['labels']),
-                    datasets: [{
-                        label: 'Pendapatan',
-                        data: @json($revenueChart['data']),
-                        backgroundColor: @json($revenueChart['backgroundColor']),
-                        borderColor: @json($revenueChart['borderColor']),
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4, // Kurva yang lebih mulus
-                        pointBackgroundColor: '#0f172a',
-                        pointBorderColor: @json($revenueChart['borderColor']),
-                        pointBorderWidth: 3,
-                        pointRadius: 4,
-                        pointHoverRadius: 8,
-                        pointHoverBackgroundColor: @json($revenueChart['borderColor']),
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: { mode: 'index', intersect: false },
-                    plugins: {
-                        legend: { display: false } // Sembunyikan legend untuk tampilan lebih bersih
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: '#1e293b', drawBorder: false },
-                            ticks: { callback: function(value) { return 'Rp ' + (value/1000000) + ' Jt'; } } // Disingkat agar rapi
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 16,
+                                    font: { size: 12, weight: 'bold' },
+                                    usePointStyle: true,
+                                    pointStyle: 'circle'
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return ' ' + context.label + ': ' + context.raw + ' akun';
+                                    }
+                                }
+                            }
                         },
-                        x: { grid: { display: false, drawBorder: false } }
+                        cutout: '68%'
                     }
-                }
-            });
-        }
+                });
+            }
 
-        // 4. User Growth Chart (Bar)
-        const userGrowthCtx = document.getElementById('userGrowthChart');
-        if (userGrowthCtx) {
-            new Chart(userGrowthCtx, {
-                type: 'bar',
-                data: {
-                    labels: @json($userGrowthChart['labels']),
-                    datasets: [{
-                        label: 'User Baru',
-                        data: @json($userGrowthChart['data']),
-                        backgroundColor: @json($userGrowthChart['backgroundColor']),
-                        borderColor: 'transparent',
-                        borderRadius: 6,
-                        barPercentage: 0.6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { beginAtZero: true, grid: { color: '#1e293b', drawBorder: false } },
-                        x: { grid: { display: false, drawBorder: false } }
+            // 2. Subscription Status Chart (Pie)
+            const subscriptionCtx = document.getElementById('subscriptionChart');
+            if (subscriptionCtx) {
+                const subLabels = @json($subscriptionChart['labels']);
+                const subData = @json($subscriptionChart['data']);
+                const subColors = @json($subscriptionChart['backgroundColor']);
+
+                new Chart(subscriptionCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: subLabels,
+                        datasets: [{
+                            data: subData,
+                            backgroundColor: subColors,
+                            borderColor: '#0f172a',
+                            borderWidth: 3,
+                            hoverOffset: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 16,
+                                    font: { size: 12, weight: 'bold' },
+                                    usePointStyle: true,
+                                    pointStyle: 'circle'
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return ' ' + context.label + ': ' + context.raw + ' langganan';
+                                    }
+                                }
+                            }
+                        }
                     }
-                }
-            });
-        }
+                });
+            }
+
+            // 3. Revenue Trend Chart (Line)
+            const revenueCtx = document.getElementById('revenueChart');
+            if (revenueCtx) {
+                new Chart(revenueCtx, {
+                    type: 'line',
+                    data: {
+                        labels: @json($revenueChart['labels']),
+                        datasets: [{
+                            label: 'Pendapatan',
+                            data: @json($revenueChart['data']),
+                            backgroundColor: @json($revenueChart['backgroundColor']),
+                            borderColor: @json($revenueChart['borderColor']),
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.35,
+                            pointBackgroundColor: '#0f172a',
+                            pointBorderColor: @json($revenueChart['borderColor']),
+                            pointBorderWidth: 3,
+                            pointRadius: 4,
+                            pointHoverRadius: 7,
+                            pointHoverBackgroundColor: @json($revenueChart['borderColor']),
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: false },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return ' Pendapatan: Rp ' + Number(context.raw || 0).toLocaleString('id-ID');
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: '#1e293b', drawBorder: false },
+                                ticks: {
+                                    callback: function(value) {
+                                        if (value >= 1000000) {
+                                            return 'Rp ' + (value / 1000000).toLocaleString('id-ID') + ' Jt';
+                                        }
+                                        return 'Rp ' + Number(value).toLocaleString('id-ID');
+                                    }
+                                }
+                            },
+                            x: { grid: { display: false, drawBorder: false } }
+                        }
+                    }
+                });
+            }
+
+            // 4. User Growth Chart (Bar)
+            const userGrowthCtx = document.getElementById('userGrowthChart');
+            if (userGrowthCtx) {
+                new Chart(userGrowthCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: @json($userGrowthChart['labels']),
+                        datasets: [{
+                            label: 'User Baru',
+                            data: @json($userGrowthChart['data']),
+                            backgroundColor: @json($userGrowthChart['backgroundColor']),
+                            borderColor: 'transparent',
+                            borderRadius: 8,
+                            barPercentage: 0.55
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return ' User Baru: ' + context.raw + ' orang';
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { precision: 0, stepSize: 1 },
+                                grid: { color: '#1e293b', drawBorder: false }
+                            },
+                            x: { grid: { display: false, drawBorder: false } }
+                        }
+                    }
+                });
+            }
+        });
     </script>
     @endpush
 </x-app-layout>
