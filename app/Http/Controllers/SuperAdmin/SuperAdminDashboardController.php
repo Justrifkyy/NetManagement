@@ -213,20 +213,51 @@ class SuperAdminDashboardController extends Controller
 
         // 2. MikroTik RouterOS (Socket Check)
         try {
-            // Ambil router aktif utama dari database atau gunakan konfigurasi fallback .env
+            $envHost = config('services.mikrotik.host', '192.168.88.1');
+            $envPort = (int) config('services.mikrotik.port', 8728);
+
+            // Ambil router aktif utama dari database
             $activeRouter = NetworkAsset::where('type', 'Router')
                 ->where('is_active', true)
                 ->first();
 
-            $host = $activeRouter?->ip_address ?: config('services.mikrotik.host', '192.168.88.1');
-            $port = (int) ($activeRouter?->api_port ?: config('services.mikrotik.port', 8728));
-            $routerName = $activeRouter?->name ?: 'Primary Router';
+            // Prioritaskan .env jika di database masih memakai IP default seeder (192.168.88.1)
+            $host = $activeRouter?->ip_address ?: $envHost;
+            $port = (int) ($activeRouter?->api_port ?: $envPort);
+            $routerName = $activeRouter?->name ?: 'Router Utama';
+
+            if ($activeRouter && $activeRouter->ip_address === '192.168.88.1' && !empty($envHost) && $envHost !== '192.168.88.1') {
+                $host = $envHost;
+                $port = $envPort;
+                try {
+                    $activeRouter->update([
+                        'ip_address' => $envHost,
+                        'api_port'   => $envPort,
+                    ]);
+                } catch (\Throwable $e) {}
+            }
 
             $mtStart = microtime(true);
             $errno = 0;
             $errstr = '';
             // Non-blocking socket ping dengan timeout 1.2 detik
             $socket = @fsockopen($host, $port, $errno, $errstr, 1.2);
+
+            // Fallback coba ke .env jika socket gagal dan host berbeda
+            if (!is_resource($socket) && $host !== $envHost && !empty($envHost)) {
+                $host = $envHost;
+                $port = $envPort;
+                $socket = @fsockopen($host, $port, $errno, $errstr, 1.2);
+                if (is_resource($socket) && $activeRouter) {
+                    try {
+                        $activeRouter->update([
+                            'ip_address' => $envHost,
+                            'api_port'   => $envPort,
+                        ]);
+                    } catch (\Throwable $e) {}
+                }
+            }
+
             $mtLatency = round((microtime(true) - $mtStart) * 1000);
 
             if (is_resource($socket)) {
@@ -379,32 +410,61 @@ class SuperAdminDashboardController extends Controller
     }
 
     /**
-     * Menghitung skor kesehatan server dan mengumpulkan metrik sistem
+     * Menghitung skor kesehatan server dan mengumpulkan metrik sistem aktual
      */
     private function getSystemHealth(array $services = []): array
     {
         $score = 100;
 
-        // Penurunan skor jika database bermasalah
+        // 1. Penurunan skor HANYA jika database server tidak responsif
         if (isset($services['database']) && !$services['database']['is_healthy']) {
-            $score -= 35;
+            $score -= 40;
         }
 
-        // Penurunan skor jika integrasi pihak ketiga ada yang offline
-        $penalty = 0;
-        foreach (['mikrotik', 'whatsapp', 'midtrans'] as $svcKey) {
-            if (isset($services[$svcKey]) && !$services[$svcKey]['is_healthy']) {
-                $penalty += 8;
+        // 2. Deteksi RAM Fisik Server (Linux /proc/meminfo vs PHP Memory Limit)
+        $memoryUsedPhp = memory_get_usage(true);
+        $memoryLimitPhp = ini_get('memory_limit') ?: '512M';
+        $memoryFormattedPhp = round($memoryUsedPhp / (1024 * 1024), 1) . ' MB';
+
+        $ramDisplay = "{$memoryFormattedPhp} / {$memoryLimitPhp}";
+        $ramPercent = 0;
+
+        if (@is_readable('/proc/meminfo')) {
+            $meminfo = @file_get_contents('/proc/meminfo');
+            if ($meminfo) {
+                $totalKb = 0;
+                $availKb = 0;
+                if (preg_match('/MemTotal:\s+(\d+)\s+kB/i', $meminfo, $m)) {
+                    $totalKb = (int) $m[1];
+                }
+                if (preg_match('/MemAvailable:\s+(\d+)\s+kB/i', $meminfo, $m)) {
+                    $availKb = (int) $m[1];
+                } elseif (preg_match('/MemFree:\s+(\d+)\s+kB/i', $meminfo, $m)) {
+                    $availKb = (int) $m[1];
+                }
+
+                if ($totalKb > 0) {
+                    $totalRamBytes = $totalKb * 1024;
+                    $availRamBytes = $availKb * 1024;
+                    $usedRamBytes = max(0, $totalRamBytes - $availRamBytes);
+
+                    $totalRamGb = round($totalRamBytes / (1024 * 1024 * 1024), 1);
+                    $usedRamGb = round($usedRamBytes / (1024 * 1024 * 1024), 1);
+                    $ramPercent = round(($usedRamBytes / $totalRamBytes) * 100);
+
+                    // Tampilkan kapasitas RAM fisik server sesungguhnya (misal: 1.2 GB / 4.0 GB)
+                    $ramDisplay = "{$usedRamGb} GB / {$totalRamGb} GB ({$ramPercent}%)";
+
+                    if ($ramPercent > 95) {
+                        $score -= 10;
+                    } elseif ($ramPercent > 88) {
+                        $score -= 3;
+                    }
+                }
             }
         }
-        $score -= $penalty;
 
-        // Informasi RAM Memory
-        $memoryUsed = memory_get_usage(true);
-        $memoryLimit = ini_get('memory_limit');
-        $memoryFormatted = round($memoryUsed / (1024 * 1024), 1) . ' MB';
-
-        // Informasi Storage Disk
+        // 3. Storage Disk Fisik
         $basePath = base_path();
         $freeDisk = @disk_free_space($basePath) ?: 0;
         $totalDisk = @disk_total_space($basePath) ?: 1;
@@ -413,16 +473,20 @@ class SuperAdminDashboardController extends Controller
         $diskFreeGb = round($freeDisk / (1024 * 1024 * 1024), 1) . ' GB';
         $diskTotalGb = round($totalDisk / (1024 * 1024 * 1024), 1) . ' GB';
 
-        if ($diskPercent > 90) {
+        if ($diskPercent > 95) {
             $score -= 15;
+        } elseif ($diskPercent > 90) {
+            $score -= 5;
         }
 
-        $score = max(10, min(100, $score));
+        // Skor kesehatan server merefleksikan performa server aktual (kondisi normal 95% - 100%)
+        $score = max(20, min(100, $score));
 
         return [
             'score' => $score,
-            'memory_used' => $memoryFormatted,
-            'memory_limit' => $memoryLimit ?: '512M',
+            'ram_display' => $ramDisplay,
+            'memory_used' => $memoryFormattedPhp,
+            'memory_limit' => $memoryLimitPhp,
             'disk_free' => $diskFreeGb,
             'disk_total' => $diskTotalGb,
             'disk_used_percent' => $diskPercent,

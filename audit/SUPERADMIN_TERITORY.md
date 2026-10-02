@@ -255,14 +255,14 @@ Pada modul antarmuka dashboard Super Admin ([SuperAdminDashboardController.php](
 ### 5.7. Real-Time Third-Party Services Connectivity & Server Health Telemetry (RESOLVED)
 Pada modul dashboard Super Admin ([SuperAdminDashboardController.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/app/Http/Controllers/SuperAdmin/SuperAdminDashboardController.php) & [superadmin/dashboard/index.blade.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/resources/views/superadmin/dashboard/index.blade.php)):
 1. **Layanan Pihak Ketiga (Live Socket & HTTP Health Check):**
-   - **MikroTik RouterOS:** Melakukan socket ping non-blocking ke port API router (`8728`) router aktif (`NetworkAsset`) atau fallback host dengan timeout 1.2 detik, mengukur latensi ms, dan menampilkan status `OPERATIONAL` / `OFFLINE`.
+   - **MikroTik RouterOS:** Melakukan socket ping non-blocking ke port API router (`8728`) router aktif (`NetworkAsset`) atau fallback host dengan timeout 1.2 detik. Dilengkapi proteksi sinkronisasi otomatis (*auto-sync*): jika record router di database masih memakai IP default seeder (`192.168.88.1`), sistem otomatis membaca `MIKROTIK_HOST` dari `.env` (`100.69.126.108`) dan menyinkronkan database sehingga status langsung `OPERATIONAL`.
    - **WhatsApp Gateway Bot:** Memeriksa endpoint HTTP `GET /status` ke server bot Node.js (`127.0.0.1:3000`), mendeteksi status bot `READY` (terhubung), `SCAN QR` (standby butuh login), atau `OFFLINE` (service mati).
    - **Midtrans Payment Gateway:** Memvalidasi Server Key dari environment, memeriksa keterjangkauan endpoint Snap / Core API (Sandbox / Production) via HTTP basic ping, mengukur respon latensi ms, dan menampilkan status `CONNECTED`, `UNCONFIGURED`, atau `INVALID KEY`.
    - **Database Engine:** Memeriksa koneksi PDO aktif ke driver (MySQL / SQLite), mengukur latensi query ping ms, dan menampilkan status `OPERATIONAL` / `ERROR`.
-2. **Monitoring Kesehatan Server (Informatif & Non-Overkill):**
-   - **Indeks Skor Kesehatan (Health Score):** Dihitung secara dinamis (10-100%) berdasarkan status koneksi database, ketersediaan integrasi pihak ketiga, dan utilisasi disk/memori.
+2. **Monitoring Kesehatan Server (Informatif & Akurat Sesuai Spek):**
+   - **Indeks Skor Kesehatan (Health Score):** Merefleksikan kesehatan hardware dan database server aktual (skor 95-100% kondisi optimal) tanpa terdistorsi secara berlebihan oleh API pihak ketiga eksternal.
    - **Ukuran Database Aktual:** Dihitung dari `information_schema.TABLES` (MySQL) atau ukuran file SQLite dalam MB/GB.
-   - **Alokasi Memori RAM:** Menampilkan memori yang digunakan script PHP (`memory_get_usage`) terhadap batas memori server (`memory_limit`).
+   - **Kapasitas RAM Fisik Server:** Mendeteksi kapasitas memori fisik server sesungguhnya melalui `/proc/meminfo` di Linux/STB (misal: `1.2 GB / 4.0 GB`), bukan sekadar limit single-thread PHP `128M`.
    - **Penyimpanan Disk (Storage):** Menampilkan sisa kapasitas disk bebas dalam GB beserta persentase pemakaian (`disk_free_space` / `disk_total_space`).
    - **Sesi Aktif & Runtime Info:** Menghitung sesi pengguna aktif dalam 24 jam terakhir, versi PHP & Laravel aktif, environment sistem, dan waktu lokal (WIB).
 

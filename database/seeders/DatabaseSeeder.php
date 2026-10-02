@@ -53,7 +53,7 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Router Utama (Core MKS)'],
             [
                 'type' => 'Router',
-                'ip_address' => '192.168.88.1',
+                'ip_address' => env('MIKROTIK_HOST', '192.168.88.1'),
                 'location' => 'Data Center Gedung A',
                 'is_active' => true,
             ]

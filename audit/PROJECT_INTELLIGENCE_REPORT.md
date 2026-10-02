@@ -28,6 +28,7 @@
   17. **Billing Modernization, Teleport Modals & 2FA Dark UI (RESOLVED):** Billing records lacked quick search/filtering, modals rendered inside overflow containers suffered clipping, and 2FA authentication views clashed with the dark theme. **Resolved:** Modernized billing index table with real-time filters and verified revenue calculation, ported modals to body via `<template x-teleport="body">`, and polished 2FA confirmation UI.
   18. **Marketing Reporting Engine & Customer Profile Hardening (RESOLVED):** Report dashboard lacked period filtering and CSV exports, live funnel was inadvertently cut off by date filters, and marketing customer view leaked unnecessary PPPoE technical data. **Resolved:** Built period dropdown (`all`, `this_month`, `last_month`, `last_3_months`, `this_year`) defaulting to `all`, implemented CSV report streaming with UTF-8 BOM, unlinked Live Funnel from date ranges, removed dummy footer buttons, removed PPPoE fields from sales view, added direct WhatsApp launcher, and repaired full-width header layout.
   19. **Super Admin Dashboard Chart.js Synchronization & Icon Remediation (RESOLVED):** Super Admin dashboard charts failed to initialize due to missing Chart.js script, and multiple card icons had corrupted SVG paths. **Resolved:** Integrated Chart.js v4 UMD CDN, synchronized all 4 visual charts (User Roles, Subscription Status, 12-Month Revenue, 7-Day Growth) with localized Indonesian labels and palettes, and replaced broken paths with official Heroicons (`currency-dollar`, `chart-pie`, `check-circle`, `clipboard-list`).
+  20. **Live Third-Party Connectivity, Router IP Auto-Sync & Server Hardware Telemetry (RESOLVED):** Third-party integrations were previously static or susceptible to false offline statuses due to seeder IP mismatches (`192.168.88.1` vs `.env` host `100.69.126.108`), and server health displayed misleading single-thread PHP limits (`128M`) with artificial score degradation. **Resolved:** Implemented live non-blocking socket checks to MikroTik API (`8728`) with automatic database IP synchronization; added live health checks for Node.js WhatsApp Bot (`GET /status`), Midtrans Payment Gateway, and Database PDO query latency; detected true physical Linux server RAM via `/proc/meminfo` (e.g. `1.2 GB / 4.0 GB`); and adjusted health scoring to accurately evaluate server hardware and database performance (95%–100% Optimal).
 
 ---
 
@@ -1135,4 +1136,51 @@ NetManagement is a comprehensive, production-hardened ISP management and billing
     }
     ```
   - Updated completion redirects to point explicitly to `admin.customers.show` with flash alerts instead of `back()`.
+
+---
+
+## 59. Automated Daily Overdue Isolation & Billing Cycle (Console Scheduler)
+
+### 1. Daily Billing Execution & Policy
+- **Files:** `app/Console/Commands/ProcessDailyBilling.php`, `routes/console.php`
+- **Schedule:** Scheduled daily at `00:01` WIB via `Schedule::command('billing:process-daily')->dailyAt('00:01')`.
+- **Workflow & Rules:**
+  1. **H-3 Reminder:** Finds all unpaid invoices due in 3 days (`due_date == today + 3`) and dispatches courteous WhatsApp reminders via `WhatsappService::sendBillingReminder($invoice, 3)`.
+  2. **H-1 Urgent Reminder:** Finds unpaid invoices due tomorrow (`due_date == today + 1`) and sends urgent WhatsApp alerts (`sendBillingReminder($invoice, 1)`).
+  3. **H-0 Due Today Alert:** Finds unpaid invoices due today (`due_date == today`) and dispatches due-day reminders (`sendBillingReminder($invoice, 0)`).
+  4. **Overdue Isolation:**
+     - Query: `Invoice::where('status', 'unpaid')->whereDate('due_date', '<', $today)->whereHas('subscription.customer', fn($q) => $q->where('is_isolated', false))`
+     - Updates `customers.is_isolated = true` and `subscriptions.status = 'isolated'`.
+     - Logs automated audit trail (`action = 'isolate_customer'`).
+     - Disables subscriber PPPoE access on MikroTik router via `NetworkService::disableCustomer($subscription)`.
+     - Sends official isolation notice to subscriber's WhatsApp phone number.
+  5. **Auto Un-Isolation on Payment:**
+     - When an invoice is paid (via Midtrans webhook or admin manual reconciliation), `SyncPaidInvoiceHardwareJob` or `BillingController` immediately sets `is_isolated = false`, activates `status = 'active'`, re-enables PPPoE on MikroTik via `NetworkService::enableCustomer($subscription)`, and delivers payment confirmation via WhatsApp.
+
+---
+
+## 60. Live Third-Party Integration Telemetry, Router IP Auto-Sync & Server Hardware Monitoring
+
+### 1. Router IP Auto-Sync & False Offline Elimination
+- **Files:** `app/Http/Controllers/SuperAdmin/SuperAdminDashboardController.php`, `app/Services/NetworkService.php`, `database/seeders/DatabaseSeeder.php`, `database/migrations/2026_10_02_000002_update_active_router_ip_to_env.php`
+- **Problem:** Database seeders previously initialized `network_assets` with default dummy IP `192.168.88.1`. In production/STB environments configured with real router IP `100.69.126.108` in `.env`, health checks and connection queries targeted `192.168.88.1`, producing false offline alarms despite actual router operations succeeding.
+- **Resolution:**
+  - Added dynamic fallback and database auto-sync in `SuperAdminDashboardController`: if the router IP in database is `192.168.88.1` but `.env` specifies a different `MIKROTIK_HOST`, the system connects to the `.env` host and auto-syncs the database record.
+  - Added resolver protection in `NetworkService::resolveRouterConfig` to prioritize configured environment hosts over stale default seeder IPs.
+  - Authored migration `2026_10_02_000002_update_active_router_ip_to_env.php` and updated `DatabaseSeeder.php` to use `env('MIKROTIK_HOST', '192.168.88.1')`.
+
+### 2. Live Third-Party Service Connectivity Check
+- **Files:** `app/Http/Controllers/SuperAdmin/SuperAdminDashboardController.php`, `resources/views/superadmin/dashboard/index.blade.php`
+- **Capabilities:**
+  - **MikroTik RouterOS:** Live socket check (`@fsockopen`, 1.2s timeout) with latency measurement in milliseconds, showing active router host, port, and status (`OPERATIONAL` / `OFFLINE`).
+  - **WhatsApp Gateway:** Real-time HTTP GET to Node.js bot microservice (`127.0.0.1:3000/status`), displaying `READY` (client connected), `SCAN QR` (standby), or `OFFLINE` (service down).
+  - **Midtrans Payment Gateway:** Basic HTTP validation against Midtrans Snap / Core API with server key validation, displaying `CONNECTED` (Sandbox / Production mode) or `UNCONFIGURED` / `INVALID KEY`.
+  - **Database Engine:** Real PDO query latency measurement (`microtime`) and database driver identification (`MySQL` / `SQLite`).
+
+### 3. Server Hardware Telemetry & True Physical RAM Detection
+- **Files:** `app/Http/Controllers/SuperAdmin/SuperAdminDashboardController.php`, `resources/views/superadmin/dashboard/index.blade.php`
+- **Problem:** Server monitoring previously displayed `4 MB / 128M` by reading PHP's single-thread `memory_limit`, misleading administrators who deployed high-spec VPS/STB hardware. Additionally, server health scores were penalized by external third-party service downtime, incorrectly showing 84% on perfectly healthy servers.
+- **Resolution:**
+  - Integrated physical Linux memory parsing via `/proc/meminfo` (`MemTotal` and `MemAvailable`), accurately displaying total server RAM (e.g., `1.2 GB / 4.0 GB (30% used)`).
+  - Decoupled server hardware health scoring from external third-party APIs. Server health score now strictly evaluates local server availability (Database PDO, physical disk space, and physical RAM load), maintaining a realistic **95%–100% (Optimal)** status for healthy systems.
 

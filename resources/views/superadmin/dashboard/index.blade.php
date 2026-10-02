@@ -135,14 +135,11 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                <!-- Status & Kesehatan Server -->
+                <!-- Status Sistem -->
                 <div class="bg-slate-900/80 backdrop-blur-sm rounded-2xl border border-slate-800 p-6 hover:border-slate-700 transition-all duration-300 shadow-lg hover:shadow-xl flex flex-col justify-between">
                     <div>
                         <div class="flex items-center justify-between mb-5">
-                            <div>
-                                <h3 class="font-bold text-white text-lg tracking-wide">Status & Kesehatan Server</h3>
-                                <p class="text-xs text-slate-400 mt-0.5">Monitoring performa sistem, alokasi memori, & penyimpanan</p>
-                            </div>
+                            <h3 class="font-bold text-white text-lg tracking-wide">Status Sistem</h3>
                             @php
                                 $score = $stats['system_health'] ?? 100;
                                 $scoreBadgeColor = $score >= 80 ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : ($score >= 60 ? 'text-amber-400 bg-amber-500/10 border-amber-500/20' : 'text-rose-400 bg-rose-500/10 border-rose-500/20');
@@ -156,10 +153,7 @@
                         <!-- Progress Bar Kesehatan -->
                         <div class="mb-5">
                             <div class="flex justify-between items-center mb-2">
-                                <span class="text-xs font-medium text-slate-300 flex items-center gap-1.5">
-                                    <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                                    Indeks Kesehatan Sistem
-                                </span>
+                                <span class="text-xs font-medium text-slate-300">Kesehatan Server</span>
                                 <span class="text-sm font-bold {{ $score >= 80 ? 'text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]' : ($score >= 60 ? 'text-amber-400' : 'text-rose-400') }}">{{ $score }}%</span>
                             </div>
                             <div class="w-full h-3.5 bg-slate-800/80 rounded-full overflow-hidden border border-slate-700/50 p-0.5">
@@ -181,9 +175,9 @@
                             <div class="p-3 bg-slate-800/40 rounded-xl border border-slate-800/80">
                                 <span class="text-xs text-slate-400 block mb-1 flex items-center gap-1.5">
                                     <svg class="w-3.5 h-3.5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>
-                                    RAM Allocated
+                                    RAM Server
                                 </span>
-                                <span class="text-sm font-bold text-slate-200">{{ $stats['server_health']['memory_used'] ?? 'N/A' }} <span class="text-xs font-normal text-slate-400">/ {{ $stats['server_health']['memory_limit'] ?? '512M' }}</span></span>
+                                <span class="text-sm font-bold text-slate-200">{{ $stats['server_health']['ram_display'] ?? ($stats['server_health']['memory_used'] . ' / ' . $stats['server_health']['memory_limit']) }}</span>
                             </div>
                             <div class="p-3 bg-slate-800/40 rounded-xl border border-slate-800/80">
                                 <span class="text-xs text-slate-400 block mb-1 flex items-center gap-1.5">
@@ -205,7 +199,7 @@
                     <div class="pt-4 mt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
                         <span class="flex items-center gap-2">
                             <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
-                            {{ $stats['server_health']['php_version'] ?? 'PHP 8.2' }} • {{ $stats['server_health']['laravel_version'] ?? 'Laravel' }} ({{ $stats['server_health']['environment'] ?? 'prod' }})
+                            Terakhir Diperbarui
                         </span>
                         <span class="bg-slate-800 px-2.5 py-1 rounded-md font-mono text-slate-300">
                             {{ now()->format('H:i:s') }} WIB
@@ -217,13 +211,7 @@
                 <div class="bg-slate-900/80 backdrop-blur-sm rounded-2xl border border-slate-800 p-6 hover:border-slate-700 transition-all duration-300 shadow-lg hover:shadow-xl flex flex-col justify-between">
                     <div>
                         <div class="flex items-center justify-between mb-5">
-                            <div>
-                                <h3 class="font-bold text-white text-lg tracking-wide">Layanan Pihak Ketiga</h3>
-                                <p class="text-xs text-slate-400 mt-0.5">Integrasi socket MikroTik, WhatsApp Bot, & Gateway API</p>
-                            </div>
-                            <span class="text-xs font-medium text-slate-400 bg-slate-800/80 px-2.5 py-1 rounded-lg border border-slate-700/50">
-                                4 Integrasi
-                            </span>
+                            <h3 class="font-bold text-white text-lg tracking-wide">Layanan Pihak Ketiga</h3>
                         </div>
                         <div class="space-y-3">
                             @foreach ($servicesStatus as $key => $service)
@@ -280,11 +268,7 @@
                             @endforeach
                         </div>
                     </div>
-                    <div class="pt-4 mt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-                        <span class="flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                            Live Non-Blocking Ping Socket & HTTP
-                        </span>
+                    <div class="pt-4 mt-4 border-t border-slate-800/80 flex items-center justify-end text-xs text-slate-400">
                         <a href="{{ route('admin.integrations.index') }}" class="text-rose-400 hover:text-rose-300 font-medium transition-colors flex items-center gap-1">
                             Kelola Integrasi →
                         </a>

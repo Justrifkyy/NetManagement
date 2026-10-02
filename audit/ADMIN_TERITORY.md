@@ -322,6 +322,24 @@ Modul `NetworkService` dilengkapi method `addCustomer(Subscription $subscription
    - Filter status dinamis (`Semua Status`, `Lunas`, `Belum Bayar`, `Kedaluwarsa`).
    - Perhitungan total pendapatan lunas terverifikasi secara akurat dari invoice berstatus `paid`.
 
+### 5.5. Siklus Otomasi Penagihan & Isolir Jatuh Tempo (RESOLVED)
+1. **Cron Scheduler Harian (`00:01` WIB):**
+   - Rute console [routes/console.php](file:///c:/Users/LENOVO/Documents/Rafli/Project/NetManager/routes/console.php) mendaftarkan tugas harian: `Schedule::command('billing:process-daily')->dailyAt('00:01');`.
+2. **Peringatan Bertingkat WhatsApp Gateway:**
+   - **H-3:** Mengirim notifikasi ramah tanggal jatuh tempo invoice kepada pelanggan.
+   - **H-1:** Mengirim peringatan mendesak sehari sebelum jatuh tempo.
+   - **H-0 (Hari-H):** Mengirim pengingat bahwa tagihan jatuh tempo hari ini.
+3. **Isolir Otomatis Saat Melewati Jatuh Tempo (Overdue):**
+   - Command `billing:process-daily` mengekstrak invoice dengan `status = 'unpaid'` dan `due_date < hari_ini` dengan pelanggan yang belum diisolir (`is_isolated = false`).
+   - Memperbarui database: `customers.is_isolated = true` dan `subscriptions.status = 'isolated'`.
+   - Mencatat log audit sistem (`action = 'isolate_customer'`).
+   - Memutus akses internet pelanggan di MikroTik RouterOS via `NetworkService::disableCustomer($subscription)`.
+   - Mengirim notifikasi isolir resmi ke nomor WhatsApp pelanggan.
+4. **Auto-Un-Isolate Saat Pembayaran Diterima:**
+   - Baik melalui Midtrans Webhook otomatis maupun konfirmasi manual Admin (`BillingController@markAsPaid`), sistem seketika membuka isolir (`is_isolated = false`, `status = 'active'`) dan mengaktifkan kembali akun pelanggan di MikroTik via `enableCustomer()`.
+5. **Auto-Sync IP Router (.env vs Database):**
+   - Mengeliminasi false offline indikator: jika router di database memiliki IP default seeder (`192.168.88.1`), sistem otomatis membaca `MIKROTIK_HOST` dari `.env` (`100.69.126.108`) dan menyinkronkan database via migration `2026_10_02_000002_update_active_router_ip_to_env.php` dan fallback resolver.
+
 ---
 
 ## 6. Conclusion & Recommendations
@@ -339,6 +357,7 @@ Modul `NetworkService` dilengkapi method `addCustomer(Subscription $subscription
 | **Otomasi PPPoE & Profil MikroTik** | **PASSED** (100%) | Terintegrasi via `NetworkService::addCustomer` dengan binding `caller-id` MAC ONT dan auto-create profil PPP rate-limit. |
 | **Multi-Router & ODP Specs** | **PASSED** (100%) | Kredensial router terenkripsi, spesifikasi ODP & kapasitas port tercatat, dan `subscriptions.router_id` terikat permanen. |
 | **Modernisasi Antarmuka Billing** | **PASSED** (100%) | UI tabel billing modern dilengkapi pencarian, filter status instan, dan kalkulasi pendapatan riil. |
+| **Siklus Otomasi Isolir Harian** | **PASSED** (100%) | Scheduler harian `billing:process-daily` (H-3/H-1/H-0 & auto-isolate overdue) berjalan otomatis dan teruji. |
 | **Restorasi CustomerController & CI** | **PASSED** (100%) | Implementasi lengkap `CustomerController` tersinkron dengan route list dan pipeline CI GitHub Actions. |
 | **Sanitasi Codebase (Ponytail)** | **PASSED** (100%) | File orphaned dead code (`Admin\UserController` & `TicketQCController`) telah dihapus. |
 

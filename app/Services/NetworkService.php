@@ -78,7 +78,12 @@ class NetworkService
         // 4. Petakan kredensial router jika objek router ditemukan
         if ($router) {
             if (!empty($router->ip_address)) {
-                $config['host'] = $router->ip_address;
+                $envHost = config('services.mikrotik.host');
+                if ($router->ip_address === '192.168.88.1' && !empty($envHost) && $envHost !== '192.168.88.1') {
+                    $config['host'] = $envHost;
+                } else {
+                    $config['host'] = $router->ip_address;
+                }
             }
             if (!empty($router->api_username)) {
                 $config['user'] = $router->api_username;
