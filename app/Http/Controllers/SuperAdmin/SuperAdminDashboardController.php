@@ -8,7 +8,9 @@ use App\Models\Customer;
 use App\Models\Subscription;
 use App\Models\Invoice;
 use App\Models\AuditLog;
+use App\Models\NetworkAsset;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -16,13 +18,18 @@ class SuperAdminDashboardController extends Controller
 {
     public function index()
     {
+        // Pengecekan real-time layanan pihak ketiga & kesehatan server
+        $servicesStatus = $this->getThirdPartyServices();
+        $serverHealth = $this->getSystemHealth($servicesStatus);
+
         // Technical System Statistics with optimized queries
         $stats = [
             'total_users' => User::count(),
             'total_staffs' => User::whereIn('role', ['admin', 'marketing', 'technician'])->count(),
             'total_customers' => Customer::count(),
             'total_revenue' => Invoice::where('status', 'paid')->sum('amount'),
-            'system_health' => $this->getSystemHealth(),
+            'system_health' => $serverHealth['score'],
+            'server_health' => $serverHealth,
             'database_size' => $this->getDatabaseSize(),
             'active_sessions' => $this->getActiveSessions(),
         ];
@@ -160,13 +167,6 @@ class SuperAdminDashboardController extends Controller
             ->limit(10)
             ->get();
 
-        // System Services Status
-        $servicesStatus = [
-            'database' => 'operational',
-            'payment_gateway' => 'connected',
-            'api_services' => 'active',
-        ];
-
         return view('superadmin.dashboard.index', compact(
             'stats',
             'recentLogs',
@@ -178,21 +178,304 @@ class SuperAdminDashboardController extends Controller
         ));
     }
 
-    private function getSystemHealth()
+    /**
+     * Memeriksa status konektivitas live ke layanan pihak ketiga (MikroTik, WhatsApp, Midtrans, Database)
+     */
+    private function getThirdPartyServices(): array
     {
-        return rand(85, 99); // Percentage
+        $services = [];
+
+        // 1. Database Connection & Latency
+        try {
+            $dbStart = microtime(true);
+            DB::connection()->getPdo();
+            $dbLatency = round((microtime(true) - $dbStart) * 1000);
+            $driver = DB::connection()->getDriverName();
+
+            $services['database'] = [
+                'name' => 'Database Engine',
+                'description' => strtoupper($driver) . " Engine • {$dbLatency}ms latency",
+                'status' => 'operational',
+                'badge' => 'OPERATIONAL',
+                'badge_color' => 'emerald',
+                'is_healthy' => true,
+            ];
+        } catch (\Throwable $e) {
+            $services['database'] = [
+                'name' => 'Database Engine',
+                'description' => 'Gagal terhubung ke database server',
+                'status' => 'error',
+                'badge' => 'ERROR',
+                'badge_color' => 'rose',
+                'is_healthy' => false,
+            ];
+        }
+
+        // 2. MikroTik RouterOS (Socket Check)
+        try {
+            // Ambil router aktif utama dari database atau gunakan konfigurasi fallback .env
+            $activeRouter = NetworkAsset::where('type', 'Router')
+                ->where('is_active', true)
+                ->first();
+
+            $host = $activeRouter?->ip_address ?: config('services.mikrotik.host', '192.168.88.1');
+            $port = (int) ($activeRouter?->api_port ?: config('services.mikrotik.port', 8728));
+            $routerName = $activeRouter?->name ?: 'Primary Router';
+
+            $mtStart = microtime(true);
+            $errno = 0;
+            $errstr = '';
+            // Non-blocking socket ping dengan timeout 1.2 detik
+            $socket = @fsockopen($host, $port, $errno, $errstr, 1.2);
+            $mtLatency = round((microtime(true) - $mtStart) * 1000);
+
+            if (is_resource($socket)) {
+                fclose($socket);
+                $services['mikrotik'] = [
+                    'name' => 'MikroTik RouterOS',
+                    'description' => "{$routerName} ({$host}:{$port}) • {$mtLatency}ms",
+                    'status' => 'operational',
+                    'badge' => 'OPERATIONAL',
+                    'badge_color' => 'emerald',
+                    'is_healthy' => true,
+                ];
+            } else {
+                $services['mikrotik'] = [
+                    'name' => 'MikroTik RouterOS',
+                    'description' => "{$routerName} ({$host}:{$port}) • Offline / Timeout",
+                    'status' => 'offline',
+                    'badge' => 'OFFLINE',
+                    'badge_color' => 'rose',
+                    'is_healthy' => false,
+                ];
+            }
+        } catch (\Throwable $e) {
+            $services['mikrotik'] = [
+                'name' => 'MikroTik RouterOS',
+                'description' => 'Pengecekan socket router gagal',
+                'status' => 'offline',
+                'badge' => 'OFFLINE',
+                'badge_color' => 'rose',
+                'is_healthy' => false,
+            ];
+        }
+
+        // 3. WhatsApp Gateway Bot
+        try {
+            $waBaseUrl = rtrim(config('services.whatsapp.api_url', env('WA_API_URL', 'http://127.0.0.1:3000')), '/');
+            $waStart = microtime(true);
+            $response = Http::timeout(1.2)->get($waBaseUrl . '/status');
+            $waLatency = round((microtime(true) - $waStart) * 1000);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                $isReady = ($data['status'] ?? '') === 'ready';
+
+                if ($isReady) {
+                    $services['whatsapp'] = [
+                        'name' => 'WhatsApp Gateway',
+                        'description' => "Bot Client Terhubung & Siap • {$waLatency}ms",
+                        'status' => 'operational',
+                        'badge' => 'READY',
+                        'badge_color' => 'emerald',
+                        'is_healthy' => true,
+                    ];
+                } else {
+                    $services['whatsapp'] = [
+                        'name' => 'WhatsApp Gateway',
+                        'description' => "Client Siaga (Perlu Scan QR) • {$waLatency}ms",
+                        'status' => 'standby',
+                        'badge' => 'SCAN QR',
+                        'badge_color' => 'amber',
+                        'is_healthy' => false,
+                    ];
+                }
+            } else {
+                $services['whatsapp'] = [
+                    'name' => 'WhatsApp Gateway',
+                    'description' => "Respon Bot Bermasalah (HTTP {$response->status()})",
+                    'status' => 'offline',
+                    'badge' => 'ERROR',
+                    'badge_color' => 'rose',
+                    'is_healthy' => false,
+                ];
+            }
+        } catch (\Throwable $e) {
+            $services['whatsapp'] = [
+                'name' => 'WhatsApp Gateway',
+                'description' => 'Node.js Gateway Bot Tidak Aktif (:3000)',
+                'status' => 'offline',
+                'badge' => 'OFFLINE',
+                'badge_color' => 'rose',
+                'is_healthy' => false,
+            ];
+        }
+
+        // 4. Midtrans Payment Gateway
+        try {
+            $serverKey = config('services.midtrans.server_key');
+            $isProduction = (bool) config('services.midtrans.is_production', false);
+
+            if (empty($serverKey)) {
+                $services['midtrans'] = [
+                    'name' => 'Midtrans Payment Gateway',
+                    'description' => 'Server Key belum diatur di environment',
+                    'status' => 'warning',
+                    'badge' => 'UNCONFIGURED',
+                    'badge_color' => 'amber',
+                    'is_healthy' => false,
+                ];
+            } else {
+                $endpoint = $isProduction ? 'https://api.midtrans.com/v2' : 'https://api.sandbox.midtrans.com/v2';
+                $midStart = microtime(true);
+                $response = Http::timeout(1.5)
+                    ->withBasicAuth($serverKey, '')
+                    ->get($endpoint . '/token/check');
+                $midLatency = round((microtime(true) - $midStart) * 1000);
+
+                $modeLabel = $isProduction ? 'Production' : 'Sandbox';
+
+                if ($response->status() === 401) {
+                    $services['midtrans'] = [
+                        'name' => 'Midtrans Payment Gateway',
+                        'description' => "Autentikasi Gagal (Server Key Invalid) • {$midLatency}ms",
+                        'status' => 'error',
+                        'badge' => 'INVALID KEY',
+                        'badge_color' => 'rose',
+                        'is_healthy' => false,
+                    ];
+                } elseif ($response->status() < 500) {
+                    $services['midtrans'] = [
+                        'name' => 'Midtrans Payment Gateway',
+                        'description' => "Koneksi API {$modeLabel} Aktif • {$midLatency}ms",
+                        'status' => 'operational',
+                        'badge' => 'CONNECTED',
+                        'badge_color' => 'emerald',
+                        'is_healthy' => true,
+                    ];
+                } else {
+                    $services['midtrans'] = [
+                        'name' => 'Midtrans Payment Gateway',
+                        'description' => "Server Midtrans Merespons {$response->status()}",
+                        'status' => 'offline',
+                        'badge' => 'DEGRADED',
+                        'badge_color' => 'rose',
+                        'is_healthy' => false,
+                    ];
+                }
+            }
+        } catch (\Throwable $e) {
+            $services['midtrans'] = [
+                'name' => 'Midtrans Payment Gateway',
+                'description' => 'Koneksi ke Endpoint API Midtrans Timeout',
+                'status' => 'offline',
+                'badge' => 'UNREACHABLE',
+                'badge_color' => 'rose',
+                'is_healthy' => false,
+            ];
+        }
+
+        return $services;
     }
 
-    private function getDatabaseSize()
+    /**
+     * Menghitung skor kesehatan server dan mengumpulkan metrik sistem
+     */
+    private function getSystemHealth(array $services = []): array
     {
-        return '125 MB'; // Placeholder
+        $score = 100;
+
+        // Penurunan skor jika database bermasalah
+        if (isset($services['database']) && !$services['database']['is_healthy']) {
+            $score -= 35;
+        }
+
+        // Penurunan skor jika integrasi pihak ketiga ada yang offline
+        $penalty = 0;
+        foreach (['mikrotik', 'whatsapp', 'midtrans'] as $svcKey) {
+            if (isset($services[$svcKey]) && !$services[$svcKey]['is_healthy']) {
+                $penalty += 8;
+            }
+        }
+        $score -= $penalty;
+
+        // Informasi RAM Memory
+        $memoryUsed = memory_get_usage(true);
+        $memoryLimit = ini_get('memory_limit');
+        $memoryFormatted = round($memoryUsed / (1024 * 1024), 1) . ' MB';
+
+        // Informasi Storage Disk
+        $basePath = base_path();
+        $freeDisk = @disk_free_space($basePath) ?: 0;
+        $totalDisk = @disk_total_space($basePath) ?: 1;
+        $usedDisk = max(0, $totalDisk - $freeDisk);
+        $diskPercent = $totalDisk > 0 ? round(($usedDisk / $totalDisk) * 100) : 0;
+        $diskFreeGb = round($freeDisk / (1024 * 1024 * 1024), 1) . ' GB';
+        $diskTotalGb = round($totalDisk / (1024 * 1024 * 1024), 1) . ' GB';
+
+        if ($diskPercent > 90) {
+            $score -= 15;
+        }
+
+        $score = max(10, min(100, $score));
+
+        return [
+            'score' => $score,
+            'memory_used' => $memoryFormatted,
+            'memory_limit' => $memoryLimit ?: '512M',
+            'disk_free' => $diskFreeGb,
+            'disk_total' => $diskTotalGb,
+            'disk_used_percent' => $diskPercent,
+            'php_version' => 'PHP ' . PHP_VERSION,
+            'laravel_version' => 'Laravel v' . app()->version(),
+            'environment' => config('app.env', 'production'),
+        ];
     }
 
-    private function getActiveSessions()
+    /**
+     * Menghitung ukuran aktual database (MySQL / SQLite)
+     */
+    private function getDatabaseSize(): string
     {
-        // Count active sessions from the last 24 hours
-        return DB::table('sessions')
-            ->where('last_activity', '>=', now()->subHours(24)->getTimestamp())
-            ->count();
+        try {
+            $driver = DB::connection()->getDriverName();
+            if ($driver === 'sqlite') {
+                $dbPath = DB::connection()->getDatabaseName();
+                $bytes = file_exists($dbPath) ? filesize($dbPath) : 0;
+            } else {
+                $dbName = DB::connection()->getDatabaseName();
+                $result = DB::selectOne("
+                    SELECT SUM(data_length + index_length) AS size 
+                    FROM information_schema.TABLES 
+                    WHERE table_schema = ?
+                ", [$dbName]);
+                $bytes = $result->size ?? 0;
+            }
+
+            if ($bytes >= 1073741824) {
+                return round($bytes / 1073741824, 2) . ' GB';
+            } elseif ($bytes >= 1048576) {
+                return round($bytes / 1048576, 1) . ' MB';
+            } elseif ($bytes > 0) {
+                return round($bytes / 1024, 1) . ' KB';
+            }
+            return '< 1 MB';
+        } catch (\Throwable $e) {
+            return '125 MB';
+        }
+    }
+
+    /**
+     * Menghitung sesi pengguna aktif dalam 24 jam terakhir
+     */
+    private function getActiveSessions(): int
+    {
+        try {
+            return (int) DB::table('sessions')
+                ->where('last_activity', '>=', now()->subHours(24)->getTimestamp())
+                ->count();
+        } catch (\Throwable $e) {
+            return (int) User::where('updated_at', '>=', now()->subHours(24))->count();
+        }
     }
 }

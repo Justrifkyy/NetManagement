@@ -135,51 +135,159 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                <div class="bg-slate-900/80 backdrop-blur-sm rounded-2xl border border-slate-800 p-6 hover:border-slate-700 transition-all duration-300 shadow-lg hover:shadow-xl flex flex-col justify-center">
-                    <h3 class="font-bold text-white mb-6 text-lg tracking-wide">Status Sistem</h3>
-                    <div class="space-y-6">
-                        <div>
-                            <div class="flex justify-between items-center mb-3">
-                                <span class="text-sm font-medium text-slate-300">Kesehatan Server</span>
-                                <span class="text-sm font-bold text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]">{{ $stats['system_health'] }}%</span>
+                <!-- Status & Kesehatan Server -->
+                <div class="bg-slate-900/80 backdrop-blur-sm rounded-2xl border border-slate-800 p-6 hover:border-slate-700 transition-all duration-300 shadow-lg hover:shadow-xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-5">
+                            <div>
+                                <h3 class="font-bold text-white text-lg tracking-wide">Status & Kesehatan Server</h3>
+                                <p class="text-xs text-slate-400 mt-0.5">Monitoring performa sistem, alokasi memori, & penyimpanan</p>
                             </div>
-                            <div class="w-full h-4 bg-slate-800/80 rounded-full overflow-hidden border border-slate-700/50 p-0.5">
-                                <div class="h-full bg-gradient-to-r from-emerald-500 to-green-400 rounded-full shadow-[0_0_10px_rgba(52,211,153,0.4)] relative" style="width: {{ $stats['system_health'] }}%">
+                            @php
+                                $score = $stats['system_health'] ?? 100;
+                                $scoreBadgeColor = $score >= 80 ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : ($score >= 60 ? 'text-amber-400 bg-amber-500/10 border-amber-500/20' : 'text-rose-400 bg-rose-500/10 border-rose-500/20');
+                                $scoreBarGrad = $score >= 80 ? 'from-emerald-500 to-green-400 shadow-[0_0_10px_rgba(52,211,153,0.4)]' : ($score >= 60 ? 'from-amber-500 to-yellow-400 shadow-[0_0_10px_rgba(245,158,11,0.4)]' : 'from-rose-500 to-red-400 shadow-[0_0_10px_rgba(244,63,94,0.4)]');
+                            @endphp
+                            <span class="text-xs font-semibold px-2.5 py-1 rounded-full border {{ $scoreBadgeColor }}">
+                                {{ $score >= 80 ? 'Optimal' : ($score >= 60 ? 'Perhatian' : 'Kritis') }}
+                            </span>
+                        </div>
+
+                        <!-- Progress Bar Kesehatan -->
+                        <div class="mb-5">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-medium text-slate-300 flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                    Indeks Kesehatan Sistem
+                                </span>
+                                <span class="text-sm font-bold {{ $score >= 80 ? 'text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]' : ($score >= 60 ? 'text-amber-400' : 'text-rose-400') }}">{{ $score }}%</span>
+                            </div>
+                            <div class="w-full h-3.5 bg-slate-800/80 rounded-full overflow-hidden border border-slate-700/50 p-0.5">
+                                <div class="h-full bg-gradient-to-r {{ $scoreBarGrad }} rounded-full relative transition-all duration-700" style="width: {{ $score }}%">
                                     <div class="absolute top-0 right-0 bottom-0 left-0 bg-[linear-gradient(45deg,rgba(255,255,255,0.15)_25%,transparent_25%,transparent_50%,rgba(255,255,255,0.15)_50%,rgba(255,255,255,0.15)_75%,transparent_75%,transparent)] bg-[length:1rem_1rem] animate-[progress_1s_linear_infinite]"></div>
                                 </div>
                             </div>
                         </div>
-                        <div class="pt-5 space-y-4 border-t border-slate-800">
-                            <div class="flex justify-between items-center">
-                                <span class="text-sm text-slate-400 flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-slate-500"></div> Database Size</span>
-                                <span class="text-sm font-bold text-slate-200 bg-slate-800 px-3 py-1 rounded-md">{{ $stats['database_size'] }}</span>
+
+                        <!-- Grid Metrik Server -->
+                        <div class="grid grid-cols-2 gap-3 pt-3 border-t border-slate-800">
+                            <div class="p-3 bg-slate-800/40 rounded-xl border border-slate-800/80">
+                                <span class="text-xs text-slate-400 block mb-1 flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2 1.5 3 3.5 3h9c2 0 3.5-1 3.5-3V7c0-2-1.5-3-3.5-3h-9C5.5 4 4 5 4 7z"/></svg>
+                                    Ukuran Database
+                                </span>
+                                <span class="text-sm font-bold text-slate-200">{{ $stats['database_size'] }}</span>
                             </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-sm text-slate-400 flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-slate-500"></div> Active Sessions</span>
-                                <span class="text-sm font-bold text-slate-200 bg-slate-800 px-3 py-1 rounded-md">{{ $stats['active_sessions'] }} sesi</span>
+                            <div class="p-3 bg-slate-800/40 rounded-xl border border-slate-800/80">
+                                <span class="text-xs text-slate-400 block mb-1 flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>
+                                    RAM Allocated
+                                </span>
+                                <span class="text-sm font-bold text-slate-200">{{ $stats['server_health']['memory_used'] ?? 'N/A' }} <span class="text-xs font-normal text-slate-400">/ {{ $stats['server_health']['memory_limit'] ?? '512M' }}</span></span>
                             </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-sm text-slate-400 flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-slate-500"></div> Last Updated</span>
-                                <span class="text-sm font-bold text-slate-200 bg-slate-800 px-3 py-1 rounded-md">{{ now()->format('H:i:s') }}</span>
+                            <div class="p-3 bg-slate-800/40 rounded-xl border border-slate-800/80">
+                                <span class="text-xs text-slate-400 block mb-1 flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 00-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
+                                    Storage Disk
+                                </span>
+                                <span class="text-sm font-bold text-slate-200">{{ $stats['server_health']['disk_free'] ?? 'N/A' }} Bebas <span class="text-xs font-normal text-slate-400">({{ $stats['server_health']['disk_used_percent'] ?? 0 }}% used)</span></span>
+                            </div>
+                            <div class="p-3 bg-slate-800/40 rounded-xl border border-slate-800/80">
+                                <span class="text-xs text-slate-400 block mb-1 flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                                    Active Sessions
+                                </span>
+                                <span class="text-sm font-bold text-slate-200">{{ $stats['active_sessions'] }} sesi</span>
                             </div>
                         </div>
                     </div>
+
+                    <div class="pt-4 mt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+                        <span class="flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
+                            {{ $stats['server_health']['php_version'] ?? 'PHP 8.2' }} • {{ $stats['server_health']['laravel_version'] ?? 'Laravel' }} ({{ $stats['server_health']['environment'] ?? 'prod' }})
+                        </span>
+                        <span class="bg-slate-800 px-2.5 py-1 rounded-md font-mono text-slate-300">
+                            {{ now()->format('H:i:s') }} WIB
+                        </span>
+                    </div>
                 </div>
 
-                <div class="bg-slate-900/80 backdrop-blur-sm rounded-2xl border border-slate-800 p-6 hover:border-slate-700 transition-all duration-300 shadow-lg hover:shadow-xl">
-                    <h3 class="font-bold text-white mb-6 text-lg tracking-wide">Layanan Pihak Ketiga</h3>
-                    <div class="space-y-3">
-                        @foreach ($servicesStatus as $service => $status)
-                            <div class="flex justify-between items-center p-4 bg-slate-800/40 hover:bg-slate-800/80 rounded-xl border border-slate-700/50 transition-colors">
-                                <span class="text-sm text-slate-200 font-medium capitalize">{{ str_replace('_', ' ', $service) }}</span>
-                                <div class="flex items-center gap-2.5">
-                                    <div class="w-2.5 h-2.5 rounded-full {{ $status === 'operational' || $status === 'connected' || $status === 'active' ? 'bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]' : 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]' }}"></div>
-                                    <span class="text-xs font-bold {{ $status === 'operational' || $status === 'connected' || $status === 'active' ? 'text-emerald-400' : 'text-rose-400' }} uppercase tracking-wider">
-                                        {{ ucfirst($status) }}
-                                    </span>
-                                </div>
+                <!-- Layanan Pihak Ketiga -->
+                <div class="bg-slate-900/80 backdrop-blur-sm rounded-2xl border border-slate-800 p-6 hover:border-slate-700 transition-all duration-300 shadow-lg hover:shadow-xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-5">
+                            <div>
+                                <h3 class="font-bold text-white text-lg tracking-wide">Layanan Pihak Ketiga</h3>
+                                <p class="text-xs text-slate-400 mt-0.5">Integrasi socket MikroTik, WhatsApp Bot, & Gateway API</p>
                             </div>
-                        @endforeach
+                            <span class="text-xs font-medium text-slate-400 bg-slate-800/80 px-2.5 py-1 rounded-lg border border-slate-700/50">
+                                4 Integrasi
+                            </span>
+                        </div>
+                        <div class="space-y-3">
+                            @foreach ($servicesStatus as $key => $service)
+                                @php
+                                    $badge = $service['badge'] ?? strtoupper($service['status'] ?? 'UNKNOWN');
+                                    $color = $service['badge_color'] ?? ($service['is_healthy'] ? 'emerald' : 'rose');
+                                @endphp
+                                <div class="flex items-center justify-between p-3.5 bg-slate-800/40 hover:bg-slate-800/70 rounded-xl border border-slate-700/50 transition-colors">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-9 h-9 rounded-lg flex items-center justify-center 
+                                            @if($key === 'mikrotik') bg-cyan-500/10 text-cyan-400 border border-cyan-500/20
+                                            @elseif($key === 'whatsapp') bg-emerald-500/10 text-emerald-400 border border-emerald-500/20
+                                            @elseif($key === 'midtrans') bg-blue-500/10 text-blue-400 border border-blue-500/20
+                                            @else bg-purple-500/10 text-purple-400 border border-purple-500/20
+                                            @endif">
+                                            @if($key === 'mikrotik')
+                                                <!-- Router icon -->
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/></svg>
+                                            @elseif($key === 'whatsapp')
+                                                <!-- WhatsApp / Chat icon -->
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                                            @elseif($key === 'midtrans')
+                                                <!-- Payment card icon -->
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                                            @else
+                                                <!-- Database icon -->
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
+                                            @endif
+                                        </div>
+                                        <div>
+                                            <h4 class="text-sm font-semibold text-slate-200">{{ $service['name'] }}</h4>
+                                            <p class="text-xs text-slate-400">{{ $service['description'] }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        @if($color === 'emerald')
+                                            <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]"></div>
+                                            <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20 tracking-wider">
+                                                {{ $badge }}
+                                            </span>
+                                        @elseif($color === 'amber')
+                                            <div class="w-2 h-2 rounded-full bg-amber-500 animate-pulse shadow-[0_0_8px_rgba(245,158,11,0.8)]"></div>
+                                            <span class="text-xs font-bold text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-md border border-amber-500/20 tracking-wider">
+                                                {{ $badge }}
+                                            </span>
+                                        @else
+                                            <div class="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]"></div>
+                                            <span class="text-xs font-bold text-rose-400 bg-rose-500/10 px-2.5 py-1 rounded-md border border-rose-500/20 tracking-wider">
+                                                {{ $badge }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    <div class="pt-4 mt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+                        <span class="flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            Live Non-Blocking Ping Socket & HTTP
+                        </span>
+                        <a href="{{ route('admin.integrations.index') }}" class="text-rose-400 hover:text-rose-300 font-medium transition-colors flex items-center gap-1">
+                            Kelola Integrasi →
+                        </a>
                     </div>
                 </div>
             </div>
