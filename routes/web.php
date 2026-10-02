@@ -18,7 +18,6 @@ use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\PackageController;
 use App\Http\Controllers\Admin\RouterController;
 use App\Http\Controllers\Admin\BillingController;
-use App\Http\Controllers\Admin\IntegrationController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\LogController;
 use App\Http\Controllers\Admin\ProfileController;
@@ -150,10 +149,6 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
         Route::get('/billing/{invoice}/edit', [BillingController::class, 'edit'])->name('billing.edit');
         Route::put('/billing/{invoice}', [BillingController::class, 'update'])->name('billing.update');
         Route::post('/billing/{invoice}/mark-as-paid', [BillingController::class, 'markAsPaid'])->name('billing.markAsPaid');
-
-        // Integrations
-        Route::resource('integrations', IntegrationController::class)->except(['create', 'show', 'edit']);
-        Route::post('/integrations/{integration}/test', [IntegrationController::class, 'testConnection'])->name('integrations.test');
 
         // Reports & Logs
         Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');

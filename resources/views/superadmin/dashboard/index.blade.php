@@ -208,70 +208,63 @@
                 </div>
 
                 <!-- Layanan Pihak Ketiga -->
-                <div class="bg-slate-900/80 backdrop-blur-sm rounded-2xl border border-slate-800 p-6 hover:border-slate-700 transition-all duration-300 shadow-lg hover:shadow-xl flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between mb-5">
-                            <h3 class="font-bold text-white text-lg tracking-wide">Layanan Pihak Ketiga</h3>
-                        </div>
-                        <div class="space-y-3">
-                            @foreach ($servicesStatus as $key => $service)
-                                @php
-                                    $badge = $service['badge'] ?? strtoupper($service['status'] ?? 'UNKNOWN');
-                                    $color = $service['badge_color'] ?? ($service['is_healthy'] ? 'emerald' : 'rose');
-                                @endphp
-                                <div class="flex items-center justify-between p-3.5 bg-slate-800/40 hover:bg-slate-800/70 rounded-xl border border-slate-700/50 transition-colors">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-9 h-9 rounded-lg flex items-center justify-center 
-                                            @if($key === 'mikrotik') bg-cyan-500/10 text-cyan-400 border border-cyan-500/20
-                                            @elseif($key === 'whatsapp') bg-emerald-500/10 text-emerald-400 border border-emerald-500/20
-                                            @elseif($key === 'midtrans') bg-blue-500/10 text-blue-400 border border-blue-500/20
-                                            @else bg-purple-500/10 text-purple-400 border border-purple-500/20
-                                            @endif">
-                                            @if($key === 'mikrotik')
-                                                <!-- Router icon -->
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/></svg>
-                                            @elseif($key === 'whatsapp')
-                                                <!-- WhatsApp / Chat icon -->
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-                                            @elseif($key === 'midtrans')
-                                                <!-- Payment card icon -->
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
-                                            @else
-                                                <!-- Database icon -->
-                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
-                                            @endif
-                                        </div>
-                                        <div>
-                                            <h4 class="text-sm font-semibold text-slate-200">{{ $service['name'] }}</h4>
-                                            <p class="text-xs text-slate-400">{{ $service['description'] }}</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        @if($color === 'emerald')
-                                            <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]"></div>
-                                            <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20 tracking-wider">
-                                                {{ $badge }}
-                                            </span>
-                                        @elseif($color === 'amber')
-                                            <div class="w-2 h-2 rounded-full bg-amber-500 animate-pulse shadow-[0_0_8px_rgba(245,158,11,0.8)]"></div>
-                                            <span class="text-xs font-bold text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-md border border-amber-500/20 tracking-wider">
-                                                {{ $badge }}
-                                            </span>
+                <div class="bg-slate-900/80 backdrop-blur-sm rounded-2xl border border-slate-800 p-6 hover:border-slate-700 transition-all duration-300 shadow-lg hover:shadow-xl">
+                    <div class="flex items-center justify-between mb-5">
+                        <h3 class="font-bold text-white text-lg tracking-wide">Layanan Pihak Ketiga</h3>
+                    </div>
+                    <div class="space-y-3">
+                        @foreach ($servicesStatus as $key => $service)
+                            @php
+                                $badge = $service['badge'] ?? strtoupper($service['status'] ?? 'UNKNOWN');
+                                $color = $service['badge_color'] ?? ($service['is_healthy'] ? 'emerald' : 'rose');
+                            @endphp
+                            <div class="flex items-center justify-between p-3.5 bg-slate-800/40 hover:bg-slate-800/70 rounded-xl border border-slate-700/50 transition-colors">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-lg flex items-center justify-center 
+                                        @if($key === 'mikrotik') bg-cyan-500/10 text-cyan-400 border border-cyan-500/20
+                                        @elseif($key === 'whatsapp') bg-emerald-500/10 text-emerald-400 border border-emerald-500/20
+                                        @elseif($key === 'midtrans') bg-blue-500/10 text-blue-400 border border-blue-500/20
+                                        @else bg-purple-500/10 text-purple-400 border border-purple-500/20
+                                        @endif">
+                                        @if($key === 'mikrotik')
+                                            <!-- Router icon -->
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/></svg>
+                                        @elseif($key === 'whatsapp')
+                                            <!-- WhatsApp / Chat icon -->
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                                        @elseif($key === 'midtrans')
+                                            <!-- Payment card icon -->
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
                                         @else
-                                            <div class="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]"></div>
-                                            <span class="text-xs font-bold text-rose-400 bg-rose-500/10 px-2.5 py-1 rounded-md border border-rose-500/20 tracking-wider">
-                                                {{ $badge }}
-                                            </span>
+                                            <!-- Database icon -->
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
                                         @endif
                                     </div>
+                                    <div>
+                                        <h4 class="text-sm font-semibold text-slate-200">{{ $service['name'] }}</h4>
+                                        <p class="text-xs text-slate-400">{{ $service['description'] }}</p>
+                                    </div>
                                 </div>
-                            @endforeach
-                        </div>
-                    </div>
-                    <div class="pt-4 mt-4 border-t border-slate-800/80 flex items-center justify-end text-xs text-slate-400">
-                        <a href="{{ route('admin.integrations.index') }}" class="text-rose-400 hover:text-rose-300 font-medium transition-colors flex items-center gap-1">
-                            Kelola Integrasi →
-                        </a>
+                                <div class="flex items-center gap-2">
+                                    @if($color === 'emerald')
+                                        <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]"></div>
+                                        <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-md border border-emerald-500/20 tracking-wider">
+                                            {{ $badge }}
+                                        </span>
+                                    @elseif($color === 'amber')
+                                        <div class="w-2 h-2 rounded-full bg-amber-500 animate-pulse shadow-[0_0_8px_rgba(245,158,11,0.8)]"></div>
+                                        <span class="text-xs font-bold text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-md border border-amber-500/20 tracking-wider">
+                                            {{ $badge }}
+                                        </span>
+                                    @else
+                                        <div class="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]"></div>
+                                        <span class="text-xs font-bold text-rose-400 bg-rose-500/10 px-2.5 py-1 rounded-md border border-rose-500/20 tracking-wider">
+                                            {{ $badge }}
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
             </div>

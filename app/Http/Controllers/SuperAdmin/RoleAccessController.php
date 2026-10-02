@@ -50,7 +50,6 @@ class RoleAccessController extends Controller
                 'packages.manage' => 'Kelola Paket',
                 'billing.view' => 'Lihat Billing',
                 'billing.create' => 'Buat Invoice',
-                'integrations.manage' => 'Kelola Integrasi',
                 'reports.view' => 'Lihat Laporan',
             ],
             'marketing' => [

@@ -251,8 +251,6 @@ The application registers 158 total routes (including Fortify, Jetstream, Sanctu
 - `GET|PUT /admin/billing/{invoice}` $\rightarrow$ `BillingController@show|update`
 - `GET /admin/billing/{invoice}/edit` $\rightarrow$ `BillingController@edit`
 - `POST /admin/billing/{invoice}/mark-as-paid` $\rightarrow$ `BillingController@markAsPaid`
-- `RESOURCE /admin/integrations` $\rightarrow$ `IntegrationController` (`index`, `store`, `update`, `destroy`)
-- `POST /admin/integrations/{integration}/test` $\rightarrow$ `IntegrationController@testConnection`
 - `GET /admin/reports` $\rightarrow$ `ReportController@index`
 - `GET /admin/reports/customers` $\rightarrow$ `ReportController@customerReport`
 - `GET /admin/reports/arrears` $\rightarrow$ `ReportController@arrearsReport`

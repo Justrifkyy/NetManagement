@@ -327,7 +327,7 @@ class DatabaseSeeder extends Seeder
         $defaultPermissions = [
             'admin' => [
                 'dashboard.view', 'customers.view', 'customers.edit', 'customers.isolate',
-                'packages.manage', 'billing.view', 'billing.create', 'integrations.manage', 'reports.view'
+                'packages.manage', 'billing.view', 'billing.create', 'reports.view'
             ],
             'marketing' => [
                 'leads.view', 'leads.manage'
