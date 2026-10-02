@@ -12,13 +12,13 @@ class UserManagementController extends Controller
 {
     public function index()
     {
-        $users = User::paginate(15);
+        $users = User::where('role', '!=', 'customer')->latest()->paginate(15);
         return view('superadmin.users.index', compact('users'));
     }
 
     public function create()
     {
-        $roles = ['super_admin', 'admin', 'marketing', 'technician', 'customer'];
+        $roles = ['super_admin', 'admin', 'marketing', 'technician'];
         return view('superadmin.users.create', compact('roles'));
     }
 
@@ -28,7 +28,7 @@ class UserManagementController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:8',
-            'role' => 'required|in:super_admin,admin,marketing,technician,customer',
+            'role' => 'required|in:super_admin,admin,marketing,technician',
             'phone_number' => 'nullable|string',
             'is_active' => 'required|boolean',
             'area_id' => 'nullable|exists:master_areas,id',
@@ -45,16 +45,24 @@ class UserManagementController extends Controller
 
     public function edit(User $user)
     {
-        $roles = ['super_admin', 'admin', 'marketing', 'technician', 'customer'];
+        if ($user->role === 'customer') {
+            return redirect()->route('superadmin.users.index')->with('error', 'Akun pelanggan dikelola di menu Pelanggan.');
+        }
+
+        $roles = ['super_admin', 'admin', 'marketing', 'technician'];
         return view('superadmin.users.edit', compact('user', 'roles'));
     }
 
     public function update(Request $request, User $user)
     {
+        if ($user->role === 'customer') {
+            return redirect()->route('superadmin.users.index')->with('error', 'Akun pelanggan dikelola di menu Pelanggan.');
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
-            'role' => 'required|in:super_admin,admin,marketing,technician,customer',
+            'role' => 'required|in:super_admin,admin,marketing,technician',
             'phone_number' => 'nullable|string',
             'is_active' => 'required|boolean',
             'area_id' => 'nullable|exists:master_areas,id',
@@ -68,6 +76,10 @@ class UserManagementController extends Controller
 
     public function resetPassword(User $user)
     {
+        if ($user->role === 'customer') {
+            return redirect()->back()->with('error', 'Password pelanggan tidak dikelola di sini.');
+        }
+
         $newPassword = 'temp' . rand(10000, 99999);
         $user->update(['password' => Hash::make($newPassword)]);
 
@@ -76,6 +88,10 @@ class UserManagementController extends Controller
 
     public function destroy(User $user)
     {
+        if ($user->role === 'customer') {
+            return redirect()->route('superadmin.users.index')->with('error', 'Akun pelanggan tidak dapat dihapus melalui menu staf.');
+        }
+
         // 1. Proteksi Akun Master (Permanen)
         if ($user->id === 1) {
             return redirect()->route('superadmin.users.index')->with('error', 'Gagal! Akun Master Super Admin bersifat permanen dan tidak dapat dihapus.');

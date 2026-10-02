@@ -13,7 +13,9 @@ class CustomerController extends Controller
     {
         $marketingId = Auth::id();
 
-        $query = Customer::whereHas('lead', function ($q) use ($marketingId) {
+        $query = Customer::whereHas('user', function ($q) {
+            $q->where('role', 'customer');
+        })->whereHas('lead', function ($q) use ($marketingId) {
             $q->where('marketing_id', $marketingId);
         })->with(['user', 'lead.package', 'subscriptions']);
 

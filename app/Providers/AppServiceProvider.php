@@ -21,8 +21,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Use Bootstrap pagination for better performance
-        Paginator::useBootstrapFive();
+        // Use Tailwind pagination matching dark theme
+        Paginator::useTailwind();
 
         if (request()->server('HTTP_X_FORWARDED_PROTO') === 'https' || request()->header('X-Forwarded-Proto') === 'https' || request()->isSecure()) {
             \Illuminate\Support\Facades\URL::forceScheme('https');

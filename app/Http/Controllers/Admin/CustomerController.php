@@ -15,7 +15,9 @@ class CustomerController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Customer::with(['user', 'subscriptions']);
+        $query = Customer::whereHas('user', function ($q) {
+            $q->where('role', 'customer');
+        })->with(['user', 'subscriptions']);
 
         // Search by customer code, name, or phone number
         if ($request->filled('search')) {
