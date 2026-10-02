@@ -89,6 +89,10 @@
                         {{ __('Pelanggan') }}
                     </x-sidebar-link>
                     
+                    <x-sidebar-link href="{{ route('admin.packages.index') }}" :active="request()->routeIs('admin.packages.*')" icon="package">
+                        {{ __('Paket Layanan') }}
+                    </x-sidebar-link>
+                    
                     <x-sidebar-link href="{{ route('admin.tickets.index') }}" :active="request()->routeIs('admin.tickets.*')" icon="ticket">
                         {{ __('Tiket Teknisi') }}
                     </x-sidebar-link>
