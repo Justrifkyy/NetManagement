@@ -30,6 +30,12 @@
                         @endforelse
                     </div>
 
+                    @if ($masterAreas->hasPages())
+                        <div class="mb-4">
+                            {{ $masterAreas->links() }}
+                        </div>
+                    @endif
+
                     <form action="{{ route('superadmin.master.storeArea') }}" method="POST" class="space-y-3">
                         @csrf
                         <input type="text" name="name" placeholder="Nama Area (Contoh: BTP Blok M)" required

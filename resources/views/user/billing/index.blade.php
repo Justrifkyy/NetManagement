@@ -93,6 +93,10 @@
                 </div>
             </div>
 
+            <div class="mt-6 px-4 sm:px-0">
+                {{ $invoices->links() }}
+            </div>
+
         </div>
     </div>
 </x-app-layout>

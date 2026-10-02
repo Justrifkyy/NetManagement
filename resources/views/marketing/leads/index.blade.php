@@ -236,6 +236,10 @@
                 @endforelse
             </div>
 
+            <div class="mt-8 px-4 sm:px-0">
+                {{ $leads->links() }}
+            </div>
+
         </div>
     </div>
 </x-app-layout>

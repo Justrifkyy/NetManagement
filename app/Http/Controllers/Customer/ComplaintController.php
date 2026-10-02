@@ -13,7 +13,7 @@ class ComplaintController extends Controller
     public function index()
     {
         $customer = $this->customer();
-        $tickets = $customer->tickets()->latest()->get();
+        $tickets = $customer->tickets()->latest()->paginate(10);
 
         return view('client.complaints.index', compact('tickets'));
     }

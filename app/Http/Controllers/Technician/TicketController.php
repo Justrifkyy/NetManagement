@@ -29,7 +29,7 @@ class TicketController extends Controller
         $tickets = Ticket::with(['customer', 'customer.user'])
             ->where('status', 'open')
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(12);
 
         // Mengarahkan ke view yang Anda miliki: technician/open-tickets/index.blade.php
         return view('technician.open-tickets.index', compact('tickets'));
@@ -85,7 +85,7 @@ class TicketController extends Controller
             ->where('technician_id', Auth::id())
             ->whereIn('status', ['assigned', 'in_progress'])
             ->orderBy('updated_at', 'desc')
-            ->get();
+            ->paginate(15);
 
         // Mengarahkan ke view my-tasks/index.blade.php
         return view('technician.my-tasks.index', compact('tasks'));
@@ -273,7 +273,7 @@ class TicketController extends Controller
             ->where('technician_id', Auth::id())
             ->whereIn('status', ['closed', 'resolved'])
             ->latest('completed_at')
-            ->get();
+            ->paginate(15);
 
         return view('technician.history.index', compact('tickets'));
     }

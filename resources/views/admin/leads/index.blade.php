@@ -171,9 +171,7 @@
             </div>
 
             <div class="mt-8 px-4 sm:px-0">
-                @if($leads instanceof \Illuminate\Pagination\Paginator)
-                    {{ $leads->links() }}
-                @endif
+                {{ $leads->links() }}
             </div>
         </div>
     </div>

@@ -69,6 +69,12 @@
                 @endforelse
             </div>
 
+            @if ($tickets->hasPages())
+                <div class="mt-6 px-4 sm:px-0">
+                    {{ $tickets->links() }}
+                </div>
+            @endif
+
             <!-- Quick Actions -->
             <div class="mt-10 px-4 sm:px-0 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <a href="{{ route('client.billing.index') }}" class="bg-slate-800 border border-slate-700 rounded-lg p-6 hover:border-amber-500 transition">

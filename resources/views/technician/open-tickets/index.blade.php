@@ -36,6 +36,10 @@
                     <div class="rounded-2xl border border-slate-800 bg-slate-900/80 p-10 text-center text-slate-400 md:col-span-2 xl:col-span-3">Belum ada tiket terbuka saat ini.</div>
                 @endforelse
             </div>
+
+            <div class="mt-8">
+                {{ $tickets->links() }}
+            </div>
         </div>
     </div>
 </x-app-layout>
